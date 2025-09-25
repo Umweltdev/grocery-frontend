@@ -1,4 +1,5 @@
-import { useState } from "react";
+import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import {
   Typography,
@@ -8,68 +9,72 @@ import {
   IconButton,
   Paper,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { base_url } from "../../utils/baseUrl";
 import makeToast from "../../utils/toaster";
 import { Link } from "react-router-dom";
 
 const WishListCard = ({
-  images,
+  images = [],
   name,
   description,
   regularPrice,
   salePrice,
-  totalstar,
   toggle,
   setToggle,
   _id,
 }) => {
-  const auth = useSelector((state) => state.auth);
-  const { user } = auth;
+  const { user } = useSelector((state) => state.auth);
 
   const removeFromWishList = () => {
     axios
       .put(`${base_url}product/wishlist/${_id}`, null, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
+        headers: { Authorization: `Bearer ${user?.token}` },
       })
-      .then((response) => {
-        // makeToast("success", "Product Added to WishList");
-        setToggle(!toggle);
-      })
-      .catch((error) => {
-        makeToast("error", "You must be logged. Sign in");
-      });
+      .then(() => setToggle(!toggle))
+      .catch(() => makeToast("error", "You must be logged in"));
   };
+
   return (
     <Paper
       elevation={3}
       sx={{
         backgroundColor: "#fff",
-        height: "100%",
-        margin: "auto",
         display: "flex",
-        overflow: "hidden",
-        borderRadius: "8px",
-        position: "relative",
         flexDirection: "column",
-        paddingBottom: 3,
+        borderRadius: 3,
+        overflow: "hidden",
+        width: "100%",
+        maxWidth: 380,
+        margin: "auto",
+        paddingBottom: 2,
+        boxSizing: "border-box",
       }}
     >
       <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
-        <img src={images[0]?.url} style={{ width: "100%", height: "auto" }} />
-        {/* {images[0].url} */}
+        <Box
+          component="img"
+          src={images[0]?.url || "/placeholder.png"}
+          alt={name}
+          sx={{
+            width: "100%",
+            height: { xs: 250, sm: 300, md: 350 },
+            objectFit: "contain",
+          }}
+        />
       </Link>
-
       <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
-        <Box px={2}>
-          <Typography variant="body2" color="#373F50" textAlign="center">
+        <Box px={2} pt={2}>
+          <Typography
+            variant="body1"
+            color="text.primary"
+            textAlign="center"
+            noWrap
+          >
             {name}
           </Typography>
           <Typography
-            variant="subtitle2"
+            variant="subtitle1"
             color="text.secondary"
             textAlign="center"
             mt={1}
@@ -80,7 +85,6 @@ const WishListCard = ({
           </Typography>
         </Box>
       </Link>
-
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -88,32 +92,45 @@ const WishListCard = ({
         px={2}
         mt={2}
       >
-        <Stack spacing={0.2} direction="row">
-          <Typography
-            color="text.secondary"
-            variant="subtitle2"
-            fontSize="13px"
-          >
-            <del>{salePrice ? `₦${regularPrice.toLocaleString()}` : ""}</del>
-          </Typography>
-          <Typography color="primary.main" variant="subtitle1" fontSize="13px">
-            {`₦${(salePrice ? salePrice : regularPrice).toLocaleString()}`}
+        <Stack direction="column" spacing={0.5}>
+          {salePrice && (
+            <Typography
+              color="text.secondary"
+              variant="subtitle2"
+              fontSize={14}
+              sx={{ textDecoration: "line-through" }}
+            >
+              £{regularPrice.toLocaleString()}
+            </Typography>
+          )}
+          <Typography color="primary.main" variant="subtitle1" fontSize={16}>
+            £{(salePrice || regularPrice).toLocaleString()}
           </Typography>
         </Stack>
 
-        <Tooltip title={"Remove from wishlist"}>
-          <IconButton
-            onClick={() => removeFromWishList()}
-            sx={{
-              color: "#D23F57",
-            }}
-          >
-            <FavoriteIcon fontSize="small" />
+        <Tooltip title="Remove from wishlist">
+          <IconButton onClick={removeFromWishList} sx={{ color: "#D23F57" }}>
+            <FavoriteIcon fontSize="medium" />
           </IconButton>
         </Tooltip>
       </Stack>
     </Paper>
   );
+};
+
+WishListCard.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      url: PropTypes.string,
+    })
+  ),
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  regularPrice: PropTypes.number.isRequired,
+  salePrice: PropTypes.number,
+  toggle: PropTypes.bool.isRequired,
+  setToggle: PropTypes.func.isRequired,
+  _id: PropTypes.string.isRequired,
 };
 
 export default WishListCard;

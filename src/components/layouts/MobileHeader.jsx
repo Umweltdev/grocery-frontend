@@ -4,14 +4,12 @@ import {
   Stack,
   Menu,
   MenuItem,
-  Container,
   IconButton,
   Badge,
   styled,
   Typography,
   Drawer,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
@@ -21,36 +19,41 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import SearchInput from "../forms/SearchInput";
 import { Link, useNavigate } from "react-router-dom";
-import Cart from "./Cart";
 import { logout, resetState } from "../../features/auth/authSlice";
 import { useSelector, useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 const MobileHeader = ({
   handleCartOpen,
   handleClick,
   anchorEl,
-  handleLogout,
   handleClose,
 }) => {
+  const dispatch = useDispatch();
   const { products } = useSelector((state) => state.cart);
-  const user = useSelector((state) => state.auth.user);
+  const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const StyledBadge = styled(Badge)(({ theme }) => ({
+
+  const StyledBadge = styled(Badge)(() => ({
     "& .MuiBadge-badge": {
       height: "15px",
       minWidth: "15px",
-      backgroundColor: products.length > 0 ? "#D23F57" : "transparent",
+      backgroundColor: products?.length > 0 ? "#D23F57" : "transparent",
       padding: "0 6px",
       color: "white",
     },
   }));
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const handleDrawerOpen = () => {
-    setDrawerOpen(true);
-  };
 
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawerOpen = () => setDrawerOpen(true);
+  const handleDrawerClose = () => setDrawerOpen(false);
+
+  const handleLogoutClick = () => {
+    dispatch(logout());
+    dispatch(resetState());
+    handleClose();
+    navigate("/login"); // send back to login after logout
   };
 
   return (
@@ -62,105 +65,86 @@ const MobileHeader = ({
       justifyContent="space-between"
       display={{ xs: "flex", lg: "none" }}
     >
+      {/* Logo */}
       <Link to="/" style={{ display: "flex" }}>
         <img
           src="https://bazaar.ui-lib.com/assets/images/logo2.svg"
+          alt="logo"
         />
       </Link>
 
+      {/* Actions */}
       <Stack
         direction="row"
         alignItems="center"
-        sx={{
-          flex: "1 1 0%",
-          justifyContent: "end",
-        }}
+        sx={{ flex: "1 1 0%", justifyContent: "end" }}
       >
+        {/* Search */}
         <IconButton
           component="span"
           onClick={handleDrawerOpen}
           sx={{
             color: "black",
             transition: "none !important",
-            "& .MuiTouchRipple-root": {
-              display: "none",
-            },
+            "& .MuiTouchRipple-root": { display: "none" },
           }}
         >
           <SearchIcon />
         </IconButton>
+
+        {/* Profile / User menu */}
         <div>
-          <IconButton
-            sx={{
-              color: "black",
-            }}
-            onClick={handleClick}
-          >
+          <IconButton sx={{ color: "black" }} onClick={handleClick}>
             <PersonOutlineOutlinedIcon />
           </IconButton>
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            transformOrigin={{ vertical: "top", horizontal: "left" }}
             sx={{
               marginTop: "10px",
-              "& .MuiList-root": {
-                width: "200px",
-              },
+              "& .MuiList-root": { width: "200px" },
             }}
           >
-            <Link
-              to="/user/profile"
-              style={{
-                textDecoration: "none",
-                color: "#2b3445",
-              }}
-            >
-              {user && (
+            {user && (
+              <Link
+                to="/user/profile"
+                style={{ textDecoration: "none", color: "#2b3445" }}
+              >
                 <MenuItem onClick={handleClose}>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <PersonAdd fontSize="small" />
-                    <Typography>My Dashbord</Typography>
+                    <Typography>My Dashboard</Typography>
                   </Stack>
                 </MenuItem>
-              )}
-            </Link>
+              </Link>
+            )}
 
             {user ? (
-              <MenuItem onClick={handleLogout}>
+              <MenuItem onClick={handleLogoutClick}>
                 <Stack direction="row" spacing={2} alignItems="center">
                   <LogoutIcon fontSize="small" />
                   <Typography>Logout</Typography>
-                </Stack>{" "}
+                </Stack>
               </MenuItem>
             ) : (
               <MenuItem onClick={() => navigate("/login")}>
                 <Stack direction="row" spacing={2} alignItems="center">
                   <LoginIcon fontSize="small" />
                   <Typography>Login</Typography>
-                </Stack>{" "}
+                </Stack>
               </MenuItem>
             )}
           </Menu>
         </div>
 
-        <IconButton
-          onClick={handleCartOpen}
-          sx={{
-            color: "black",
-          }}
-        >
+        {/* Cart */}
+        <IconButton onClick={handleCartOpen} sx={{ color: "black" }}>
           <StyledBadge
-            badgeContent={products.reduce(
-              (sum, product) => sum + product.count,
+            badgeContent={products?.reduce(
+              (sum, product) => sum + (product.count || 0),
               0
             )}
           >
@@ -168,25 +152,18 @@ const MobileHeader = ({
           </StyledBadge>
         </IconButton>
       </Stack>
+
+      {/* Drawer for Search */}
       <Drawer
         open={drawerOpen}
         onClose={handleDrawerClose}
         anchor="top"
-        bgcolor="white"
         sx={{
           zIndex: "1200",
-          "& .MuiPaper-root": {
-            backgroundColor: "white",
-          },
+          "& .MuiPaper-root": { backgroundColor: "white" },
         }}
       >
-        <Box
-          sx={{
-            width: "auto",
-            padding: "20px",
-            height: "100vh",
-          }}
-        >
+        <Box sx={{ width: "auto", padding: "20px", height: "100vh" }}>
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -195,9 +172,7 @@ const MobileHeader = ({
             <Typography variant="subtitle2">Search Bazaar</Typography>
             <IconButton
               onClick={handleDrawerClose}
-              sx={{
-                color: "rgba(0, 0, 0, 0.54)",
-              }}
+              sx={{ color: "rgba(0, 0, 0, 0.54)" }}
             >
               <ClearIcon />
             </IconButton>
@@ -205,7 +180,6 @@ const MobileHeader = ({
           <Box
             sx={{
               position: "relative",
-
               maxWidth: "670px",
               marginLeft: "auto",
               marginRight: "auto",
@@ -220,6 +194,13 @@ const MobileHeader = ({
       </Drawer>
     </Stack>
   );
+};
+
+MobileHeader.propTypes = {
+  handleCartOpen: PropTypes.func.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  anchorEl: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  handleClose: PropTypes.func.isRequired,
 };
 
 export default MobileHeader;

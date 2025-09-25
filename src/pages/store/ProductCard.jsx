@@ -58,10 +58,22 @@ const ProductCard = ({
         {wishlist ? <FavoriteIcon /> : <FavoriteBorderIcon />}
       </IconButton>
 
-      <Grid container spacing={2} alignItems="center">
+      <Grid
+        container
+        spacing={2}
+        alignItems="center"
+        direction={{ xs: "column", sm: "row" }}
+        textAlign={{ xs: "center", sm: "left" }}
+      >
         <Grid item xs={12} sm={5} md={4} lg={3}>
           <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
-            <Box width="100%" height="195px" textAlign="center">
+            <Box
+              width="100%"
+              height="195px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
               <img
                 src={images[0]?.url || ""}
                 alt={name}
@@ -76,7 +88,9 @@ const ProductCard = ({
         </Grid>
 
         <Grid item xs={12} sm={7} md={8} lg={9}>
-          <Stack spacing={1}>
+          <Stack
+            alignItems={{ xs: "center", sm: "flex-start" }}
+          >
             <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
               <Typography variant="subtitle1" color="text.primary">
                 {name}
@@ -90,26 +104,49 @@ const ProductCard = ({
               {description}
             </Typography>
 
-            <Stack direction="row" spacing={1} mt={1} alignItems="center">
-              <Typography color="primary.main" fontWeight={600}>
-                ₦ {pricing?.finalPrice || salePrice || regularPrice}
-              </Typography>
+            <Stack
+              direction="column"
+              spacing={0.3}
+              alignItems={{ xs: "center", sm: "flex-start" }}
+            >
               {salePrice && (
                 <Typography
                   color="text.secondary"
-                  sx={{ textDecoration: "line-through" }}
+                  variant="subtitle2"
+                  fontSize="12px"
                 >
-                  ₦ {regularPrice}
+                  <del>£{regularPrice.toLocaleString()}</del>
                 </Typography>
               )}
+              <Typography
+                color="primary.main"
+                variant="subtitle1"
+                fontSize="13px"
+              >
+                £
+                {(
+                  pricing?.finalPrice ||
+                  salePrice ||
+                  regularPrice
+                ).toLocaleString()}
+              </Typography>
               {pricing?.discount > 0 && (
-                <Typography variant="caption" color="success.main">
+                <Typography
+                  variant="caption"
+                  color="success.main"
+                  fontSize="10px"
+                >
                   -{pricing.discount.toFixed(1)}% RCD
                 </Typography>
               )}
             </Stack>
-
-            <Stack direction="row" spacing={1} mt={1} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={1}
+              mt={1}
+              alignItems="center"
+              justifyContent={{ xs: "center", sm: "flex-start" }}
+            >
               {stock <= 0 ? (
                 <Button
                   disabled

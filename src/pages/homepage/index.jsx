@@ -231,8 +231,6 @@ const Homepage = () => {
               <Category visibleCategories={visibleCategories} />
             </Box>
           </Grid>
-
-          {/* Shop content */}
           <Grid item xs={12} md={9}>
             <Box
               bgcolor="white"

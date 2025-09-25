@@ -24,7 +24,7 @@ export const EcommerceDashboardSection = () => {
         .map((p) => ({
             id: p._id,
             product: p?.name,
-            amount: p.salePrice ? `₦ ${p.salePrice.toLocaleString()}` : `₦ ${p.regularPrice.toLocaleString()}`,
+            amount: p.salePrice ? `£ ${p.salePrice.toLocaleString()}` : `£ ${p.regularPrice.toLocaleString()}`,
             stock: p?.stock,
         }));
 
@@ -32,7 +32,7 @@ export const EcommerceDashboardSection = () => {
       id: o._id,
       orderId: o?.orderId.substring(0, 8),
       qty: o?.products.reduce((sum, p) => sum + p.count, 0),
-      amount: `₦ ${o?.totalPrice.toLocaleString()}`,
+      amount: `£ ${o?.totalPrice.toLocaleString()}`,
       status: o?.orderStatus,
       action: null,
     }));

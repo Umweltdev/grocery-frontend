@@ -111,9 +111,14 @@ const Store = () => {
           bgcolor: "#F6F9FC",
           py: 3,
           width: "100%",
+          overflow: "hidden",
         }}
       >
-        <Container maxWidth="xl">
+        <Container
+          maxWidth="xl"
+          disableGutters
+          sx={{ px: { xs: 1, sm: 2, md: 3 } }}
+        >
           <Sort
             activeIcon={activeIcon}
             setActiveIcon={setActiveIcon}
@@ -121,18 +126,24 @@ const Store = () => {
             setSort={setSort}
             openDrawer={toggleDrawer}
           />
-          <Grid container spacing={3} mt={1}>
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              display: "flex",
+              justifyContent: { xs: "center", sm: "flex-end" },
+              mt: { xs: "0", md: "1" },
+            }}
+          >
             <Grid item md={3} display={{ xs: "none", md: "block" }}>
               <Filters />
             </Grid>
 
-            <Grid item xs={12} md={9}>
-              <Products
-                activeIcon={activeIcon}
-                category={category}
-                search={search}
-              />
-            </Grid>
+            <Products
+              activeIcon={activeIcon}
+              category={category}
+              search={search}
+            />
           </Grid>
         </Container>
       </Box>

@@ -1,117 +1,98 @@
-import {
-  Typography,
-  Box,
-  Stack,
-  IconButton,
-  TextField,
-  Grid,
-} from "@mui/material";
+import PropTypes from "prop-types";
+import { Typography, Box, Stack, IconButton, Grid, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export const IReview = ({ image, product, price, count }) => {
+export const IReview = ({ image, product, price, count, onDelete }) => {
   return (
-    <Grid container  sx={{
-      rowGap: 2
-    }}>
-      <Grid item xs={12} md={2.8}>
-        <Stack direction="row" spacing={2} flexGrow={1} alignItems="center">
-          <img
-            src={image}
-            style={{
-              width: "70px",
-              height: "70px",
-            }}
-          />
+    <Paper
+      elevation={1}
+      sx={{
+        p: 2,
+        mb: 2,
+        borderRadius: 2,
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <Stack direction="row" spacing={2} alignItems="center" flex={1}>
+        <Box
+          component="img"
+          src={image || "/placeholder.png"}
+          alt={product?.name}
+          sx={{
+            width: { xs: 80, sm: 100 },
+            height: { xs: 80, sm: 100 },
+            objectFit: "cover",
+            borderRadius: 1,
+          }}
+        />
 
-          <Stack>
-            <Typography variant="subtitle1" color="text.primary">
-              {product?.name}
-            </Typography>
-
-            <Typography color="text.secondary" variant="subtitle2">
-              {`₦ ${price} X ${count}`}
-            </Typography>
-          </Stack>
+        <Stack spacing={0.5}>
+          <Typography variant="subtitle1" color="text.primary" noWrap>
+            {product?.name}
+          </Typography>
+          <Typography variant="subtitle2" color="text.secondary">
+            £{price.toLocaleString()} x {count}
+          </Typography>
         </Stack>
-      </Grid>
+      </Stack>
 
-      <Grid item xs={12} md={7.2}>
-        <Typography variant="subtitle2" color="text.secondary">
-          {product?.description}
-        </Typography>
-      </Grid>
-
-      <Grid item xs={12} md={2}>
-        <Typography variant="subtitle2" color="primary.main">
-          Write A Review
-        </Typography>
-      </Grid>
-
-      {/* {icon && (
-        <IconButton aria-label="Delete">
+      {onDelete && (
+        <IconButton
+          aria-label="Delete"
+          color="error"
+          onClick={onDelete}
+          sx={{ mt: { xs: 2, sm: 0 } }}
+        >
           <DeleteIcon />
         </IconButton>
-      )} */}
-    </Grid>
+      )}
+    </Paper>
   );
+};
+
+IReview.propTypes = {
+  image: PropTypes.string,
+  product: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string,
+  }).isRequired,
+  price: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
+  onDelete: PropTypes.func,
 };
 
 const OrderedProducts = ({ order }) => {
   return (
-    <Box
-      mt={5}
-      sx={{
-        boxShadow: " 0px 1px 3px rgba(3, 0, 71, 0.09)",
-      }}
-    >
+    <Box mt={5}>
       <Stack
-        // direction="row"
-        // justifyContent="space-between"
         py={2}
         px={3}
         sx={{
           background: "#F3F5F9",
-          borderTopRightRadius: "11px",
-          borderTopLeftRadius: "11px",
+          borderRadius: 2,
         }}
       >
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={8} md={6}>
-            <Stack direction="row" alignItems="center">
-              <Typography
-                color="text.secondary"
-                variant="subtitle2"
-                fontSize={{ xs: "12.5px", sm: "14px" }}
-              >
-                Order ID:{" "}
+          <Grid item xs={12} sm={4}>
+            <Stack direction="row" spacing={1}>
+              <Typography color="text.secondary" variant="subtitle2">
+                Order ID:
               </Typography>
-              <Typography
-                variant="subtitle2"
-                fontSize={{ xs: "12.5px", sm: "14px" }}
-                sx={{
-                  color: "text.primary",
-                }}
-              >
+              <Typography color="text.primary" variant="subtitle2">
                 {order?.orderId}
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-            <Stack direction="row" alignItems="center">
-              <Typography
-                color="text.secondary"
-                variant="subtitle2"
-                fontSize={{ xs: "12.5px", sm: "14px" }}
-              >
-                Placed on:{" "}
+
+          <Grid item xs={12} sm={4}>
+            <Stack direction="row" spacing={1}>
+              <Typography color="text.secondary" variant="subtitle2">
+                Placed on:
               </Typography>
-              <Typography
-                variant="subtitle2"
-                fontSize={{ xs: "12.5px", sm: "14px" }}
-                sx={{
-                  color: "text.primary",
-                }}
-              >
+              <Typography color="text.primary" variant="subtitle2">
                 {new Date(order?.orderDate).toLocaleDateString("en-US", {
                   day: "numeric",
                   month: "short",
@@ -121,22 +102,12 @@ const OrderedProducts = ({ order }) => {
             </Stack>
           </Grid>
 
-          <Grid item xs={12} md={3}>
-            <Stack direction="row" alignItems="center">
-              <Typography
-                color="text.secondary"
-                variant="subtitle2"
-                fontSize={{ xs: "12.5px", sm: "14px" }}
-              >
-                Delivered on:{" "}
+          <Grid item xs={12} sm={4}>
+            <Stack direction="row" spacing={1}>
+              <Typography color="text.secondary" variant="subtitle2">
+                Delivered on:
               </Typography>
-              <Typography
-                variant="subtitle2"
-                fontSize={{ xs: "12.5px", sm: "14px" }}
-                sx={{
-                  color: "text.primary",
-                }}
-              >
+              <Typography color="text.primary" variant="subtitle2">
                 {new Date(order?.deliveryDate).toLocaleDateString("en-US", {
                   day: "numeric",
                   month: "short",
@@ -147,15 +118,13 @@ const OrderedProducts = ({ order }) => {
           </Grid>
         </Grid>
       </Stack>
-
       <Stack
-        spacing={5}
+        spacing={2}
         py={3}
         px={3}
         sx={{
           background: "white",
-          borderBottomRightRadius: "11px",
-          borderBottomLeftRadius: "11px",
+          borderRadius: 2,
         }}
       >
         {order?.products.map((review, index) => (
@@ -164,6 +133,25 @@ const OrderedProducts = ({ order }) => {
       </Stack>
     </Box>
   );
+};
+
+OrderedProducts.propTypes = {
+  order: PropTypes.shape({
+    orderId: PropTypes.string.isRequired,
+    orderDate: PropTypes.string.isRequired,
+    deliveryDate: PropTypes.string.isRequired,
+    products: PropTypes.arrayOf(
+      PropTypes.shape({
+        image: PropTypes.string,
+        product: PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          description: PropTypes.string,
+        }),
+        price: PropTypes.number.isRequired,
+        count: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+  }).isRequired,
 };
 
 export default OrderedProducts;

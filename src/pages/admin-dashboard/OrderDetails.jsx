@@ -66,7 +66,7 @@ const OrderDetails = () => {
   };
   useEffect(() => {
     getOrder();
-  }, []);
+  }, [getOrder]);
   const handleStatusChange = (event) => {
     setValue({ ...value, orderStatus: event.target.value });
   };
@@ -79,7 +79,7 @@ const OrderDetails = () => {
           Authorization: `Bearer ${user?.token}`,
         },
       })
-      .then((response) => {
+      .then(() => {
         makeToast("success", "Order Updated Sucessfully!");
         navigate("/admin/orders");
       })
@@ -228,7 +228,7 @@ const OrderDetails = () => {
           </Stack>
           <Stack>
             <Typography fontWeight="600" color="text.primary">
-              Customer's Note
+              Customer&apos;s Note
             </Typography>
             <Typography
               variant="subtitle2"
@@ -261,7 +261,7 @@ const OrderDetails = () => {
                 Subtotal:
               </Typography>
               <Typography variant="subtitle1" color="text.primary">
-                {`₦ ${order?.totalPrice.toLocaleString()}`}
+                {`£ ${order?.totalPrice.toLocaleString()}`}
               </Typography>
             </Stack>
 
@@ -270,7 +270,7 @@ const OrderDetails = () => {
                 Shipping Fee:
               </Typography>
               <Typography variant="subtitle1" color="text.primary">
-                ₦ 0.00
+                £ 0.00
               </Typography>
             </Stack>
 
@@ -279,7 +279,7 @@ const OrderDetails = () => {
                 Discount:
               </Typography>
               <Typography variant="subtitle1" color="text.primary">
-                ₦ 0.00
+                £ 0.00
               </Typography>
             </Stack>
           </Stack>
@@ -289,7 +289,7 @@ const OrderDetails = () => {
               Total:
             </Typography>
             <Typography variant="subtitle1" color="text.primary">
-              {`₦ ${order?.totalPrice.toLocaleString()}`}
+              {`£ ${order?.totalPrice.toLocaleString()}`}
             </Typography>
           </Stack>
 
