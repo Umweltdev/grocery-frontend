@@ -1,21 +1,31 @@
 import { useState, useEffect } from "react";
-import { Typography, Stack, Button, Grid, IconButton } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  IconButton,
+} from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MenuIcon from "@mui/icons-material/Menu";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useSelector, useDispatch } from "react-redux";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import PropTypes from "prop-types";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import WishListCard from "./WishlistCard";
+import DashboardHeader from "./Header";
 import { getWishList } from "../../features/auth/authSlice";
 import { addAllToCart } from "../../features/cart/cartSlice";
 
 const WishList = ({ openDrawer }) => {
   const isNonMobile = useMediaQuery("(min-width:968px)");
   const dispatch = useDispatch();
-
   const [toggle, setToggle] = useState(false);
-  const { user, wishlist } = useSelector((state) => state.auth);
+
+  const { user, wishlist = [] } = useSelector((state) => state.auth); // safe default
 
   useEffect(() => {
     if (user?.token) {
@@ -24,75 +34,97 @@ const WishList = ({ openDrawer }) => {
   }, [dispatch, toggle, user?.token]);
 
   const handleAddAllToCart = () => {
+    if (!wishlist.length) return;
     const productItems = wishlist.map((product) => ({
       id: product._id,
-      image: product.images[0]?.url || "/placeholder.png",
-      price: product.salePrice || product.regularPrice,
-      name: product.name,
+      image: product.images?.[0]?.url || "/placeholder.png",
+      price: product.salePrice || product.regularPrice || 0,
+      name: product.name || "Unnamed product",
     }));
     dispatch(addAllToCart(productItems));
   };
 
   return (
-    <Stack spacing={2}>
-      <Stack direction="row" justifyContent="space-between" alignItems="start">
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
-          alignItems={{ xs: "start", md: "center" }}
-          width={{ xs: "auto", md: "100%" }}
+    <Stack spacing={4}>
+      <DashboardHeader
+        Icon={FavoriteIcon}
+        title="My Wishlist"
+        openDrawer={openDrawer}
+        button={wishlist.length > 0 ? "Add All to Cart" : null}
+        link="#"
+      />
+
+      {wishlist.length === 0 ? (
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 3,
+            textAlign: "center",
+            py: 8,
+          }}
         >
-          <Stack
-            direction="row"
-            spacing={{ xs: 1, md: 2 }}
-            alignItems="center"
-            mb={{ xs: 1.5, md: 0 }}
-          >
-            <FavoriteIcon sx={{ color: "#D23F57" }} />
-            <Typography variant="h5" fontSize={{ xs: "20px", md: "25px" }}>
-              My WishList
+          <CardContent>
+            <FavoriteIcon sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+            <Typography variant="h6" color="text.secondary" mb={1}>
+              Your Wishlist is Empty
             </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Add products you love to see them here
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "start", md: "center" }}
+            mb={2}
+          >
+            <Stack direction="row" spacing={2} alignItems="center">
+              <FavoriteIcon sx={{ color: "#D23F57" }} />
+              <Typography variant="h5" fontSize={{ xs: "20px", md: "25px" }}>
+                {wishlist.length} item{wishlist.length !== 1 ? "s" : ""} in your wishlist
+              </Typography>
+            </Stack>
+
+            <Button
+              disabled={!wishlist.length}
+              onClick={handleAddAllToCart}
+              sx={{
+                textTransform: "none",
+                bgcolor: "#FCE9EC",
+                color: "primary.main",
+                fontSize: "subtitle2",
+                fontWeight: 600,
+                px: isNonMobile ? 4 : 2,
+                py: 1,
+                "&:hover": { backgroundColor: "rgba(210, 63, 87, 0.04)" },
+              }}
+              startIcon={<ShoppingCartIcon />}
+            >
+              Add All to Cart
+            </Button>
+
+            <IconButton
+              onClick={openDrawer}
+              sx={{ display: isNonMobile ? "none" : "inline-flex" }}
+            >
+              <MenuIcon />
+            </IconButton>
           </Stack>
 
-          <Button
-            disabled={!wishlist || wishlist.length === 0}
-            onClick={handleAddAllToCart}
-            sx={{
-              textTransform: "none",
-              bgcolor: "#FCE9EC",
-              color: "primary.main",
-              fontSize: "subtitle2",
-              fontWeight: 600,
-              px: isNonMobile ? 4 : 2,
-              py: 1,
-              "&:hover": { backgroundColor: "rgba(210, 63, 87, 0.04)" },
-            }}
-          >
-            Add All To Cart
-          </Button>
-        </Stack>
-
-        <IconButton
-          onClick={openDrawer}
-          sx={{ display: isNonMobile ? "none" : "inline-flex" }}
-        >
-          <MenuIcon />
-        </IconButton>
-      </Stack>
-
-      <Grid container spacing={3}>
-        {wishlist && wishlist.length > 0 ? (
-          wishlist.map((item) => (
-            <Grid key={item._id} item xs={12} sm={6} md={4}>
-              <WishListCard {...item} toggle={toggle} setToggle={setToggle} />
-            </Grid>
-          ))
-        ) : (
-          <Typography variant="subtitle1" color="text.secondary" mt={3} mx={2}>
-            Your wishlist is empty.
-          </Typography>
-        )}
-      </Grid>
+          <Grid container spacing={3}>
+            {wishlist.map((item) => (
+              <Grid key={item._id || Math.random()} item xs={12} sm={6} md={4}>
+                <WishListCard {...item} toggle={toggle} setToggle={setToggle} />
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
     </Stack>
   );
 };
