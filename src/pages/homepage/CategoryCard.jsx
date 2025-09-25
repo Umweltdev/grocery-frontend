@@ -32,7 +32,7 @@ const CategoryCard = ({ name, image, _id }) => (
           image={image?.url}
           alt={name}
           sx={{
-            objectFit: "cover",
+            objectFit: "fit",
             borderTopLeftRadius: "12px",
             borderTopRightRadius: "12px",
             transition: "transform 0.3s ease",

@@ -22,10 +22,10 @@ import { base_url } from "../../utils/baseUrl";
 import { getProducts } from "../../features/product/productSlice";
 import { getCategories } from "../../features/category/categorySlice";
 import {
-  CategoryOutlined,
   PersonOutlineOutlined,
   HomeOutlined,
   ShoppingBagOutlined,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
 
 const Homepage = () => {
@@ -78,6 +78,52 @@ const Homepage = () => {
 
   return (
     <Box>
+      <Header />
+
+      <Box
+        display={{ xs: "flex", md: "none" }}
+        sx={{
+          px: 2,
+          py: 1.5,
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottom: "1px solid #e5e7eb",
+          backgroundColor: "#fff",
+          position: "sticky",
+          top: 0,
+          zIndex: 1100,
+        }}
+      >
+        <Typography fontWeight={700} fontSize="18px">
+          Shop
+        </Typography>
+        <IconButton onClick={() => setDrawerOpen(true)}>
+          <MenuIcon />
+        </IconButton>
+      </Box>
+
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        anchor="left"
+        sx={{
+          "& .MuiPaper-root": {
+            width: 300,
+            background: "#fff",
+            borderRadius: "0 12px 12px 0",
+            boxShadow: "2px 0 12px rgba(0,0,0,0.12)",
+          },
+        }}
+      >
+        <Box p={3} sx={{ height: "100vh", overflowY: "auto" }}>
+          <Typography variant="h6" fontWeight={700} mb={2} color="primary">
+            Categories
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Category visibleCategories={visibleCategories} />
+        </Box>
+      </Drawer>
+
       <Box
         display={{ xs: "flex", md: "none" }}
         sx={{
@@ -112,19 +158,6 @@ const Homepage = () => {
             Home
           </Typography>
         </Link>
-        <IconButton
-          onClick={() => setDrawerOpen(true)}
-          sx={{
-            flex: 1,
-            flexDirection: "column",
-            color: "#374151",
-          }}
-        >
-          <CategoryOutlined fontSize="medium" />
-          <Typography fontSize="12px" fontWeight={500}>
-            Category
-          </Typography>
-        </IconButton>
         <IconButton
           onClick={() => navigate("/cart")}
           sx={{ flex: 1, flexDirection: "column", color: "#374151" }}
@@ -161,28 +194,7 @@ const Homepage = () => {
           </Link>
         )}
       </Box>
-      <Drawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        anchor="left"
-        sx={{
-          "& .MuiPaper-root": {
-            width: 300,
-            background: "#fff",
-            borderRadius: "0 12px 12px 0",
-            boxShadow: "2px 0 12px rgba(0,0,0,0.12)",
-          },
-        }}
-      >
-        <Box p={3} sx={{ height: "100vh", overflowY: "auto" }}>
-          <Typography variant="h6" fontWeight={700} mb={2} color="primary">
-            Categories
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Category visibleCategories={visibleCategories} />
-        </Box>
-      </Drawer>
-      <Header />
+
       <Box
         paddingTop={{ xs: "16px", sm: "32px" }}
         sx={{ bgcolor: "#F9FAFB", width: "100%" }}
@@ -193,7 +205,6 @@ const Homepage = () => {
               bgcolor="white"
               py={3}
               px={2.5}
-              borderRadius="16px"
               sx={{
                 height: "calc(100vh - 120px)",
                 boxShadow: "0px 3px 10px rgba(0,0,0,0.1)",
@@ -220,10 +231,11 @@ const Homepage = () => {
               <Category visibleCategories={visibleCategories} />
             </Box>
           </Grid>
+
+          {/* Shop content */}
           <Grid item xs={12} md={9}>
             <Box
               bgcolor="white"
-              borderRadius="16px"
               p={3}
               boxShadow="0px 3px 10px rgba(0,0,0,0.08)"
               sx={{ width: "100%" }}

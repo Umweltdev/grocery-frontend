@@ -118,35 +118,67 @@ const ICard = ({
         pb: 3,
       }}
     >
-      <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
-        <img
-          src={images[0]?.url}
-          alt={name}
-          className="card-image"
-          style={{ width: "100%", objectFit: "cover" }}
-        />
-      </Link>
+     <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
+  <img
+    src={images[0]?.url}
+    alt={name}
+    className="card-image"
+    style={{ width: "100%", objectFit: "fit" }}
+  />
 
-      <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
-        <Box px={2} textAlign="center">
-          <Typography variant="body2" color="#373F50">
-            {name}
+  <Box px={2} textAlign="center">
+    <Typography variant="body2" color="#373F50">
+      {name}
+    </Typography>
+    <Typography variant="subtitle2" color="text.secondary" mt={1}>
+      {description.length > 100
+        ? `${description.substring(0, 85)}...`
+        : description}
+    </Typography>
+    <Rating
+      name="read-only-rating"
+      value={totalstar || 0}
+      precision={0.5}
+      readOnly
+      size="small"
+      sx={{ mt: 1 }}
+    />
+
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
+      mt={1}
+    >
+      <Stack direction="column" spacing={0.3}>
+        {salePrice && (
+          <Typography color="text.secondary" variant="subtitle2" fontSize="12px">
+            <del>£{regularPrice.toLocaleString()}</del>
           </Typography>
-          <Typography variant="subtitle2" color="text.secondary" mt={1}>
-            {description.length > 100
-              ? `${description.substring(0, 85)}...`
-              : description}
+        )}
+        <Typography color="primary.main" variant="subtitle1" fontSize="13px">
+          £{(pricing?.finalPrice || salePrice || regularPrice).toLocaleString()}
+        </Typography>
+        {pricing?.discount > 0 && (
+          <Typography variant="caption" color="success.main" fontSize="10px">
+            -{pricing.discount.toFixed(1)}% RCD
           </Typography>
-          <Rating
-            name="read-only-rating"
-            value={totalstar || 0}
-            precision={0.5}
-            readOnly
-            size="small"
-            sx={{ mt: 1 }}
-          />
-        </Box>
-      </Link>
+        )}
+      </Stack>
+
+      {/* Wishlist Icon */}
+      <Tooltip title={toggle ? "Remove from wishlist" : "Add to wishlist"}>
+        <IconButton
+          onClick={addToWishList}
+          sx={{ color: toggle ? "#D23F57" : "#00000042" }}
+          size="small"
+        >
+          <FavoriteIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Stack>
+  </Box>
+</Link>
 
       {stock > 0 ? (
         <Box mt={2} sx={{ alignSelf: "center" }}>
@@ -211,44 +243,16 @@ const ICard = ({
         </Box>
       )}
 
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        px={2}
-        mt={2}
-      >
-        <Stack spacing={0.2} direction="row">
-          {salePrice && (
-            <Typography
-              color="text.secondary"
-              variant="subtitle2"
-              fontSize="13px"
-            >
-              <del>₦{regularPrice.toLocaleString()}</del>
-            </Typography>
-          )}
-          <Typography color="primary.main" variant="subtitle1" fontSize="13px">
-            ₦{(pricing?.finalPrice || salePrice || regularPrice).toLocaleString()}
-          </Typography>
-          {pricing?.discount > 0 && (
-            <Typography variant="caption" color="success.main" fontSize="10px">
-              -{pricing.discount.toFixed(1)}% RCD
-            </Typography>
-          )}
-        </Stack>
-
-        <Tooltip title={toggle ? "Remove from wishlist" : "Add to wishlist"}>
-          <span>
-            <IconButton
-              onClick={addToWishList}
-              sx={{ color: toggle ? "#D23F57" : "#00000042" }}
-            >
-              <FavoriteIcon fontSize="small" />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Stack>
+     <Stack
+  direction="row"
+  justifyContent="space-between"
+  alignItems="center"
+  px={2}
+  mt={2}
+>
+  {/* Price Section */}
+  
+</Stack>
     </Paper>
   );
 };

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import {
   Box,
   Stack,
@@ -8,68 +9,60 @@ import {
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import "pure-react-carousel/dist/react-carousel.es.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import ICard from "../../components/ui-elements/Card";
 import ScaleLoader from "react-spinners/PulseLoader";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
 
-function SampleNextArrow(props) {
-  const { onClick } = props;
+function SampleNextArrow({ onClick }) {
   return (
     <IconButton
       onClick={onClick}
       sx={{
         position: "absolute",
         top: "50%",
-        transform: "translate(0, -50%)",
         right: "-5px",
+        transform: "translateY(-50%)",
         background: "#0f3460",
         color: "white",
-        "&:hover": {
-          background: "#0f3460",
-        },
+        zIndex: 2,
+        "&:hover": { background: "#0f3460" },
       }}
     >
-      <ArrowForwardIcon
-        sx={{
-          cursor: "pointer",
-          fontSize: "25px",
-        }}
-      />
+      <ArrowForwardIcon fontSize="small" />
     </IconButton>
   );
 }
 
-function SamplePrevArrow(props) {
-  const { onClick } = props;
+SampleNextArrow.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
+
+function SamplePrevArrow({ onClick }) {
   return (
     <IconButton
       onClick={onClick}
       sx={{
         position: "absolute",
         top: "50%",
-        transform: "translate(0, -50%)",
         left: "-5px",
-        zIndex: 10,
+        transform: "translateY(-50%)",
         background: "#0f3460",
         color: "white",
-        "&:hover": {
-          background: "#0f3460",
-        },
+        zIndex: 2,
+        "&:hover": { background: "#0f3460" },
       }}
     >
-      <ArrowBackIcon
-        sx={{
-          cursor: "pointer",
-          fontSize: "25px",
-        }}
-      />
+      <ArrowBackIcon fontSize="small" />
     </IconButton>
   );
 }
+
+SamplePrevArrow.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
 
 const Offer = () => {
   const navigate = useNavigate();
@@ -78,26 +71,17 @@ const Offer = () => {
       bgcolor="#FFF8E5"
       py={5}
       px={{ xs: 4, lg: 7 }}
-      sx={{
-        cursor: "pointer",
-        borderRadius: "8px",
-      }}
+      sx={{ borderRadius: "8px" }}
     >
-      <Grid
-        container
-        spacing={{ xs: 4, sm: 0 }}
-        sx={{
-          alignItems: "center",
-        }}
-      >
-        <Grid item xs={12} sm={7} order={{ xs: 1, sm: 0 }} alignItems="center">
+      <Grid container spacing={{ xs: 4, sm: 0 }} alignItems="center">
+        <Grid item xs={12} sm={7} order={{ xs: 1, sm: 0 }}>
           <Stack spacing={2.5}>
-            <Typography variant="h6" fontWeight="500">
+            <Typography variant="h6" fontWeight={500}>
               Till 10 Sept, 2021
             </Typography>
             <Typography
-              variant={"h5"}
-              lineHeight="1.4"
+              variant="h5"
+              lineHeight={1.4}
               fontSize={{ sm: "25px", md: "30px" }}
             >
               25% Special Off Today Only for Vegetables
@@ -109,13 +93,10 @@ const Offer = () => {
                 bgcolor: "primary.main",
                 color: "white",
                 fontSize: "14px",
-                paddingX: "20px",
+                px: "20px",
+                py: "8px",
                 fontWeight: 500,
-                paddingY: "8px",
-                alignSelf: "start",
-                "&:hover": {
-                  backgroundColor: "#E3364E",
-                },
+                "&:hover": { backgroundColor: "#E3364E" },
               }}
             >
               Shop Now
@@ -126,10 +107,11 @@ const Offer = () => {
           <img
             src="https://bazaar.ui-lib.com/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fkisspng-organic-food-leaf-vegetable-fruit-rich-vegetables-5aa9f4d026ae09%201.png&w=384&q=75"
             style={{
-              height: "100%",
               width: "100%",
-              objectFit: "cover",
+              height: "100%",
+              objectFit: "contain",
             }}
+            alt="Offer"
           />
         </Grid>
       </Grid>
@@ -147,61 +129,68 @@ export const Carousel = ({ title, productList, isLoading }) => {
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
     responsive: [
-      {
-        breakpoint: 968,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 500,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true,
-        },
-      },
+      { breakpoint: 968, settings: { slidesToShow: 2, slidesToScroll: 1 } },
+      { breakpoint: 500, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h5">{title}</Typography>
+      <Typography
+        variant="h5"
+        sx={{ mb: 1, color: "#E3364E", textAlign: "center", fontSize: "28px" }}
+      >
+        {title}
+      </Typography>
       {isLoading ? (
         <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
-          height="100px"
+          height={100}
         >
-          <ScaleLoader color="#00000042" height={10} width={10} />
+          <ScaleLoader
+            color="#E3364E"
+            height={30}
+            width={6}
+            margin={4}
+            radius={2}
+            loading
+          />
         </Box>
       ) : productList.length === 0 ? (
         <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
-          height="100px"
+          height={100}
         >
-          <Typography variant="h6" textAlign="center">No products found</Typography>
+          <Typography variant="h6" textAlign="center">
+            No products found
+          </Typography>
         </Box>
       ) : (
-        <div>
-          <Slider {...settings}>
-            {productList.map((item, index) => (
-              <div key={index} className="carousel-card">
-                <ICard {...item} />
-              </div>
-            ))}
-          </Slider>
-        </div>
+        <Slider {...settings}>
+          {productList.map((item, index) => (
+            <div key={index} className="carousel-card">
+              <ICard {...item} />
+            </div>
+          ))}
+        </Slider>
       )}
     </Stack>
   );
+};
+
+Carousel.propTypes = {
+  title: PropTypes.string.isRequired,
+  productList: PropTypes.array,
+  isLoading: PropTypes.bool,
+};
+
+Carousel.defaultProps = {
+  productList: [],
+  isLoading: false,
 };
 
 export const Carousel1 = () => {
@@ -217,31 +206,26 @@ export const Carousel1 = () => {
     cssEase: "linear",
   };
   return (
-    <div>
-      <Slider {...settings}>
-        <Offer />
-        <Offer />
-        <Offer />
-      </Slider>
-    </div>
+    <Slider {...settings}>
+      <Offer />
+      <Offer />
+      <Offer />
+    </Slider>
   );
 };
 
 export const Carousel2 = () => {
   const settings = {
     dots: true,
-    infinite: true,
     arrows: false,
-    speed: 500,
+    infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
   };
   return (
-    <div>
-      <Slider {...settings}>
-        <Offer />
-        <Offer />
-      </Slider>
-    </div>
+    <Slider {...settings}>
+      <Offer />
+      <Offer />
+    </Slider>
   );
 };

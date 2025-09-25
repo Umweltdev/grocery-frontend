@@ -109,8 +109,6 @@ const Header = () => {
                   </Typography>
                 )}
               </Stack>
-
-              {/* Dropdown Menu */}
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
@@ -165,7 +163,6 @@ const Header = () => {
               </Menu>
             </div>
 
-            {/* Cart */}
             <IconButton
               onClick={handleCartOpen}
               sx={{
@@ -195,8 +192,6 @@ const Header = () => {
           anchorEl={anchorEl}
         />
       </Container>
-
-      {/* Cart Drawer */}
       <Cart open={cartOpen} onClose={handleCartClose} />
     </Box>
   );

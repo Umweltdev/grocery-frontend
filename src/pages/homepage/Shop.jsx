@@ -129,7 +129,6 @@ const Shop = () => {
       <Stack spacing={8}>
         <Carousel2 />
 
-        {/* ✅ Categories */}
         <Stack spacing={3}>
           <Typography
             variant="h4"

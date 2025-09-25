@@ -6,7 +6,6 @@ import svgr from 'vite-plugin-svgr'
 export default defineConfig({
   plugins: [react(), svgr()],
   build: {
-    // Allow bundles up to ~2MB before warnings
     chunkSizeWarningLimit: 2000,
     outDir: "dist",
   },
