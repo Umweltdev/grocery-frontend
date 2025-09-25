@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Typography, Stack, Button, Grid, Card, CardContent } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+} from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import WishListCard from "./WishlistCard";
@@ -67,9 +74,15 @@ const WishList = ({ openDrawer }) => {
         </Card>
       ) : (
         <>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
             <Typography variant="body2" color="text.secondary">
-              {wishlist.length} item{wishlist.length !== 1 ? 's' : ''} in your wishlist
+              {wishlist.length} item{wishlist.length !== 1 ? "s" : ""} in your
+              wishlist
             </Typography>
             <Button
               variant="outlined"
@@ -84,7 +97,7 @@ const WishList = ({ openDrawer }) => {
               Add All to Cart
             </Button>
           </Stack>
-          
+
           <Grid container spacing={3}>
             {wishlist.map((item, index) => (
               <Grid item xs={12} sm={6} lg={4} key={item._id || index}>

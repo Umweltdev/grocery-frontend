@@ -78,9 +78,7 @@ const Profile = ({ openDrawer }) => {
                       color: "primary.main",
                       "&:hover": { bgcolor: "grey.100" },
                     }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
+                  />
                 }
               >
                 <Avatar

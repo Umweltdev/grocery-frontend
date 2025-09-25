@@ -110,7 +110,9 @@ const WishListCard = ({
       {/* Discount Badge */}
       {hasDiscount && (
         <Chip
-          label={`-${Math.round(((regularPrice - salePrice) / regularPrice) * 100)}%`}
+          label={`-${Math.round(
+            ((regularPrice - salePrice) / regularPrice) * 100
+          )}%`}
           color="error"
           size="small"
           sx={{
@@ -170,16 +172,14 @@ const WishListCard = ({
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={
-            {
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              mb: 2,
-              lineHeight: 1.4,
-            }
-          }
+          sx={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            mb: 2,
+            lineHeight: 1.4,
+          }}
         >
           {description}
         </Typography>
@@ -219,6 +219,7 @@ const WishListCard = ({
             borderRadius: 2,
             py: 1.2,
             boxShadow: "none",
+            color: "#fff",
             "&:hover": {
               boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.15)",
             },
