@@ -105,7 +105,7 @@ const Header = () => {
                     fontWeight={500}
                     textTransform="capitalize"
                   >
-                    Hi, {user?.fullName.split(" ")[0]}
+                    Hi, {user?.fullName?.split(" ")[0] || "User"}
                   </Typography>
                 )}
               </Stack>

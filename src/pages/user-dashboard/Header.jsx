@@ -1,78 +1,99 @@
-import { Typography, Stack, Button, IconButton } from "@mui/material";
+import { Typography, Stack, Button, IconButton, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
 
-const Header = ({ Icon, title, button, openDrawer, link }) => {
+const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
   const isNonMobile = useMediaQuery("(min-width:968px)");
   const marginBottom = button ? { xs: 1.5, md: 0 } : 0;
   const alignment =  button ? "start" : "center"
 
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems={alignment}>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        justifyContent="space-between"
-        alignItems={{ xs: "start", md: "center" }}
-        width={{ xs: "auto", md: "100%" }}
-      >
+    <Box
+      sx={{
+        mb: 4,
+        pb: 3,
+        borderBottom: "1px solid",
+        borderColor: "divider",
+      }}
+    >
+      <Stack direction="row" justifyContent="space-between" alignItems={alignment}>
         <Stack
-          direction="row"
-          spacing={{ xs: 1, md: 2 }}
-          alignItems="center"
-         mb={marginBottom}
+          direction={{ xs: "column", md: "row" }}
+          justifyContent="space-between"
+          alignItems={{ xs: "start", md: "center" }}
+          width={{ xs: "auto", md: "100%" }}
         >
-          <Icon
-            sx={{
-              color: "primary.main",
-            }}
-          />
-
-          <Typography
-            variant="h5"
-            color="text.primary"
-            fontSize={{ xs: "20px", md: "25px" }}
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            mb={marginBottom}
           >
-            {title}
-          </Typography>
-        </Stack>
-        {button && (
-          <Link
-            to={link}
-            style={{
-              textDecoration: "none",
-            }}
-          >
-            <Button
+            <Box
               sx={{
-                textTransform: "none",
-                bgcolor: "#FCE9EC",
+                p: 1.5,
+                borderRadius: 2,
+                bgcolor: "primary.50",
                 color: "primary.main",
-                fontSize: "subtitle2",
-                paddingX: isNonMobile ? "40px" : "20px",
-                fontWeight: 600,
-                paddingY: "6px",
-                "&:hover": {
-                  backgroundColor: "rgba(210, 63, 87, 0.04)",
-                },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {button}
-            </Button>
-          </Link>
-        )}
-      </Stack>
+              <Icon />
+            </Box>
+            <Typography
+              variant="h4"
+              color="text.primary"
+              fontWeight={700}
+              fontSize={{ xs: "24px", md: "28px" }}
+            >
+              {title}
+            </Typography>
+          </Stack>
+          {button && (
+            <Link
+              to={link}
+              style={{
+                textDecoration: "none",
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  px: 3,
+                  py: 1.5,
+                  boxShadow: "none",
+                  "&:hover": {
+                    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 0.12)",
+                  },
+                }}
+              >
+                {button}
+              </Button>
+            </Link>
+          )}
+        </Stack>
 
-      <IconButton
-        onClick={openDrawer}
-        sx={{
-          display: isNonMobile ? "none" : "inline-flex",
-        }}
-      >
-        <MenuIcon />
-      </IconButton>
-    </Stack>
+        <IconButton
+          onClick={openDrawer}
+          sx={{
+            display: isNonMobile ? "none" : "inline-flex",
+            bgcolor: "grey.100",
+            "&:hover": {
+              bgcolor: "grey.200",
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+      </Stack>
+    </Box>
   );
 };
 
-export default Header;
+export default DashboardHeader;
