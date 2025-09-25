@@ -3,53 +3,57 @@ import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import {
   Box,
   Button,
-  Paper,
   Stack,
   TextField,
   Typography,
   Avatar,
   IconButton,
+  Card,
+  CardContent,
+  Grid,
+  Divider,
+  Badge,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import { Formik } from "formik";
 import * as yup from "yup";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import PersonIcon from "@mui/icons-material/Person";
+import SaveIcon from "@mui/icons-material/Save";
 import { useDispatch, useSelector } from "react-redux";
-import Header from "./Header";
+import DashboardHeader from "./Header";
 import {
   updateProfile,
   resetState,
   resetUpdatedFlag,
 } from "../../features/auth/authSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import makeToast from "../../utils/toaster";
-makeToast;
 const EditProfile = ({ openDrawer }) => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
 
-  const isNonMobile = useMediaQuery("(min-width:968px)");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const auth = useSelector((state) => state.auth);
   const { isSuccess, isError, user, isLoading, userUpdated } = auth;
+  
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     setProfilePictureFile(file);
     if (file) {
       const reader = new FileReader();
-
       reader.onloadend = () => {
         setProfilePicture(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
+  
   useEffect(() => {
     if (isSuccess && userUpdated) {
+      makeToast("success", "Profile updated successfully!");
       navigate("/user/profile");
       dispatch(resetUpdatedFlag());
     }
@@ -57,218 +61,241 @@ const EditProfile = ({ openDrawer }) => {
       makeToast("error", "Something went wrong, Please Try Again");
       dispatch(resetState());
     }
-  }, [isSuccess, userUpdated, isError]);
+  }, [isSuccess, userUpdated, isError, navigate, dispatch]);
+  
   const initialValues = {
-    fullName: user?.fullName,
-    email: user?.email,
-    phone: user?.phone,
-    dob: user?.dob,
-    image: user?.image,
+    fullName: user?.fullName || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    dob: user?.dob || null,
   };
+
   return (
-    <Stack spacing={3}>
-      <Header
+    <Stack spacing={4}>
+      <DashboardHeader
         Icon={PersonIcon}
-        title={"Edit Profile"}
+        title="Edit Profile"
         openDrawer={openDrawer}
-        button="Back To Profile"
-        link={`/user/profile`}
+        button="Back to Profile"
+        link="/user/profile"
       />
 
-      <Paper
+      <Card
         elevation={0}
         sx={{
-          bgcolor: "white",
-          paddingX: isNonMobile ? 5 : 2,
-          paddingY: 4,
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
         }}
       >
-        <Formik
-          enableReinitialize={true}
-          onSubmit={(values) => {
-            dispatch(updateProfile({ ...values, image: profilePictureFile }));
-          }}
-          initialValues={initialValues}
-          validationSchema={editSchema}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            setFieldValue,
-            isValid,
-            dirty,
-          }) => (
-            <form onSubmit={handleSubmit}>
-              <Box
-                display="flex"
-                alignItems={{ xs: "center", md: "flex-end" }}
-                justifyContent={{ xs: "center", md: "flex-start" }}
-                mb={3}
-              >
-                <Avatar
-                  alt="profile-picture"
-                  src={profilePicture || user?.image}
-                  sx={{ width: 64, height: 64 }}
-                />
-                <Box ml="-15px">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    style={{ display: "none" }}
-                    id="profilePictureInput"
-                  />
-                  <label htmlFor="profilePictureInput">
-                    <IconButton
-                      component="span"
+        <CardContent sx={{ p: 4 }}>
+          <Formik
+            enableReinitialize={true}
+            onSubmit={(values) => {
+              dispatch(updateProfile({ ...values, image: profilePictureFile }));
+            }}
+            initialValues={initialValues}
+            validationSchema={editSchema}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              setFieldValue,
+              isValid,
+              dirty,
+            }) => (
+              <form onSubmit={handleSubmit}>
+                {/* Profile Picture Section */}
+                <Box textAlign="center" mb={4}>
+                  <Typography variant="h6" fontWeight={600} mb={3}>
+                    Profile Picture
+                  </Typography>
+                  <Badge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    badgeContent={
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        style={{ display: "none" }}
+                        id="profilePictureInput"
+                      />
+                    }
+                  >
+                    <Avatar
+                      src={profilePicture || user?.image}
                       sx={{
-                        backgroundColor: "#e3e9ef !important",
-                        color: "#0F3460 !important",
-                        padding: "7px",
-                        "&:hover": {
-                          backgroundColor: "#0f34600a !important",
-                        },
+                        width: 120,
+                        height: 120,
+                        border: "4px solid",
+                        borderColor: "primary.100",
+                        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
                       }}
                     >
-                      <CameraEnhanceIcon
+                      <PersonIcon sx={{ fontSize: 60 }} />
+                    </Avatar>
+                    <label htmlFor="profilePictureInput">
+                      <IconButton
+                        component="span"
                         sx={{
-                          fontSize: "1.2rem",
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          bgcolor: "primary.main",
+                          color: "white",
+                          "&:hover": {
+                            bgcolor: "primary.dark",
+                            transform: "scale(1.1)",
+                          },
+                          transition: "all 0.2s ease",
                         }}
-                      />
-                    </IconButton>
-                  </label>
+                      >
+                        <CameraEnhanceIcon />
+                      </IconButton>
+                    </label>
+                  </Badge>
+                  <Typography variant="body2" color="text.secondary" mt={2}>
+                    Click the camera icon to change your profile picture
+                  </Typography>
                 </Box>
-              </Box>
 
-              <Box
-                display="grid"
-                gap="20px"
-                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-                sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-                }}
-              >
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  type="text"
-                  label="Full Name"
-                  size="small"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.fullName}
-                  name="fullName"
-                  error={!!touched.fullName && !!errors.fullName}
-                  helperText={touched.fullName && errors.fullName}
-                  sx={{
-                    gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  type="email"
-                  label="Email"
-                  size="small"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.email}
-                  name="email"
-                  error={!!touched.email && !!errors.email}
-                  helperText={touched.email && errors.email}
-                  sx={{
-                    gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  type="text"
-                  label="Phone"
-                  size="small"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.phone}
-                  name="phone"
-                  error={!!touched.phone && !!errors.phone}
-                  helperText={touched.phone && errors.phone}
-                  sx={{
-                    gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                />{" "}
-                <DatePicker
-                  fullWidth
-                  label="Birth Date"
-                  value={values.dob ? dayjs(values.dob) : null}
-                  onChange={(date) => {
-                    setFieldValue("dob", date.toISOString());
-                  }}
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      helperText: touched.dob && errors.dob,
-                      error: !!touched.dob && !!errors.dob,
-                      name: "dob",
-                      onBlur: handleBlur,
-                    },
-                  }}
-                  sx={{
-                    gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
-                  }}
-                />
-              </Box>
-              <Button
-                type="submit"
-                disabled={!isValid || isLoading || !dirty}
-                sx={{
-                  mt: 4,
-                  textTransform: "none",
-                  bgcolor:
-                    !isValid || isLoading || !dirty
-                      ? "#0000001f !important"
-                      : "primary.main",
-                  color: isLoading ? "#00000042 !important" : "white",
-                  fontSize: "14px",
-                  paddingX: "20px",
-                  fontWeight: 500,
-                  paddingY: "8px",
-                  alignSelf: "start",
-                  "&:hover": {
-                    backgroundColor: "#E3364E",
-                  },
-                }}
-              >
-                {isLoading ? "Saving..." : "Save Changes"}
-              </Button>
-            </form>
-          )}
-        </Formik>
-      </Paper>
+                <Divider sx={{ mb: 4 }} />
+
+                {/* Form Fields */}
+                <Typography variant="h6" fontWeight={600} mb={3}>
+                  Personal Information
+                </Typography>
+                
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      label="Full Name"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.fullName}
+                      name="fullName"
+                      error={!!touched.fullName && !!errors.fullName}
+                      helperText={touched.fullName && errors.fullName}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      type="email"
+                      label="Email Address"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.email}
+                      name="email"
+                      error={!!touched.email && !!errors.email}
+                      helperText={touched.email && errors.email}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      label="Phone Number"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.phone}
+                      name="phone"
+                      error={!!touched.phone && !!errors.phone}
+                      helperText={touched.phone && errors.phone}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <DatePicker
+                      label="Date of Birth"
+                      value={values.dob ? dayjs(values.dob) : null}
+                      onChange={(date) => {
+                        setFieldValue("dob", date ? date.toISOString() : null);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          helperText: touched.dob && errors.dob,
+                          error: !!touched.dob && !!errors.dob,
+                          name: "dob",
+                          onBlur: handleBlur,
+                          sx: {
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: 2,
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                {/* Action Buttons */}
+                <Stack direction="row" spacing={2} justifyContent="flex-end" mt={4}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => navigate("/user/profile")}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      px: 3,
+                      py: 1.5,
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={!isValid || isLoading || !dirty}
+                    startIcon={isLoading ? null : <SaveIcon />}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      px: 3,
+                      py: 1.5,
+                      boxShadow: "none",
+                      "&:hover": {
+                        boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.15)",
+                      },
+                    }}
+                  >
+                    {isLoading ? "Saving..." : "Save Changes"}
+                  </Button>
+                </Stack>
+              </form>
+            )}
+          </Formik>
+        </CardContent>
+      </Card>
     </Stack>
   );
 };
@@ -276,12 +303,9 @@ const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const editSchema = yup.object().shape({
-  fullName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  dob: yup.date().required("Birth Date is required"),
-  phone: yup
-    .string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
+  fullName: yup.string().required("Full name is required"),
+  email: yup.string().email("Invalid email format").required("Email is required"),
+  phone: yup.string().matches(phoneRegExp, "Invalid phone number").required("Phone number is required"),
+  dob: yup.date().nullable(),
 });
 export default EditProfile;

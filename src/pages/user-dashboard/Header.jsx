@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
   const isNonMobile = useMediaQuery("(min-width:968px)");
   const marginBottom = button ? { xs: 1.5, md: 0 } : 0;
-  const alignment =  button ? "start" : "center"
+  const alignment = button ? "start" : "center";
 
   return (
     <Box
@@ -17,7 +17,11 @@ const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
         borderColor: "divider",
       }}
     >
-      <Stack direction="row" justifyContent="space-between" alignItems={alignment}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems={alignment}
+      >
         <Stack
           direction={{ xs: "column", md: "row" }}
           justifyContent="space-between"
@@ -68,6 +72,7 @@ const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
                   px: 3,
                   py: 1.5,
                   boxShadow: "none",
+                  color: "#FFF",
                   "&:hover": {
                     boxShadow: "0 4px 8px 0 rgb(0 0 0 / 0.12)",
                   },
