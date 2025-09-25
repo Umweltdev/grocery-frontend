@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { base_url } from "../../utils/baseUrl";
 import axios from "axios";
 import makeToast from "../../utils/toaster";
@@ -251,29 +251,29 @@ const PaymentPage = () => {
             <Typography variant="subtitle2" color="text.secondary">
               Subtotal:
             </Typography>
-            <Typography fontWeight="600">{`₦ ${cartTotal.toLocaleString()}`}</Typography>
+            <Typography fontWeight="600">{`£ ${cartTotal.toLocaleString()}`}</Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" mt={0.7}>
             <Typography variant="subtitle2" color="text.secondary">
               Shipping:
             </Typography>
-            <Typography fontWeight="600">{`₦ 0`}</Typography>
+            <Typography fontWeight="600">{`£ 0`}</Typography>
           </Stack>{" "}
           <Stack direction="row" justifyContent="space-between" mt={0.7}>
             <Typography variant="subtitle2" color="text.secondary">
               Tax:
             </Typography>
-            <Typography fontWeight="600">{`₦ 0`}</Typography>
+            <Typography fontWeight="600">{`£ 0`}</Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" mt={0.7}>
             <Typography variant="subtitle2" color="text.secondary">
               Discount:
             </Typography>
-            <Typography fontWeight="600">{`₦ 0`}</Typography>
+            <Typography fontWeight="600">{`£ 0`}</Typography>
           </Stack>
           <CustomDivider />
           <Typography variant="h5" textAlign="right" my={1}>
-            {`₦ ${cartTotal.toLocaleString()}`}
+            {`£ ${cartTotal.toLocaleString()}`}
           </Typography>
         </Paper>
       </Grid>

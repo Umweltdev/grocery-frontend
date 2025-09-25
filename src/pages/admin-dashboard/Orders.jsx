@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Stack, Typography, IconButton, Chip, Box } from "@mui/material";
+import { Stack, IconButton, Chip, Box } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { Link } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Header from "./Header";
 import { DataGrid } from "@mui/x-data-grid";
 import Table from "./Table";
@@ -71,7 +70,6 @@ const columns = [
   {
     field: "action",
     headerName: "Action",
-    // flex: 1,
     headerAlign: "center",
     align: "center",
     renderCell: ({ row }) => (
@@ -81,10 +79,6 @@ const columns = [
             <RemoveRedEyeIcon />
           </IconButton>
         </Link>
-
-        {/* <IconButton aria-label="Delete">
-          <DeleteIcon />
-        </IconButton> */}
       </Stack>
     ),
   },
@@ -109,7 +103,7 @@ const Orders = () => {
     }),
     qty: order?.products.reduce((sum, product) => sum + product.count, 0),
     address: `${order?.address?.address} ${order?.address?.state}`,
-    amount: `₦ ${order?.totalPrice.toLocaleString()}`,
+    amount: `£ ${order?.totalPrice.toLocaleString()}`,
 
     status: order?.orderStatus,
     action: null,

@@ -1,20 +1,34 @@
 import { useEffect } from "react";
-import { Typography, Box, Stack, IconButton, Paper, Chip, Card, CardContent, Grid, useTheme } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  IconButton,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../../features/auth/authSlice";
 import DashboardHeader from "./Header";
+import PropTypes from "prop-types";
 
 const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'delivered': return 'success';
-      case 'processing': return 'info';
-      case 'pending': return 'warning';
-      case 'cancelled': return 'error';
-      default: return 'default';
+      case "delivered":
+        return "success";
+      case "processing":
+        return "info";
+      case "pending":
+        return "warning";
+      case "cancelled":
+        return "error";
+      default:
+        return "default";
     }
   };
 
@@ -40,18 +54,30 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={3}>
             <Stack spacing={1}>
-              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
                 ORDER ID
               </Typography>
-              <Typography variant="body2" fontWeight={600} fontFamily="monospace">
-                #{orderId.substring(0, 8).toUpperCase()}
+              <Typography
+                variant="body2"
+                fontWeight={600}
+                fontFamily="monospace"
+              >
+                £{orderId?.substring(0, 8).toUpperCase()}
               </Typography>
             </Stack>
           </Grid>
-          
+
           <Grid item xs={6} sm={2}>
             <Stack spacing={1}>
-              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
                 STATUS
               </Typography>
               <Chip
@@ -66,10 +92,14 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
               />
             </Stack>
           </Grid>
-          
+
           <Grid item xs={6} sm={3}>
             <Stack spacing={1}>
-              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
                 DATE
               </Typography>
               <Typography variant="body2">
@@ -81,18 +111,22 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
               </Typography>
             </Stack>
           </Grid>
-          
+
           <Grid item xs={8} sm={3}>
             <Stack spacing={1}>
-              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
                 TOTAL
               </Typography>
               <Typography variant="h6" color="primary.main" fontWeight={700}>
-                ₦{totalPrice.toLocaleString()}
+                £{totalPrice?.toLocaleString()}
               </Typography>
             </Stack>
           </Grid>
-          
+
           <Grid item xs={4} sm={1} sx={{ textAlign: "right" }}>
             <IconButton
               size="small"
@@ -113,10 +147,18 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
   );
 };
 
+Order.propTypes = {
+  _id: PropTypes.string.isRequired,
+  orderId: PropTypes.string.isRequired,
+  orderStatus: PropTypes.string.isRequired,
+  orderDate: PropTypes.string.isRequired,
+  totalPrice: PropTypes.number.isRequired,
+};
+
 const Orders = ({ openDrawer }) => {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.auth);
-  
+
   useEffect(() => {
     dispatch(getOrders());
   }, [dispatch]);
@@ -125,7 +167,7 @@ const Orders = ({ openDrawer }) => {
     <Stack spacing={4}>
       <DashboardHeader
         Icon={ShoppingBagIcon}
-        title={"My Orders"}
+        title="My Orders"
         openDrawer={openDrawer}
       />
 
@@ -165,6 +207,10 @@ const Orders = ({ openDrawer }) => {
       )}
     </Stack>
   );
+};
+
+Orders.propTypes = {
+  openDrawer: PropTypes.func,
 };
 
 export default Orders;

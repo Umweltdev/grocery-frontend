@@ -48,7 +48,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
               sx={{
                 boxShadow: "none",
                 border: "1px solid #f0f0f0",
-                borderRadius: "10px",
+                // borderRadius: "10px",
                 "&:hover": {
                   boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                   transform: "translateY(-2px)",

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import {
   Typography,
@@ -6,14 +7,9 @@ import {
   Stack,
   Tooltip,
   IconButton,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
   Button,
-  Chip,
+  Paper,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { base_url } from "../../utils/baseUrl";
@@ -22,34 +18,29 @@ import { addToCart } from "../../features/cart/cartSlice";
 import { Link } from "react-router-dom";
 
 const WishListCard = ({
-  images,
+  images = [],
   name,
   description,
   regularPrice,
   salePrice,
-  totalstar,
   toggle,
   setToggle,
   _id,
 }) => {
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
-  const { user } = auth;
+  const { user } = useSelector((state) => state.auth);
 
   const removeFromWishList = () => {
+    if (!user?.token) {
+      makeToast("error", "You must be logged in");
+      return;
+    }
     axios
       .put(`${base_url}product/wishlist/${_id}`, null, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
+        headers: { Authorization: `Bearer ${user?.token}` },
       })
-      .then((response) => {
-        makeToast("success", "Removed from wishlist");
-        setToggle(!toggle);
-      })
-      .catch((error) => {
-        makeToast("error", "Error removing from wishlist");
-      });
+      .then(() => setToggle(!toggle))
+      .catch(() => makeToast("error", "Unable to update wishlist"));
   };
 
   const handleAddToCart = (e) => {
@@ -69,145 +60,77 @@ const WishListCard = ({
   const hasDiscount = salePrice && salePrice < regularPrice;
 
   return (
-    <Card
-      elevation={0}
+    <Paper
+      elevation={3}
       sx={{
-        height: "100%",
+        backgroundColor: "#fff",
         display: "flex",
         flexDirection: "column",
-        border: "1px solid",
-        borderColor: "divider",
         borderRadius: 3,
-        transition: "all 0.3s ease-in-out",
+        overflow: "hidden",
+        width: "100%",
+        maxWidth: 380,
+        margin: "auto",
         position: "relative",
-        "&:hover": {
-          borderColor: "primary.300",
-          boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.1)",
-          transform: "translateY(-4px)",
-        },
+        pb: 2,
       }}
     >
-      {/* Wishlist Heart Button */}
-      <IconButton
-        onClick={removeFromWishList}
-        sx={{
-          position: "absolute",
-          top: 12,
-          right: 12,
-          zIndex: 2,
-          bgcolor: "white",
-          boxShadow: "0 2px 8px 0 rgb(0 0 0 / 0.1)",
-          color: "error.main",
-          "&:hover": {
-            bgcolor: "error.50",
-            transform: "scale(1.1)",
-          },
-        }}
-      >
-        <FavoriteIcon fontSize="small" />
-      </IconButton>
-
-      {/* Discount Badge */}
-      {hasDiscount && (
-        <Chip
-          label={`-${Math.round(
-            ((regularPrice - salePrice) / regularPrice) * 100
-          )}%`}
-          color="error"
-          size="small"
+      <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
+        <Box
+          component="img"
+          src={images[0]?.url || "/placeholder.png"}
+          alt={name}
           sx={{
-            position: "absolute",
-            top: 12,
-            left: 12,
-            zIndex: 2,
-            fontWeight: 700,
-            fontSize: "0.75rem",
+            width: "100%",
+            height: { xs: 250, sm: 300, md: 350 },
+            objectFit: "contain",
           }}
         />
-      )}
+      </Link>
 
-      {/* Product Image */}
-      <CardMedia
-        component={Link}
-        to={`/product/${_id}`}
-        sx={{
-          height: 200,
-          backgroundSize: "contain",
-          backgroundPosition: "center",
-          textDecoration: "none",
-          transition: "transform 0.3s ease",
-          "&:hover": {
-            transform: "scale(1.05)",
-          },
-        }}
-        image={images[0]?.url}
-        title={name}
-      />
-
-      {/* Product Content */}
-      <CardContent sx={{ flexGrow: 1, p: 2 }}>
-        <Typography
-          component={Link}
-          to={`/product/${_id}`}
-          variant="h6"
-          sx={{
-            textDecoration: "none",
-            color: "text.primary",
-            fontWeight: 600,
-            fontSize: "1rem",
-            lineHeight: 1.3,
-            mb: 1,
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            "&:hover": {
-              color: "primary.main",
-            },
-          }}
-        >
-          {name}
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            mb: 2,
-            lineHeight: 1.4,
-          }}
-        >
-          {description}
-        </Typography>
-
-        {/* Price Section */}
-        <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-          <Typography
-            variant="h6"
-            color="primary.main"
-            fontWeight={700}
-            fontSize="1.1rem"
-          >
-            ₦{finalPrice.toLocaleString()}
-          </Typography>
-          {hasDiscount && (
+      {/* Wishlist & Price */}
+      <Stack direction="row" justifyContent="space-between" px={2} mt={2}>
+        <Stack direction="column" spacing={0.5}>
+          {salePrice && (
             <Typography
-              variant="body2"
               color="text.secondary"
+              variant="subtitle2"
               sx={{ textDecoration: "line-through" }}
             >
-              ₦{regularPrice.toLocaleString()}
+              £{regularPrice.toLocaleString()}
             </Typography>
           )}
+          <Typography color="primary.main" variant="subtitle1" fontWeight={600}>
+            £{finalPrice.toLocaleString()}
+          </Typography>
         </Stack>
-      </CardContent>
 
-      {/* Action Button */}
-      <CardActions sx={{ p: 2, pt: 0 }}>
+        <Tooltip title="Remove from wishlist">
+          <IconButton onClick={removeFromWishList} sx={{ color: "#D23F57" }}>
+            <FavoriteIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+
+      {/* Product Info */}
+      <Box px={2} pt={1} textAlign="center">
+        <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
+          <Typography variant="body1" color="text.primary" noWrap>
+            {name}
+          </Typography>
+        </Link>
+        <Typography
+          variant="subtitle2"
+          color="text.secondary"
+          mt={0.5}
+          noWrap
+        >
+          {description.length > 100 ? `${description.substring(0, 90)}...` : description}
+        </Typography>
+      </Box>
+
+      {/* Add to Cart Button */}
+      <Box px={2} pt={2}>
         <Button
           fullWidth
           variant="contained"
@@ -217,19 +140,32 @@ const WishListCard = ({
             textTransform: "none",
             fontWeight: 600,
             borderRadius: 2,
-            py: 1.2,
+            py: 1,
             boxShadow: "none",
             color: "#fff",
-            "&:hover": {
-              boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.15)",
-            },
+            "&:hover": { boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.15)" },
           }}
         >
           Add to Cart
         </Button>
-      </CardActions>
-    </Card>
+      </Box>
+    </Paper>
   );
+};
+
+WishListCard.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      url: PropTypes.string,
+    })
+  ),
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  regularPrice: PropTypes.number.isRequired,
+  salePrice: PropTypes.number,
+  toggle: PropTypes.bool.isRequired,
+  setToggle: PropTypes.func.isRequired,
+  _id: PropTypes.string.isRequired,
 };
 
 export default WishListCard;

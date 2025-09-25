@@ -22,6 +22,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import PropTypes from "prop-types";
 
 const CustomDivider = styled(Divider)`
   margin: 16px 0px 20px;
@@ -33,7 +34,6 @@ const CustomDivider = styled(Divider)`
 const CartCard = ({ name, image, id, price, count, total }) => {
   const dispatch = useDispatch();
   const Mobile = useMediaQuery("(min-width:600px)");
-
   return (
     <Paper
       elevation={1}
@@ -51,7 +51,6 @@ const CartCard = ({ name, image, id, price, count, total }) => {
           position: "absolute",
           top: "15px",
           right: "15px",
-          //   color: toggle ? "#D23F57" : "rgba(0, 0, 0, 0.54)",
         }}
       >
         <ClearIcon />
@@ -72,22 +71,20 @@ const CartCard = ({ name, image, id, price, count, total }) => {
         </Box>
         <Box padding={{ xs: 2, sm: 0 }}>
           <Stack spacing={1.5}>
-            <Stack spacing={1.5}>
-              <Typography
-                variant="subtitle1"
-                color="#373F50"
-                fontSize={{ xs: "14px", md: "16px" }}
-              >
-                {name}
+            <Typography
+              variant="subtitle1"
+              color="#373F50"
+              fontSize={{ xs: "14px", md: "16px" }}
+            >
+              {name}
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <Typography color="text.secondary" variant="subtitle2">
+                {`£ ${price.toLocaleString()}`} X {count}
               </Typography>
-              <Stack direction="row" spacing={2}>
-                <Typography color="text.secondary" variant="subtitle2">
-                  {`₦ ${price.toLocaleString()}`} X {count}
-                </Typography>
-                <Typography color="primary.main" variant="subtitle1">
-                  {`₦ ${total?.toLocaleString()}`}
-                </Typography>
-              </Stack>
+              <Typography color="primary.main" variant="subtitle1">
+                {`£ ${total?.toLocaleString()}`}
+              </Typography>
             </Stack>
 
             <Stack direction="row" spacing={1.5} alignItems="center">
@@ -95,10 +92,7 @@ const CartCard = ({ name, image, id, price, count, total }) => {
                 disabled={count === 1}
                 onClick={() => dispatch(decreaseQuantity(id))}
                 variant="outlined"
-                sx={{
-                  padding: "1px",
-                  minWidth: 0,
-                }}
+                sx={{ padding: "1px", minWidth: 0 }}
               >
                 <RemoveIcon />
               </Button>
@@ -106,10 +100,7 @@ const CartCard = ({ name, image, id, price, count, total }) => {
               <Button
                 onClick={() => dispatch(increaseQuantity(id))}
                 variant="outlined"
-                sx={{
-                  padding: "1px",
-                  minWidth: 0,
-                }}
+                sx={{ padding: "1px", minWidth: 0 }}
               >
                 <AddIcon />
               </Button>
@@ -121,12 +112,25 @@ const CartCard = ({ name, image, id, price, count, total }) => {
   );
 };
 
+CartCard.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
+  total: PropTypes.number,
+};
+
 const CartPage = ({ updateStepCompletion }) => {
   const { products, cartTotal } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    updateStepCompletion("Cart");
-  }, []);
+    if (typeof updateStepCompletion === "function") {
+      updateStepCompletion("Cart");
+    }
+  }, [updateStepCompletion]);
+
   return (
     <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
       <Grid item xs={12} md={8}>
@@ -142,8 +146,7 @@ const CartPage = ({ updateStepCompletion }) => {
               To proceed with the checkout, kindly add items to your cart first.
             </Typography>
             <Typography textAlign="center" variant="h5">
-              {" "}
-              Happy shopping!{" "}
+              Happy shopping!
             </Typography>
           </Stack>
         )}
@@ -163,7 +166,7 @@ const CartPage = ({ updateStepCompletion }) => {
             <Typography variant="subtitle2" color="text.secondary">
               Total:
             </Typography>
-            <Typography variant="subtitle1">{`₦ ${cartTotal.toLocaleString()}`}</Typography>
+            <Typography variant="subtitle1">{`£ ${cartTotal.toLocaleString()}`}</Typography>
           </Stack>
           <CustomDivider />
           <Stack spacing={1.5}>
@@ -194,13 +197,9 @@ const CartPage = ({ updateStepCompletion }) => {
               }}
               sx={{
                 gridColumn: "span 2",
-                "& .MuiInputBase-root": {
-                  fontSize: "15px",
-                },
+                "& .MuiInputBase-root": { fontSize: "15px" },
               }}
-              InputLabelProps={{
-                style: { fontSize: "14px" },
-              }}
+              InputLabelProps={{ style: { fontSize: "14px" } }}
             />
           </Stack>
           <CustomDivider />
@@ -215,20 +214,13 @@ const CartPage = ({ updateStepCompletion }) => {
               size="small"
               sx={{
                 gridColumn: "span 2",
-                "& .MuiInputBase-root": {
-                  fontSize: "15px",
-                },
+                "& .MuiInputBase-root": { fontSize: "15px" },
               }}
-              InputLabelProps={{
-                style: { fontSize: "14px" },
-              }}
+              InputLabelProps={{ style: { fontSize: "14px" } }}
             />
             <Button
               variant="outlined"
-              sx={{
-                textTransform: "none",
-                fontWeight: 600,
-              }}
+              sx={{ textTransform: "none", fontWeight: 600 }}
             >
               Apply Voucher
             </Button>
@@ -237,6 +229,10 @@ const CartPage = ({ updateStepCompletion }) => {
       </Grid>
     </Grid>
   );
+};
+
+CartPage.propTypes = {
+  updateStepCompletion: PropTypes.func,
 };
 
 export default CartPage;

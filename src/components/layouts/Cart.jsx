@@ -139,11 +139,11 @@ const Cart = ({ open, onClose }) => {
                         variant="subtitle2"
                         fontSize="10px"
                       >
-                        {`₦ ${product?.price?.toLocaleString()}`} X{" "}
+                        {`£ ${product?.price?.toLocaleString()}`} X{" "}
                         {product?.count}
                       </Typography>
                       <Typography color="primary.main" variant="subtitle1">
-                        {`₦ ${product?.total?.toLocaleString()}`}
+                        {`£ ${product?.total?.toLocaleString()}`}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -183,7 +183,7 @@ const Cart = ({ open, onClose }) => {
                 borderRadius: "3px",
               }}
             >
-              {`TOTAL (₦ ${cartTotal.toLocaleString()})`}
+              {`TOTAL (£ ${cartTotal.toLocaleString()})`}
             </Typography>
             <Button
               onClick={() => navigate("/cart")}

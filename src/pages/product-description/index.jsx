@@ -211,7 +211,7 @@ const ProductDescription = () => {
                   <Stack spacing={0.5} alignItems="flex-start">
                     {/* Final / real price */}
                     <Typography variant="h5" color="primary.main">
-                      ₦{" "}
+                      £{" "}
                       {productDetails?.pricing?.finalPrice ||
                         (productDetails?.salePrice
                           ? productDetails?.salePrice
@@ -227,7 +227,7 @@ const ProductDescription = () => {
                           fontSize="14px"
                           sx={{ textDecoration: "line-through" }}
                         >
-                          ₦ {productDetails?.regularPrice}
+                          £ {productDetails?.regularPrice}
                         </Typography>
                         <Typography variant="caption" color="success.main">
                           RCD Discount: -

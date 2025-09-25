@@ -92,13 +92,13 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
 
   return (
     <Stack spacing={3}>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} justifyContent="center">
         {paginatedData.map((item) => (
           <Grid
             item
             xs={12}
-            sm={activeIcon === "apps" ? 6 : 12}
-            md={activeIcon === "apps" ? 4 : 12}
+            // sm={activeIcon === "apps" ? 6 : 12}
+            // md={activeIcon === "apps" ? 4 : 12}
             key={item._id}
           >
             {activeIcon === "apps" ? (
@@ -116,7 +116,11 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
         onChange={handlePageChange}
         variant="outlined"
         color="primary"
-        sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}
+        sx={{
+          display: "flex",
+          justifyContent: { xs: "center", sm: "flex-end" },
+          mt: 3,
+        }}
       />
     </Stack>
   );

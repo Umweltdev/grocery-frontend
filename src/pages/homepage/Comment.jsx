@@ -5,7 +5,6 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-// ✅ Review card
 const ReviewBox = ({ customer, image, comment }) => {
   const initials = customer
     ? customer
@@ -82,7 +81,6 @@ ReviewBox.defaultProps = {
   comment: "No comment provided",
 };
 
-// ✅ Main comment slider
 const Comment = ({ products }) => {
   const reviews = useMemo(() => {
     if (!Array.isArray(products) || products.length === 0) return [];

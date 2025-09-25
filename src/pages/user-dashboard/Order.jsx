@@ -1,46 +1,63 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import { Typography, Box, Stack, Button, IconButton } from "@mui/material";
-import DashboardBox from "./DashboardBox";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import { addAllToCart } from "../../features/cart/cartSlice";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 import OrderedProducts from "./OrderedProducts";
 import Delivery from "./Delivery";
+import { addAllToCart } from "../../features/cart/cartSlice";
 import { base_url } from "../../utils/baseUrl";
-import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Order = ({ openDrawer }) => {
   const isNonMobile = useMediaQuery("(min-width:968px)");
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+
   const [order, setOrder] = useState(null);
-  const auth = useSelector((state) => state.auth);
-  const { user } = auth;
+  const { user } = useSelector((state) => state.auth);
+
   const getOrder = () => {
+    if (!user?.token) return;
     axios
       .get(`${base_url}user/order/${id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
+        headers: { Authorization: `Bearer ${user.token}` },
       })
-      .then((response) => {
-        setOrder(response.data);
-      })
-      .catch((error) => console.log(error));
+      .then((response) => setOrder(response.data))
+      .catch((err) => console.error(err));
   };
+
   useEffect(() => {
     getOrder();
-  }, []);
+  }, [id, user?.token]);
+
+  const handleOrderAgain = () => {
+    if (!order?.products) return;
+    const products = order.products.map((p) => ({
+      id: p.product._id,
+      image: p.image,
+      price: p.product.salePrice || p.product.regularPrice,
+      name: p.product.name,
+      count: p.count,
+    }));
+    dispatch(addAllToCart(products));
+    navigate("/cart");
+  };
+
   return (
     <Box>
       <Stack flex={1} spacing={3}>
-        <Stack direction="row" justifyContent="space-between" alignItems="start">
+        {/* Header */}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="start"
+        >
           <Stack
             direction={{ xs: "column", md: "row" }}
             justifyContent="space-between"
@@ -53,11 +70,7 @@ const Order = ({ openDrawer }) => {
               alignItems="center"
               mb={{ xs: 1.5, md: 0 }}
             >
-              <ShoppingBagIcon
-                sx={{
-                  color: "primary.main",
-                }}
-              />
+              <ShoppingBagIcon sx={{ color: "primary.main" }} />
               <Typography
                 variant="h5"
                 color="text.primary"
@@ -68,40 +81,26 @@ const Order = ({ openDrawer }) => {
             </Stack>
 
             <Button
-              onClick={() => {
-                const products = order?.products.map((product) => ({
-                  id: product.product._id,
-                  image: product.image,
-                  price:
-                    product.product.salePrice || product.product.regularPrice,
-                  name: product.product.name,
-                  count: product.count,
-                }));
-                dispatch(addAllToCart(products));
-                navigate("/cart");
-              }}
+              onClick={handleOrderAgain}
               sx={{
                 textTransform: "none",
                 bgcolor: "#FCE9EC",
                 color: "primary.main",
                 fontSize: "subtitle1",
-                paddingX: isNonMobile ? "40px" : "20px",
-
+                px: isNonMobile ? 4 : 2,
+                py: 1,
                 fontWeight: 600,
-                paddingY: "6px",
-                "&:hover": {
-                  backgroundColor: "rgba(210, 63, 87, 0.04)",
-                },
+                "&:hover": { backgroundColor: "rgba(210, 63, 87, 0.04)" },
               }}
+              disabled={!order?.products || order.products.length === 0}
             >
               Order Again
             </Button>
           </Stack>
+
           <IconButton
             onClick={openDrawer}
-            sx={{
-              display: isNonMobile ? "none" : "inline-flex",
-            }}
+            sx={{ display: isNonMobile ? "none" : "inline-flex" }}
           >
             <MenuIcon />
           </IconButton>
@@ -121,10 +120,14 @@ const Order = ({ openDrawer }) => {
             alignSelf={{ xs: "stretch", sm: "start" }}
             sx={{
               background: "white",
-              boxShadow: " 0px 1px 3px rgba(3, 0, 71, 0.09)",
+              boxShadow: "0px 1px 3px rgba(3,0,71,0.09)",
             }}
           >
-            <Typography variant="h6" color="text.primary" fontSize={{xs:"16px",sm:"18px"}}>
+            <Typography
+              variant="h6"
+              color="text.primary"
+              fontSize={{ xs: "16px", sm: "18px" }}
+            >
               Shipping Address
             </Typography>
             <Typography
@@ -132,7 +135,7 @@ const Order = ({ openDrawer }) => {
               color="text.primary"
               textTransform="capitalize"
             >
-              {`${order?.address?.address} ${order?.address?.state}`}
+              {`${order?.address?.address || ""} ${order?.address?.state || ""}`}
             </Typography>
           </Stack>
 
@@ -144,47 +147,50 @@ const Order = ({ openDrawer }) => {
             borderRadius={3}
             sx={{
               background: "white",
-
-              boxShadow: " 0px 1px 3px rgba(3, 0, 71, 0.09)",
+              boxShadow: "0px 1px 3px rgba(3,0,71,0.09)",
             }}
           >
-            <Typography variant="h6" color="text.primary" fontSize={{xs:"16px",sm:"18px"}}>
+            <Typography
+              variant="h6"
+              color="text.primary"
+              fontSize={{ xs: "16px", sm: "18px" }}
+            >
               Total Summary
             </Typography>
+
             <Stack spacing={1}>
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="subtitle2" color="text.secondary">
                   Subtotal:
                 </Typography>
                 <Typography variant="subtitle1" color="text.primary">
-                  {`₦ ${order?.totalPrice.toLocaleString()}`}
+                  £ {order?.totalPrice?.toLocaleString() || "0.00"}
                 </Typography>
               </Stack>
-
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="subtitle2" color="text.secondary">
                   Shipping Fee:
                 </Typography>
                 <Typography variant="subtitle1" color="text.primary">
-                  ₦ 0.00
+                  £ 0.00
                 </Typography>
               </Stack>
-
               <Stack direction="row" justifyContent="space-between">
                 <Typography variant="subtitle2" color="text.secondary">
                   Discount:
                 </Typography>
                 <Typography variant="subtitle1" color="text.primary">
-                  ₦ 0.00
+                  £ 0.00
                 </Typography>
               </Stack>
             </Stack>
+
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="subtitle1" color="text.primary">
                 Total:
               </Typography>
               <Typography variant="subtitle1" color="text.primary">
-                {`₦ ${order?.totalPrice.toLocaleString()}`}
+                £ {order?.totalPrice?.toLocaleString() || "0.00"}
               </Typography>
             </Stack>
 
@@ -193,13 +199,17 @@ const Order = ({ openDrawer }) => {
               color="text.primary"
               textTransform="capitalize"
             >
-              {order?.isPaid ? `Paid by ${order?.paymentMethod}` : "Pending"}
+              {order?.isPaid ? `Paid by ${order.paymentMethod}` : "Pending"}
             </Typography>
           </Stack>
         </Stack>
       </Stack>
     </Box>
   );
+};
+
+Order.propTypes = {
+  openDrawer: PropTypes.func.isRequired,
 };
 
 export default Order;
