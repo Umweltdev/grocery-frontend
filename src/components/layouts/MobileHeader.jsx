@@ -62,24 +62,10 @@ const MobileHeader = ({
       justifyContent="space-between"
       display={{ xs: "flex", lg: "none" }}
     >
-      {/* <Box
-        sx={{
-          flex: "1 1 0%",
-        }}
-      >
-        <IconButton>
-          <MenuIcon />
-        </IconButton>
-      </Box> */}
-
       <Link to="/" style={{ display: "flex" }}>
-        {/* <Box height="40px" width="auto"> */}
         <img
           src="https://bazaar.ui-lib.com/assets/images/logo2.svg"
-          // width="100%"
-          // height="100%"
         />
-        {/* </Box> */}
       </Link>
 
       <Stack

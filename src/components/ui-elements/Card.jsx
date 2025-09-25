@@ -204,8 +204,6 @@ const ICard = ({
       </Box>
     </Link>
   </Box>
-
-  {/* Bottom action */}
   <Box
     sx={{
       p: 2,
