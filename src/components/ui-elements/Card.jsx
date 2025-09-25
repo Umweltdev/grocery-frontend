@@ -24,14 +24,14 @@ import { Link } from "react-router-dom";
 
 const ICard = ({
   images = [],
-  name,
-  description,
-  regularPrice,
+  name = "",
+  description = "",
+  regularPrice = 0,
   salePrice,
-  stock,
-  totalstar,
+  stock = 0,
+  totalstar = 0,
   _id,
-  pricing,
+  pricing = {},
 }) => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.cart);
@@ -40,18 +40,16 @@ const ICard = ({
   const productInCart = products.find((p) => p.id === _id);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  // Initialize wishlist state
+  // Initialize wishlist state safely
   useEffect(() => {
-    if (wishlist && _id) {
-      setIsWishlisted(wishlist.some((item) => item._id === _id));
-    }
+    setIsWishlisted(wishlist?.some((item) => item._id === _id) ?? false);
   }, [wishlist, _id]);
 
   const handleAddToCart = () => {
     dispatch(
       addToCart({
         id: _id,
-        image: images[0]?.url,
+        image: images[0]?.url || "/placeholder.png",
         price: pricing?.finalPrice || salePrice || regularPrice,
         name,
       })
@@ -115,7 +113,7 @@ const ICard = ({
             }}
           >
             <img
-              src={images[0]?.url}
+              src={images[0]?.url || "/placeholder.png"}
               alt={name}
               style={{
                 width: "100%",
@@ -127,13 +125,20 @@ const ICard = ({
           </Box>
 
           <Box px={2} textAlign="center">
-            <Typography variant="body2" color="#373F50">
-              {name}
+            <Typography variant="body2" color="#373F50" noWrap>
+              {name || ""}
             </Typography>
-            <Typography variant="subtitle2" color="text.secondary" mt={1}>
-              {description.length > 100
-                ? `${description.substring(0, 85)}...`
-                : description}
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+              mt={1}
+              noWrap
+            >
+              {description
+                ? description.length > 100
+                  ? `${description.substring(0, 85)}...`
+                  : description
+                : ""}
             </Typography>
             <Rating
               name="read-only-rating"
