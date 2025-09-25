@@ -19,16 +19,19 @@ import { Link } from "react-router-dom";
 
 const WishListCard = ({
   images = [],
-  name,
-  description,
-  regularPrice,
+  name = "Unnamed Product",
+  description = "No description available",
+  regularPrice = 0,
   salePrice,
   toggle,
   setToggle,
-  _id,
+  _id = "no-id",
 }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  const finalPrice = salePrice || regularPrice;
+  const hasDiscount = salePrice && salePrice < regularPrice;
 
   const removeFromWishList = () => {
     if (!user?.token) {
@@ -48,16 +51,13 @@ const WishListCard = ({
     dispatch(
       addToCart({
         id: _id,
-        image: images[0]?.url,
-        price: salePrice || regularPrice,
+        image: images?.[0]?.url || "/placeholder.png",
+        price: finalPrice,
         name,
       })
     );
     makeToast("success", "Added to cart");
   };
-
-  const finalPrice = salePrice || regularPrice;
-  const hasDiscount = salePrice && salePrice < regularPrice;
 
   return (
     <Paper
@@ -78,7 +78,7 @@ const WishListCard = ({
       <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
         <Box
           component="img"
-          src={images[0]?.url || "/placeholder.png"}
+          src={images?.[0]?.url || "/placeholder.png"}
           alt={name}
           sx={{
             width: "100%",
@@ -91,7 +91,7 @@ const WishListCard = ({
       {/* Wishlist & Price */}
       <Stack direction="row" justifyContent="space-between" px={2} mt={2}>
         <Stack direction="column" spacing={0.5}>
-          {salePrice && (
+          {hasDiscount && (
             <Typography
               color="text.secondary"
               variant="subtitle2"
@@ -125,7 +125,7 @@ const WishListCard = ({
           mt={0.5}
           noWrap
         >
-          {description.length > 100 ? `${description.substring(0, 90)}...` : description}
+          {description ? (description.length > 100 ? `${description.substring(0, 90)}...` : description) : ""}
         </Typography>
       </Box>
 
@@ -159,13 +159,13 @@ WishListCard.propTypes = {
       url: PropTypes.string,
     })
   ),
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  regularPrice: PropTypes.number.isRequired,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  regularPrice: PropTypes.number,
   salePrice: PropTypes.number,
   toggle: PropTypes.bool.isRequired,
   setToggle: PropTypes.func.isRequired,
-  _id: PropTypes.string.isRequired,
+  _id: PropTypes.string,
 };
 
 export default WishListCard;
