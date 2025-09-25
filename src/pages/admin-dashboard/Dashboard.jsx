@@ -203,7 +203,7 @@ const Dashboard = () => {
                     fontSize="20px"
                     fontWeight="700"
                   >
-                    $15,350.25
+                    £15,350.25
                   </Typography>
                   <Typography variant="subtitle2" color="text.secondary">
                     Today’s Visit
@@ -215,7 +215,7 @@ const Dashboard = () => {
                     fontSize="20px"
                     fontWeight="700"
                   >
-                    {`₦ ${filteredOrders
+                    {`£ ${filteredOrders
                       .reduce((sum, order) => sum + (order?.totalPrice || 0), 0)
                       .toLocaleString()}`}
                   </Typography>

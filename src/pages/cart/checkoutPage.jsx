@@ -1,18 +1,16 @@
 import {
-  Box,
   Stack,
   Grid,
-  Container,
-  Typography,
-  IconButton,
-  Button,
   Paper,
   Divider,
   styled,
   TextField,
+  Typography,
+  Button,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import DeliveryCollection from "./Delivery-Collection";
+import PropTypes from "prop-types";
 
 const CustomDivider = styled(Divider)`
   margin: 16px 0px 20px;
@@ -21,17 +19,38 @@ const CustomDivider = styled(Divider)`
   border-color: rgb(243, 245, 249);
 `;
 
-const CheckoutPage = ({updateStepCompletion}) => {
+const CheckoutPage = ({ updateStepCompletion }) => {
   const { cartTotal } = useSelector((state) => state.cart);
+  const isDeliveryAllowed = cartTotal >= 150;
 
   return (
     <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
-      <Grid item xs={12}  md={8}>
+      <Grid item xs={12} md={8}>
         <Stack spacing={4}>
-          <DeliveryCollection updateStepCompletion={updateStepCompletion} />
+          <DeliveryCollection
+            updateStepCompletion={updateStepCompletion}
+            disabled={!isDeliveryAllowed}
+            forceCollection={!isDeliveryAllowed}
+          />
+
+          {!isDeliveryAllowed && (
+            <Typography
+              variant="body2"
+              color="error"
+              sx={{
+                backgroundColor: "#fce9ec",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                textAlign: "center"
+              }}
+            >
+              Delivery is only available for orders above £150.
+            </Typography>
+          )}
         </Stack>
       </Grid>
-      <Grid item xs={12}  md={4}>
+
+      <Grid item xs={12} md={4}>
         <Paper
           sx={{
             bgcolor: "white",
@@ -42,34 +61,42 @@ const CheckoutPage = ({updateStepCompletion}) => {
             position: "relative",
           }}
         >
-          <Stack direction="row" justifyContent="space-between" >
+          <Stack direction="row" justifyContent="space-between">
             <Typography variant="subtitle2" color="text.secondary">
               Subtotal:
             </Typography>
-            <Typography fontWeight="600">{`₦ ${cartTotal.toLocaleString()}`}</Typography>
+            <Typography fontWeight="600">{`£ ${cartTotal.toLocaleString()}`}</Typography>
           </Stack>
+
           <Stack direction="row" justifyContent="space-between" mt={0.7}>
             <Typography variant="subtitle2" color="text.secondary">
               Shipping:
             </Typography>
-            <Typography fontWeight="600">{`₦ 0`}</Typography>
-          </Stack>{" "}
+            <Typography fontWeight="600">
+              {isDeliveryAllowed ? "£ 0" : "Not Available"}
+            </Typography>
+          </Stack>
+
           <Stack direction="row" justifyContent="space-between" mt={0.7}>
             <Typography variant="subtitle2" color="text.secondary">
               Tax:
             </Typography>
-            <Typography fontWeight="600">{`₦ 0`}</Typography>
+            <Typography fontWeight="600">{`£ 0`}</Typography>
           </Stack>
+
           <Stack direction="row" justifyContent="space-between" mt={0.7}>
             <Typography variant="subtitle2" color="text.secondary">
               Discount:
             </Typography>
-            <Typography fontWeight="600">{`₦ 0`}</Typography>
+            <Typography fontWeight="600">{`£ 0`}</Typography>
           </Stack>
+
           <CustomDivider />
+
           <Typography variant="h5" textAlign="right" my={1}>
-          {`₦ ${cartTotal.toLocaleString()}`}
-            </Typography>
+            {`£ ${cartTotal.toLocaleString()}`}
+          </Typography>
+
           <Stack spacing={1.5}>
             <TextField
               fullWidth
@@ -105,3 +132,6 @@ const CheckoutPage = ({updateStepCompletion}) => {
 };
 
 export default CheckoutPage;
+CheckoutPage.propTypes = {
+  updateStepCompletion: PropTypes.func,
+};

@@ -10,6 +10,7 @@ const OrderDetails = () => {
       <Stack spacing={1.5}>
         {products.map((product) => (
           <Stack
+            key={product.id || product._id || product.name}
             direction="row"
             justifyContent="space-between"
             alignItems="center"
@@ -21,12 +22,12 @@ const OrderDetails = () => {
                   marginRight: "8px",
                 }}
               >
-                {`₦ ${product.price.toLocaleString()}`} X {product.count}
+                {`£ ${product.price.toLocaleString()}`} X {product.count}
               </span>
               {`- ${product.name}`}
             </Typography>
 
-            <Typography variant="subtitle1"> {`₦ ${product.total}`}</Typography>
+            <Typography variant="subtitle1"> {`£ ${product.total}`}</Typography>
           </Stack>
         ))}
       </Stack>
@@ -37,7 +38,7 @@ const OrderDetails = () => {
             Subtotal:
           </Typography>
           <Typography variant="subtitle1" color="text.primary">
-            {`₦ ${cartTotal.toLocaleString()}`}
+            {`£ ${cartTotal.toLocaleString()}`}
           </Typography>
         </Stack>
 
@@ -46,7 +47,7 @@ const OrderDetails = () => {
             Shipping Fee:
           </Typography>
           <Typography variant="subtitle1" color="text.primary">
-            $0.00
+            £0.00
           </Typography>
         </Stack>
 
@@ -55,7 +56,7 @@ const OrderDetails = () => {
             Discount:
           </Typography>
           <Typography variant="subtitle1" color="text.primary">
-            $0.00
+            £0.00
           </Typography>
         </Stack>
       </Stack>
@@ -65,7 +66,7 @@ const OrderDetails = () => {
           Total:
         </Typography>
         <Typography variant="subtitle1" color="text.primary">
-          {`₦ ${cartTotal.toLocaleString()}`}
+          {`£ ${cartTotal.toLocaleString()}`}
         </Typography>
       </Stack>
     </Stack>
