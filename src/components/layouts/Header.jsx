@@ -64,7 +64,7 @@ const Header = () => {
         py:1,
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="lg">
         <Stack
           direction="row"
           justifyContent="space-between"

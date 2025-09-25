@@ -104,156 +104,172 @@ const ICard = ({
   };
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        backgroundColor: "#fff",
-        height: "100%",
-        margin: "auto",
-        display: "flex",
-        overflow: "hidden",
-        borderRadius: "8px",
-        position: "relative",
-        flexDirection: "column",
-        pb: 3,
-      }}
-    >
-     <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
+<Paper
+  elevation={3}
+  sx={{
+    backgroundColor: "#fff",
+    height: "430px",
+    margin: "auto",
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: "8px",
+    overflow: "hidden",
+  }}
+>
+  <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+    <Link to={`/product/${_id}`} style={{ textDecoration: "none", flexGrow: 1 }}>
+      <Box
+  sx={{
+    width: "100%",
+    height: 190,
+    borderRadius: 2,
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    bgcolor: "#f9f9f9",
+  }}
+>
   <img
     src={images[0]?.url}
     alt={name}
-    className="card-image"
-    style={{ width: "100%", objectFit: "fit" }}
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "contain",
+      display: "block",
+    }}
   />
+</Box>
 
-  <Box px={2} textAlign="center">
-    <Typography variant="body2" color="#373F50">
-      {name}
-    </Typography>
-    <Typography variant="subtitle2" color="text.secondary" mt={1}>
-      {description.length > 100
-        ? `${description.substring(0, 85)}...`
-        : description}
-    </Typography>
-    <Rating
-      name="read-only-rating"
-      value={totalstar || 0}
-      precision={0.5}
-      readOnly
-      size="small"
-      sx={{ mt: 1 }}
-    />
-
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      mt={1}
-    >
-      <Stack direction="column" spacing={0.3}>
-        {salePrice && (
-          <Typography color="text.secondary" variant="subtitle2" fontSize="12px">
-            <del>£{regularPrice.toLocaleString()}</del>
-          </Typography>
-        )}
-        <Typography color="primary.main" variant="subtitle1" fontSize="13px">
-          £{(pricing?.finalPrice || salePrice || regularPrice).toLocaleString()}
+      <Box px={2} textAlign="center">
+        <Typography variant="body2" color="#373F50">
+          {name}
         </Typography>
-        {pricing?.discount > 0 && (
-          <Typography variant="caption" color="success.main" fontSize="10px">
-            -{pricing.discount.toFixed(1)}% RCD
-          </Typography>
-        )}
-      </Stack>
-
-      {/* Wishlist Icon */}
-      <Tooltip title={toggle ? "Remove from wishlist" : "Add to wishlist"}>
-        <IconButton
-          onClick={addToWishList}
-          sx={{ color: toggle ? "#D23F57" : "#00000042" }}
+        <Typography variant="subtitle2" color="text.secondary" mt={1}>
+          {description.length > 100
+            ? `${description.substring(0, 85)}...`
+            : description}
+        </Typography>
+        <Rating
+          name="read-only-rating"
+          value={totalstar || 0}
+          precision={0.5}
+          readOnly
           size="small"
+          sx={{ mt: 1 }}
+        />
+
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={1}
         >
-          <FavoriteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    </Stack>
-  </Box>
-</Link>
-
-      {stock > 0 ? (
-        <Box mt={2} sx={{ alignSelf: "center" }}>
-          {product?.count > 0 ? (
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Button
-                onClick={handleRemoveCart}
-                variant="outlined"
-                sx={{ p: 1, minWidth: 0 }}
+          <Stack direction="column" spacing={0.3}>
+            {salePrice && (
+              <Typography
+                color="text.secondary"
+                variant="subtitle2"
+                fontSize="12px"
               >
-                <RemoveIcon />
-              </Button>
-              <Typography>{product?.count}</Typography>
-              <Button
-                onClick={handleAddToCart}
-                variant="outlined"
-                sx={{ p: 1, minWidth: 0 }}
+                <del>£{regularPrice.toLocaleString()}</del>
+              </Typography>
+            )}
+            <Typography color="primary.main" variant="subtitle1" fontSize="13px">
+              £{(pricing?.finalPrice || salePrice || regularPrice).toLocaleString()}
+            </Typography>
+            {pricing?.discount > 0 && (
+              <Typography
+                variant="caption"
+                color="success.main"
+                fontSize="10px"
               >
-                <AddIcon />
-              </Button>
-            </Stack>
-          ) : (
-            <Button
-              onClick={handleAddToCart}
-              sx={{
-                textTransform: "none",
-                bgcolor: "primary.main",
-                color: "white",
-                fontSize: "14px",
-                px: "20px",
-                fontWeight: 500,
-                py: "8px",
-                borderRadius: "50px",
-                gap: 1,
-                "&:hover": { backgroundColor: "#E3364E" },
-              }}
-            >
-              <ShoppingCartOutlinedIcon sx={{ fontSize: "20px" }} />
-              <Typography variant="subtitle1">Add To Cart</Typography>
-            </Button>
-          )}
-        </Box>
-      ) : (
-        <Box mt={2} sx={{ alignSelf: "center" }}>
-          <Button
-            disabled
-            sx={{
-              textTransform: "none",
-              bgcolor: "#0000001f",
-              fontSize: "14px",
-              px: "20px",
-              fontWeight: 500,
-              py: "8px",
-              borderRadius: "50px",
-              gap: 1,
-              cursor: "not-allowed",
-            }}
+                -{pricing.discount.toFixed(1)}% RCD
+              </Typography>
+            )}
+          </Stack>
+          <Tooltip
+            title={toggle ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <BlockIcon sx={{ fontSize: "20px" }} />
-            <Typography variant="subtitle1">BACK SOON</Typography>
-          </Button>
-        </Box>
-      )}
+            <IconButton
+              onClick={addToWishList}
+              sx={{ color: toggle ? "#D23F57" : "#00000042" }}
+              size="small"
+            >
+              <FavoriteIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Box>
+    </Link>
+  </Box>
 
-     <Stack
-  direction="row"
-  justifyContent="space-between"
-  alignItems="center"
-  px={2}
-  mt={2}
->
-  {/* Price Section */}
-  
-</Stack>
-    </Paper>
+  {/* Bottom action */}
+  <Box
+    sx={{
+      p: 2,
+      borderTop: "1px solid #eee",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    {stock > 0 ? (
+      product?.count > 0 ? (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Button
+            onClick={handleRemoveCart}
+            variant="outlined"
+            sx={{ p: 0.5, minWidth: 0 }}
+          >
+            <RemoveIcon fontSize="small" />
+          </Button>
+          <Typography>{product?.count}</Typography>
+          <Button
+            onClick={handleAddToCart}
+            variant="outlined"
+            sx={{ p: 0.5, minWidth: 0 }}
+          >
+            <AddIcon fontSize="small" />
+          </Button>
+        </Stack>
+      ) : (
+        <Button
+          onClick={handleAddToCart}
+          sx={{
+            textTransform: "none",
+            bgcolor: "primary.main",
+            color: "white",
+            fontSize: 16,
+            px: 2,
+            py: 0.8,
+            borderRadius: "50px",
+            "&:hover": { backgroundColor: "#E3364E" },
+          }}
+        >
+          <ShoppingCartOutlinedIcon sx={{ fontSize: 16, mr: 0.5 }} />
+          Add To Cart
+        </Button>
+      )
+    ) : (
+      <Button
+        disabled
+        sx={{
+          textTransform: "none",
+          bgcolor: "#0000001f",
+          fontSize: 12,
+          px: 2,
+          py: 0.5,
+          borderRadius: "50px",
+        }}
+      >
+        <BlockIcon sx={{ fontSize: 16, mr: 0.5 }} />
+        BACK SOON
+      </Button>
+    )}
+  </Box>
+</Paper>
   );
 };
 
