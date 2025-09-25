@@ -189,7 +189,7 @@ const Homepage = () => {
           >
             <PersonOutlineOutlined fontSize="medium" />
             <Typography fontSize="12px" fontWeight={500}>
-              {user?.fullName.split(" ")[0]}
+              {user?.fullName?.split(" ")[0] || "Profile"}
             </Typography>
           </Link>
         )}

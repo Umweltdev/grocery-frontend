@@ -5,11 +5,14 @@ import {
   Paper,
   Avatar,
   Grid,
+  Card,
+  CardContent,
+  Chip,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { useSelector } from "react-redux";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "./Header";
+import DashboardHeader from "./Header";
 
 const Profile = ({ openDrawer }) => {
   const isNonMobile = useMediaQuery("(min-width:968px)");
@@ -19,191 +22,141 @@ const Profile = ({ openDrawer }) => {
   const { orders, user } = auth;
   return (
     <Stack spacing={3}>
-      <Header
+      <DashboardHeader
         Icon={PersonIcon}
         title={"My Profile"}
         openDrawer={openDrawer}
         button="Edit Profile"
         link={`/user/profile/${user?._id}`}
       />
-      <Grid container justifyContent="space-between">
-        <Grid item xs={12} sm={6}>
-          <Paper
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={8}>
+          <Card
             elevation={0}
             sx={{
-              paddingY: 2,
-              paddingX: Mobile ? 3 : 1.5,
-              bgcolor: "white",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 3,
             }}
           >
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar
-                alt="profile-picture"
-                src={user?.image || ""}
-                sx={{ width: 64, height: 64 }}
-              />
-              <Typography
-                color="rgb(125, 135, 156)"
-                letterSpacing={4}
-                textTransform="uppercase"
-              >
-                {user?.fullName}
-              </Typography>
-            </Stack>
-            {/* <Typography color="rgb(125, 135, 156)" letterSpacing={4}>
-              SILVER USER
-            </Typography> */}
-          </Paper>
+            <CardContent sx={{ p: 4 }}>
+              <Stack direction="row" spacing={3} alignItems="center">
+                <Avatar
+                  alt="profile-picture"
+                  src={user?.image || ""}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    border: "3px solid",
+                    borderColor: "primary.100",
+                  }}
+                />
+                <Stack spacing={1}>
+                  <Typography variant="h5" fontWeight={600}>
+                    {user?.fullName || "User"}
+                  </Typography>
+                  <Chip
+                    label="Active Member"
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
 
-        <Grid
-          item
-          xs={12}
-          sm={2}
-          sx={{
-            marginTop: Mobile ? 0 : 2,
-          }}
-        >
-          <Paper
+        <Grid item xs={12} md={4}>
+          <Card
             elevation={0}
             sx={{
-              paddingY: 2,
-              paddingX: 4,
-              bgcolor: "white",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 1,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 3,
+              bgcolor: "primary.50",
             }}
           >
-            <Typography color="primary.main" variant="h6">
-              {orders?.length || 0}
-            </Typography>
-            <Typography
-              variant="subtitle2"
-              fontSize="12px"
-              textAlign="center"
-              color="rgb(125, 135, 156)"
-            >
-              All Orders
-            </Typography>
-          </Paper>
+            <CardContent sx={{ p: 4, textAlign: "center" }}>
+              <Typography variant="h3" color="primary.main" fontWeight={700}>
+                {orders?.length || 0}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mt={1}>
+                Total Orders
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
 
-      <Paper
+      <Card
         elevation={0}
         sx={{
-          paddingY: 2,
-          paddingX: Mobile ? 3 : 1.5,
-
-          display: "flex",
-          bgcolor: "white",
-          flexDirection: isNonMobile ? "row" : "column",
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
         }}
       >
-        <Box
-          sx={{
-            flex: "1 1 0",
-            display: "flex",
-            flexDirection: "column",
-            padding: "8px",
-          }}
-        >
-          <small
-            style={{
-              color: "rgb(125, 135, 156)",
-            }}
-          >
-            First Name
-          </small>
-          <Typography variant="subtitle2" textTransform="capitalize">
-            {user?.fullName.split(" ")[0]}
+        <CardContent sx={{ p: 4 }}>
+          <Typography variant="h6" fontWeight={600} mb={3}>
+            Personal Information
           </Typography>
-        </Box>
-        <Box
-          sx={{
-            flex: "1 1 0",
-            display: "flex",
-            flexDirection: "column",
-            padding: "8px",
-          }}
-        >
-          <small
-            style={{
-              color: "rgb(125, 135, 156)",
-            }}
-          >
-            Last Name
-          </small>
-          <Typography variant="subtitle2" textTransform="capitalize">
-            {user?.fullName.split(" ")[1]}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            flex: "1 1 0",
-            display: "flex",
-            flexDirection: "column",
-            padding: "8px",
-          }}
-        >
-          <small
-            style={{
-              color: "rgb(125, 135, 156)",
-            }}
-          >
-            Email
-          </small>
-          <Typography variant="subtitle2">{user?.email}</Typography>
-        </Box>
-        <Box
-          sx={{
-            flex: "1 1 0",
-            display: "flex",
-            flexDirection: "column",
-            padding: "8px",
-          }}
-        >
-          <small
-            style={{
-              color: "rgb(125, 135, 156)",
-            }}
-          >
-            Phone
-          </small>
-          <Typography variant="subtitle2">{user?.phone}</Typography>
-        </Box>
-        <Box
-          sx={{
-            flex: "1 1 0",
-            display: "flex",
-            flexDirection: "column",
-            padding: "8px",
-          }}
-        >
-          <small
-            style={{
-              color: "rgb(125, 135, 156)",
-            }}
-          >
-            Birth Date
-          </small>
-          <Typography variant="subtitle2">
-            {" "}
-            {user?.dob &&
-              new Date(user.dob).toLocaleDateString("en-US", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-          </Typography>
-        </Box>
-      </Paper>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  FIRST NAME
+                </Typography>
+                <Typography variant="body1" textTransform="capitalize">
+                  {user?.fullName?.split(" ")[0] || "N/A"}
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  LAST NAME
+                </Typography>
+                <Typography variant="body1" textTransform="capitalize">
+                  {user?.fullName?.split(" ")[1] || "N/A"}
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  EMAIL ADDRESS
+                </Typography>
+                <Typography variant="body1">{user?.email || "N/A"}</Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  PHONE NUMBER
+                </Typography>
+                <Typography variant="body1">{user?.phone || "N/A"}</Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  DATE OF BIRTH
+                </Typography>
+                <Typography variant="body1">
+                  {user?.dob
+                    ? new Date(user.dob).toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "N/A"}
+                </Typography>
+              </Stack>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     </Stack>
   );
 };

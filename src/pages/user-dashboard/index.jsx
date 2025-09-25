@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Box, Grid, Container, Drawer } from "@mui/material";
+import { Box, Grid, Container, Drawer, Paper, useTheme } from "@mui/material";
 import Header from "../../components/layouts/Header";
 import Footer from "../../components/layouts/Footer";
 import DashboardBox from "./DashboardBox";
@@ -28,28 +28,48 @@ const UserDashBoard = () => {
       <Header />
       <Box
         sx={{
-          bgcolor: "#F6F9FC",
-          paddingY: "40px",
+          bgcolor: "#f8fafc",
+          minHeight: "100vh",
+          py: { xs: 1, sm: 2, md: 4 },
         }}
       >
-        <Container maxWidth="lg">
-          <Grid container spacing={3}>
-            <Grid item md={12} lg={3} display={{ xs: "none", md: "block" }}>
-              <Box
-                bgcolor="#fff"
-                py={5}
-                borderRadius={2}
-                pr={2}
+        <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+          <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={12} lg={3} display={{ xs: "none", lg: "block" }}>
+              <Paper
+                elevation={0}
                 sx={{
-                  boxShadow: " 0px 1px 3px rgba(3, 0, 71, 0.09)",
+                  bgcolor: "white",
+                  borderRadius: { xs: 2, md: 3 },
+                  p: { xs: 2, md: 3 },
+                  border: "1px solid",
+                  borderColor: "divider",
+                  boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+                  position: "sticky",
+                  top: { xs: 80, md: 100 },
+                  height: "fit-content",
+                  maxHeight: "calc(100vh - 120px)",
+                  overflowY: "auto",
                 }}
               >
                 <DashboardBox />
-              </Box>
+              </Paper>
             </Grid>
 
-            <Grid item xs={12} md={12} lg={9}>
-              <Routes>
+            <Grid item xs={12} lg={9}>
+              <Paper
+                elevation={0}
+                sx={{
+                  bgcolor: "white",
+                  borderRadius: { xs: 2, md: 3 },
+                  p: { xs: 1, sm: 2, md: 4 },
+                  border: "1px solid",
+                  borderColor: "divider",
+                  boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+                  minHeight: { xs: "auto", md: "600px" },
+                }}
+              >
+                <Routes>
                 <Route
                   path="/profile"
                   element={<Profile openDrawer={openDrawer} />}
@@ -65,7 +85,8 @@ const UserDashBoard = () => {
                 <Route path="/addresses/:id" element={<Address openDrawer={openDrawer} />} />
                 <Route path="/payments" element={<Payments openDrawer={openDrawer} />} />
                 <Route path="/payments/:id" element={<Payment />} />
-              </Routes>
+                </Routes>
+              </Paper>
             </Grid>
           </Grid>
         </Container>
@@ -74,20 +95,23 @@ const UserDashBoard = () => {
         open={drawer}
         onClose={closeDrawer}
         anchor="left"
-        bgcolor="white"
         sx={{
-          zIndex: "1200",
+          zIndex: 1300,
           "& .MuiPaper-root": {
             backgroundColor: "white",
+            borderRadius: "0 16px 16px 0",
+            border: "none",
+            boxShadow: "0 8px 32px 0 rgb(0 0 0 / 0.12)",
           },
         }}
       >
         <Box
           sx={{
-            py: 3,
-            pr: 1,
-            width: "280px",
+            p: { xs: 2, sm: 3 },
+            width: { xs: "280px", sm: "320px" },
             height: "100vh",
+            bgcolor: "white",
+            overflowY: "auto",
           }}
         >
           <DashboardBox closeDrawer={closeDrawer} />
