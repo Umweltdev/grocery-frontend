@@ -66,13 +66,21 @@ const WishListCard = ({
         backgroundColor: "#fff",
         display: "flex",
         flexDirection: "column",
+        // border: "1px solid",
+        borderColor: "divider",
         borderRadius: 3,
         overflow: "hidden",
         width: "100%",
         maxWidth: 380,
         margin: "auto",
         position: "relative",
-        pb: 2,
+        bgcolor: "#fff",
+        boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.1)",
+        "&:hover": {
+          borderColor: "primary.300",
+          boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.3)",
+          transform: "translateY(-4px)",
+        },
       }}
     >
       <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>

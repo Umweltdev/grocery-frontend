@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import {
   Typography,
+  Box,
   Stack,
   IconButton,
+  Paper,
+  Chip,
   Card,
   CardContent,
   Grid,
-  Chip,
+  useTheme,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -14,21 +17,22 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../../features/auth/authSlice";
 import DashboardHeader from "./Header";
-import PropTypes from "prop-types";
 
 const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
-  const getStatusColor = (status) => {
+  const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "delivered":
-        return "success";
+        return { bgcolor: "#4CAF50", color: "white" };
       case "processing":
-        return "info";
+        return { bgcolor: "#1552bcff", color: "white" };
+      case "dispatched":
+        return { bgcolor: "#9819caff", color: "white" };
       case "pending":
-        return "warning";
+        return { bgcolor: "#FF9800", color: "white" };
       case "cancelled":
-        return "error";
+        return { bgcolor: "#F44336", color: "white" };
       default:
-        return "default";
+        return { bgcolor: "#9E9E9E", color: "white" };
     }
   };
 
@@ -39,13 +43,15 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
       elevation={0}
       sx={{
         textDecoration: "none",
-        border: "1px solid",
+        boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
+        // border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
         transition: "all 0.2s ease-in-out",
+        bgcolor: "#fff",
         "&:hover": {
-          borderColor: "primary.300",
-          boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
+          // borderColor: "primary.300",
+          boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.2)",
           transform: "translateY(-2px)",
         },
       }}
@@ -59,6 +65,11 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 color="text.secondary"
                 fontWeight={600}
               >
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
                 ORDER ID
               </Typography>
               <Typography
@@ -66,13 +77,19 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 fontWeight={600}
                 fontFamily="monospace"
               >
-                £{orderId?.substring(0, 8).toUpperCase()}
+                #{orderId.substring(0, 8).toUpperCase()}
               </Typography>
             </Stack>
           </Grid>
 
+
           <Grid item xs={6} sm={2}>
             <Stack spacing={1}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -82,19 +99,27 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
               </Typography>
               <Chip
                 label={orderStatus}
-                color={getStatusColor(orderStatus)}
-                variant="outlined"
                 size="small"
                 sx={{
                   fontWeight: 600,
+                  width: "fit-content",
+                  px: 1,
+                  py: 0.5,
                   textTransform: "capitalize",
+                  ...getStatusStyle(orderStatus),
                 }}
               />
             </Stack>
           </Grid>
 
+
           <Grid item xs={6} sm={3}>
             <Stack spacing={1}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -112,8 +137,14 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
             </Stack>
           </Grid>
 
+
           <Grid item xs={8} sm={3}>
             <Stack spacing={1}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -122,10 +153,11 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 TOTAL
               </Typography>
               <Typography variant="h6" color="primary.main" fontWeight={700}>
-                £{totalPrice?.toLocaleString()}
+                ₦{totalPrice.toLocaleString()}
               </Typography>
             </Stack>
           </Grid>
+
 
           <Grid item xs={4} sm={1} sx={{ textAlign: "right" }}>
             <IconButton
@@ -147,17 +179,10 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
   );
 };
 
-Order.propTypes = {
-  _id: PropTypes.string.isRequired,
-  orderId: PropTypes.string.isRequired,
-  orderStatus: PropTypes.string.isRequired,
-  orderDate: PropTypes.string.isRequired,
-  totalPrice: PropTypes.number.isRequired,
-};
-
 const Orders = ({ openDrawer }) => {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.auth);
+
 
   useEffect(() => {
     dispatch(getOrders());
@@ -167,7 +192,7 @@ const Orders = ({ openDrawer }) => {
     <Stack spacing={4}>
       <DashboardHeader
         Icon={ShoppingBagIcon}
-        title="My Orders"
+        title={"My Orders"}
         openDrawer={openDrawer}
       />
 
@@ -207,10 +232,6 @@ const Orders = ({ openDrawer }) => {
       )}
     </Stack>
   );
-};
-
-Orders.propTypes = {
-  openDrawer: PropTypes.func,
 };
 
 export default Orders;
