@@ -11,7 +11,8 @@ import {
   MenuItem,
 } from "@mui/material";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonAdd from "@mui/icons-material/PersonAdd";
@@ -60,8 +61,7 @@ const Header = () => {
         zIndex: 50,
         position: "sticky",
         top: 0,
-        borderBottom: "1px solid #F0F0F0",
-        py:1,
+        py: 1,
       }}
     >
       <Container maxWidth="xl">
@@ -86,14 +86,32 @@ const Header = () => {
             <SearchInput />
           </Box>
           <Stack direction="row" spacing={2} alignItems="center">
+            <IconButton
+              onClick={handleCartOpen}
+              sx={{
+                bgcolor: "#F3F5F9",
+                color: "rgba(0, 0, 0, 0.54)",
+                width: 50,
+                height: 50,
+              }}
+            >
+              <StyledBadge
+                badgeContent={products.reduce(
+                  (sum, product) => sum + product.count,
+                  0
+                )}
+              >
+                <ShoppingCartOutlinedIcon />
+              </StyledBadge>
+            </IconButton>
             <div>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <IconButton
                   sx={{
                     bgcolor: "#F3F5F9",
                     color: "rgba(0, 0, 0, 0.54)",
-                    width: 45,
-                    height: 45,
+                    width: 50,
+                    height: 50,
                   }}
                   onClick={handleClick}
                 >
@@ -101,9 +119,10 @@ const Header = () => {
                 </IconButton>
                 {user && (
                   <Typography
-                    fontSize="14px"
-                    fontWeight={500}
+                    fontSize="18px"
+                    fontWeight={700}
                     textTransform="capitalize"
+                    color="#D23F57"
                   >
                     Hi, {user?.fullName?.split(" ")[0] || "User"}
                   </Typography>
@@ -162,25 +181,6 @@ const Header = () => {
                 )}
               </Menu>
             </div>
-
-            <IconButton
-              onClick={handleCartOpen}
-              sx={{
-                bgcolor: "#F3F5F9",
-                color: "rgba(0, 0, 0, 0.54)",
-                width: 45,
-                height: 45,
-              }}
-            >
-              <StyledBadge
-                badgeContent={products.reduce(
-                  (sum, product) => sum + product.count,
-                  0
-                )}
-              >
-                <ShoppingBagOutlinedIcon />
-              </StyledBadge>
-            </IconButton>
           </Stack>
         </Stack>
 

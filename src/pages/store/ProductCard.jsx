@@ -46,6 +46,7 @@ const ProductCard = ({
         "&:hover": { transform: "translateY(-4px)", boxShadow: 4 },
       }}
     >
+      {/* Wishlist toggle */}
       <IconButton
         onClick={onToggleWishlist}
         sx={{
@@ -58,21 +59,18 @@ const ProductCard = ({
         {wishlist ? <FavoriteIcon /> : <FavoriteBorderIcon />}
       </IconButton>
 
-      <Grid
-        container
-        spacing={2}
-        alignItems="center"
-        direction={{ xs: "column", sm: "row" }}
-        textAlign={{ xs: "center", sm: "left" }}
-      >
+      <Grid container spacing={2} alignItems="flex-start">
+        {/* Image */}
         <Grid item xs={12} sm={5} md={4} lg={3}>
           <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
             <Box
-              width="100%"
-              height="195px"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
+              sx={{
+                width: "100%",
+                aspectRatio: "4/3",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               <img
                 src={images[0]?.url || ""}
@@ -87,23 +85,44 @@ const ProductCard = ({
           </Link>
         </Grid>
 
+        {/* Content */}
         <Grid item xs={12} sm={7} md={8} lg={9}>
-          <Stack
-            alignItems={{ xs: "center", sm: "flex-start" }}
-          >
+          <Stack alignItems={{ xs: "center", sm: "flex-start" }} spacing={0.8}>
+            {/* Name */}
             <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
-              <Typography variant="subtitle1" color="text.primary">
+              <Typography
+                variant="subtitle1"
+                color="text.primary"
+                sx={{
+                  fontWeight: 500,
+                  textAlign: { xs: "center", sm: "left" },
+                }}
+              >
                 {name}
               </Typography>
             </Link>
 
+            {/* Rating */}
             {totalStar > 0 && (
               <Rating value={totalStar} readOnly size="small" />
             )}
-            <Typography variant="body2" color="text.secondary">
-              {description}
-            </Typography>
 
+            {/* Description */}
+            {description && (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  textAlign: { xs: "center", sm: "left" },
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {description}
+              </Typography>
+            )}
             <Stack
               direction="column"
               spacing={0.3}
@@ -140,6 +159,7 @@ const ProductCard = ({
                 </Typography>
               )}
             </Stack>
+
             <Stack
               direction="row"
               spacing={1}
@@ -157,6 +177,7 @@ const ProductCard = ({
                     color: "rgba(0,0,0,0.5)",
                     borderRadius: 3,
                     px: 2,
+                    minWidth: 120,
                   }}
                 >
                   Out of Stock
@@ -176,6 +197,7 @@ const ProductCard = ({
                   onClick={onAddToCart}
                   startIcon={<ShoppingCartOutlinedIcon />}
                   sx={{
+                    minWidth: 120,
                     textTransform: "none",
                     bgcolor: "primary.main",
                     color: "#fff",

@@ -97,8 +97,8 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
           <Grid
             item
             xs={12}
-            // sm={activeIcon === "apps" ? 6 : 12}
-            // md={activeIcon === "apps" ? 4 : 12}
+            sm={activeIcon === "apps" ? 6 : 12}
+            md={activeIcon === "apps" ? 4 : 12}
             key={item._id}
           >
             {activeIcon === "apps" ? (
