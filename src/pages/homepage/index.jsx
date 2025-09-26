@@ -116,9 +116,6 @@ const Homepage = () => {
         }}
       >
         <Box p={3} sx={{ height: "100vh", overflowY: "auto" }}>
-          <Typography variant="h6" fontWeight={700} mb={2} color="primary">
-            Categories
-          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Category visibleCategories={visibleCategories} />
         </Box>
@@ -220,14 +217,6 @@ const Homepage = () => {
                 },
               }}
             >
-              <Typography
-                variant="h6"
-                fontWeight={700}
-                color="text.primary"
-                mb={2}
-              >
-                Categories
-              </Typography>
               <Category visibleCategories={visibleCategories} />
             </Box>
           </Grid>
