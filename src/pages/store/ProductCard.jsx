@@ -85,10 +85,8 @@ const ProductCard = ({
           </Link>
         </Grid>
 
-        {/* Content */}
         <Grid item xs={12} sm={7} md={8} lg={9}>
           <Stack alignItems={{ xs: "center", sm: "flex-start" }} spacing={0.8}>
-            {/* Name */}
             <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
               <Typography
                 variant="subtitle1"
@@ -102,12 +100,10 @@ const ProductCard = ({
               </Typography>
             </Link>
 
-            {/* Rating */}
             {totalStar > 0 && (
               <Rating value={totalStar} readOnly size="small" />
             )}
 
-            {/* Description */}
             {description && (
               <Typography
                 variant="body2"
