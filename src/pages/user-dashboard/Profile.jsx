@@ -249,9 +249,17 @@ const Profile = ({ openDrawer }) => {
       <Card
         elevation={0}
         sx={{
-          border: "1px solid",
+          // border: "1px solid",
           borderColor: "divider",
           borderRadius: 3,
+          bgcolor: "#FFF",
+          boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.1)",
+          transition: "all 0.3s ease-in-out",
+          "&:hover": {
+            borderColor: "primary.300",
+            boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.3)",
+            transform: "translateY(-4px)",
+          },
         }}
       >
         <CardContent sx={{ p: 4 }}>

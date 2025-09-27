@@ -2,19 +2,23 @@ import { useEffect, useState } from "react";
 import {
   Typography,
   Stack,
-  Button,
-  Paper,
+  Card,
+  CardContent,
   IconButton,
   Box,
+  Chip,
+  Divider,
+  Grid,
 } from "@mui/material";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import PersonIcon from "@mui/icons-material/Person";
 import { base_url } from "../../utils/baseUrl";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getCards } from "../../features/auth/authSlice";
 import Header from "./Header";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 
 export const getCardImage = (card) => {
@@ -45,11 +49,10 @@ export const getCardImage = (card) => {
   }
 };
 
-const Card = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
+const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
   const auth = useSelector((state) => state.auth);
-  const isNonMobile = useMediaQuery("(min-width:600px)");
-
   const { user } = auth;
+  
   const deleteCard = () => {
     axios
       .delete(`${base_url}card/${_id}`, {
@@ -64,85 +67,165 @@ const Card = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
   };
 
   return (
-    <Paper
+    <Card
       elevation={0}
-      
       sx={{
-        paddingX: 2,
-        paddingY: 1,
-        display: "flex",
-        bgcolor: "white",
-        borderRadius: "10px",
-        alignItems: "center",
-        flexDirection: isNonMobile? "row" : "column",
-        columnGap: 1.5,
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
+        transition: "all 0.3s ease",
+        "&:hover": {
+          borderColor: "primary.300",
+          transform: "translateY(-2px)",
+          boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
+        },
       }}
     >
-      <Stack direction="row" spacing={1.5} alignItems="center" flex="1 1 0">
-        <Box
-          sx={{
-            backgroundColor: "#fff",
-            boxShadow: "rgba(3, 0, 71, 0.09) 0px 1px 3px",
-            overflow: "hidden",
-            width: "42px",
-            height: "28px",
-            borderRadius: "2px",
-          }}
-        >
-          {getCardImage(cardDetails?.brand)}
-        </Box>
-        <Typography variant="subtitle1">{cardDetails?.account_name}</Typography>
-      </Stack>
-
-      <Typography variant="subtitle2" flex="1 1 0" textAlign={{xs:"center", sm:"left"}}>
-        {`**** **** **** ${cardDetails?.last4}`}
-      </Typography>
-      <Typography variant="subtitle2" mx={{xs:2,sm:3}}>
-        {`${cardDetails?.exp_month}/${cardDetails?.exp_year.substr(2)}`}
-      </Typography>
-
-      <Stack direction="row" justifyContent="end">
-        <IconButton onClick={deleteCard}>
-          <DeleteIcon
-            sx={{
-              fontSize: "1.8rem",
-            }}
-          />
-        </IconButton>
-      </Stack>
-    </Paper>
+      <CardContent sx={{ p: 3 }}>
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="flex-start"
+          >
+            <Box>
+              <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+                <Box
+                  sx={{
+                    backgroundColor: "#fff",
+                    boxShadow: "rgba(3, 0, 71, 0.09) 0px 1px 3px",
+                    overflow: "hidden",
+                    width: "42px",
+                    height: "28px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  {getCardImage(cardDetails?.brand)}
+                </Box>
+                <Typography variant="h6" fontWeight={600}>
+                  **** **** **** {cardDetails?.last4}
+                </Typography>
+              </Stack>
+              <Chip
+                label={cardDetails?.brand?.toUpperCase()}
+                size="small"
+                sx={{
+                  bgcolor: "primary.50",
+                  color: "primary.main",
+                  fontWeight: 500,
+                }}
+              />
+            </Box>
+            
+            <IconButton
+              size="small"
+              onClick={deleteCard}
+              sx={{
+                bgcolor: "error.50",
+                color: "error.main",
+                "&:hover": { bgcolor: "error.100" },
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+          
+          <Divider />
+          
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <PersonIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                <Typography variant="body2" color="text.secondary">
+                  Cardholder
+                </Typography>
+              </Stack>
+              <Typography variant="body1" fontWeight={500} ml={3}>
+                {cardDetails?.account_name}
+              </Typography>
+            </Grid>
+            
+            <Grid item xs={12} sm={6}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <CalendarTodayIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                <Typography variant="body2" color="text.secondary">
+                  Expires
+                </Typography>
+              </Stack>
+              <Typography variant="body1" fontWeight={500} ml={3}>
+                {cardDetails?.exp_month}/{cardDetails?.exp_year.substr(2)}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 
-const Payments = ({openDrawer}) => {
+const Payments = ({ openDrawer }) => {
   const dispatch = useDispatch();
   const { cards } = useSelector((state) => state.auth);
   const [isDeleted, setIsDeleted] = useState(false);
+  
   useEffect(() => {
-    const getUserCards = async () => {
-      dispatch(getCards());
-    };
-    getUserCards();
-  }, [isDeleted]);
+    dispatch(getCards());
+  }, [isDeleted, dispatch]);
+
   return (
-    <Stack spacing={2}>
-      
+    <Stack spacing={4}>
       <Header
         Icon={CreditCardIcon}
         title="Payment Methods"
         openDrawer={openDrawer}
-        
       />
-      <Stack spacing={2} >
-        {cards.map((card, index) => ( 
-          <Card
-            {...card}
-            isDeleted={isDeleted}
-            setIsDeleted={setIsDeleted}
-            key={index}
-          />
-        ))}
-      </Stack>
+
+      {cards.length === 0 ? (
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 3,
+            textAlign: "center",
+            py: 8,
+          }}
+        >
+          <CardContent>
+            <CreditCardIcon
+              sx={{
+                fontSize: 64,
+                color: "text.disabled",
+                mb: 2,
+              }}
+            />
+            <Typography variant="h6" color="text.secondary" mb={1}>
+              No Payment Methods Found
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Add a payment method to get started
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <Typography variant="body2" color="text.secondary">
+            {cards.length} saved payment method{cards.length !== 1 ? "s" : ""}
+          </Typography>
+          
+          <Grid container spacing={3}>
+            {cards.map((card, index) => (
+              <Grid item xs={12} md={6} key={card._id || index}>
+                <PaymentCard
+                  {...card}
+                  isDeleted={isDeleted}
+                  setIsDeleted={setIsDeleted}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
     </Stack>
   );
 };
