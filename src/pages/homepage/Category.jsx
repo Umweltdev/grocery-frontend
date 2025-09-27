@@ -13,30 +13,59 @@ import {
   Divider,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ImportantDevicesIcon from "@mui/icons-material/ImportantDevices";
 import CheckroomIcon from "@mui/icons-material/Checkroom";
-import DesktopMacIcon from "@mui/icons-material/DesktopMac";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
+import ChairIcon from "@mui/icons-material/Chair";
+import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import SpaIcon from "@mui/icons-material/Spa";
+import ToysIcon from "@mui/icons-material/Toys";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import EmojiFoodBeverageIcon from "@mui/icons-material/EmojiFoodBeverage";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
+import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
+import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
+import LocalDiningIcon from "@mui/icons-material/LocalDining";
+import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 
 const fallbackCategories = [
-  { _id: "gadgets", name: "Gadgets", children: [] },
-  { _id: "clothing", name: "Clothing", children: [] },
-  { _id: "electronics", name: "Electronics", children: [] },
+  { _id: "fashion", name: "Fashion", children: [] },
+  { _id: "groceries", name: "Groceries", children: [] },
+  { _id: "home-living", name: "Home & Living", children: [] },
 ];
 
+const iconProps = {
+  sx: { color: "grey.700", fontSize: { xs: "20px", sm: "26px" } },
+};
+
+const categoryIcons = {
+  fashion: <CheckroomIcon {...iconProps} />,
+  groceries: <LocalGroceryStoreIcon {...iconProps} />,
+  "home & living": <ChairIcon {...iconProps} />,
+  sports: <SportsSoccerIcon {...iconProps} />,
+  books: <MenuBookIcon {...iconProps} />,
+  "beauty & personal care": <SpaIcon {...iconProps} />,
+  "toys & games": <ToysIcon {...iconProps} />,
+  automotive: <DirectionsCarIcon {...iconProps} />,
+  bakery: <BakeryDiningIcon {...iconProps} />,
+  condiments: <EmojiFoodBeverageIcon {...iconProps} />,
+  "health & wellness": <HealthAndSafetyIcon {...iconProps} />,
+  "breakfast items": <FreeBreakfastIcon {...iconProps} />,
+  "herbs & spices": <LocalFloristIcon {...iconProps} />,
+  "nuts & seeds": <RestaurantIcon {...iconProps} />,
+  "ready-to-eat": <FastfoodIcon {...iconProps} />,
+  "sauces & dressings": <LocalDiningIcon {...iconProps} />,
+  "beverage mixes": <LocalDrinkIcon {...iconProps} />,
+};
+
 const getCategoryIcon = (categoryName) => {
+  if (!categoryName) return null;
   const normalizedName = categoryName.toLowerCase();
-  const iconProps = { sx: { color: "grey.700", fontSize: "26px" } };
-
-  if (normalizedName.includes("gadget"))
-    return <ImportantDevicesIcon {...iconProps} />;
-  if (normalizedName.includes("clothing"))
-    return <CheckroomIcon {...iconProps} />;
-  if (normalizedName.includes("electronics"))
-    return <DesktopMacIcon {...iconProps} />;
-
-  return null;
+  return categoryIcons[normalizedName] || null;
 };
 
 const Category = ({ visibleCategories, loading, productsByCategory }) => {
@@ -58,9 +87,15 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
     if (!products.length) return null;
 
     return (
-      <Grid container spacing={2} mt={1} alignItems="stretch">
+      <Grid container spacing={{ xs: 1, sm: 2 }} mt={1} alignItems="stretch">
         {products.slice(0, 6).map((product) => (
-          <Grid item xs={6} sm={4} md={3} key={product._id}>
+          <Grid
+            item
+            xs={12} // full width on mobile
+            sm={6} // 2 per row on tablets
+            md={3} // 4 per row on desktop
+            key={product._id}
+          >
             <Card
               sx={{
                 height: "100%",
@@ -86,10 +121,10 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
               >
                 <CardMedia
                   component="img"
-                  height="140"
                   image={product.image}
                   alt={product.name}
                   sx={{
+                    height: { xs: 120, sm: 140 },
                     objectFit: "cover",
                   }}
                 />
@@ -99,7 +134,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    p: 1.5,
+                    p: { xs: 1, sm: 1.5 },
                   }}
                 >
                   <Typography
@@ -107,6 +142,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
                     color="text.primary"
                     noWrap
                     fontWeight={500}
+                    sx={{ fontSize: { xs: "0.85rem", sm: "0.9rem" } }}
                   >
                     {product.name}
                   </Typography>
@@ -114,7 +150,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
                     variant="body2"
                     color="primary"
                     fontWeight={600}
-                    display="block"
+                    sx={{ fontSize: { xs: "0.85rem", sm: "0.95rem" } }}
                   >
                     ${product.price.toFixed(2)}
                   </Typography>
@@ -126,6 +162,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
       </Grid>
     );
   };
+
   const renderCategory = (category, topLevel = false) => {
     const hasChildren = category.children && category.children.length > 0;
     const hasProducts = !!productsByCategory[category._id]?.length;
@@ -151,11 +188,10 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
             to={`/store?category=${category._id}`}
             style={{ textDecoration: "none", flexGrow: 1 }}
           >
-            <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Stack direction="row" alignItems="center" spacing={1.2}>
               {topLevel && getCategoryIcon(category.name)}
               <Typography
-                variant="body1"
-                fontSize={topLevel ? "18px" : "14px"}
+                fontSize={{ xs: "14px", sm: topLevel ? "18px" : "14px" }}
                 fontWeight={topLevel ? 500 : 400}
                 color="#2C3E50"
                 sx={{ "&:hover": { color: "#E3364E" }, display: "block" }}
@@ -168,7 +204,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
           {(hasChildren || hasProducts) && (
             <ChevronRightIcon
               sx={{
-                fontSize: 26,
+                fontSize: { xs: 20, sm: 26 },
                 color: "#555",
                 transition: "transform 0.3s ease",
                 transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
@@ -178,7 +214,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
         </Stack>
 
         <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-          <Box ml={topLevel ? 4.5 : 2} mt={1}>
+          <Box ml={{ xs: 2, sm: topLevel ? 4.5 : 2 }} mt={1}>
             {hasChildren &&
               category.children.map((subcategory) =>
                 renderCategory(subcategory, false)
@@ -197,7 +233,14 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
 
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight={700} p={1} color="grey.600">
+      <Typography
+        variant="subtitle1"
+        fontWeight={700}
+        px={{ xs: 1, sm: 2 }}
+        py={1}
+        color="grey.600"
+        fontSize={{ xs: "14px", sm: "16px" }}
+      >
         CATEGORIES
       </Typography>
       {loading ? (

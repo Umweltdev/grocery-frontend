@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Stepper,
@@ -21,7 +21,7 @@ import PaymentPage from "./paymentPage";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useSelector } from "react-redux";
 
-const QontoConnector = styled(StepConnector)(({ theme }) => ({
+const QontoConnector = styled(StepConnector)(() => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 10,
     left: "calc(-50% + 16px)",
@@ -182,14 +182,11 @@ const Cart = () => {
           {getStepContent(steps[activeStep])}
           <Stack
             direction={{ xs: "column", md: "row" }}
-            spacing={3}
-            width={{ xs: "100%", md: "66%" }}
-            mt={4}
-            sx={
-              {
-                // width: "66%",
-              }
-            }
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+            mt={8}
+            width="100%"
           >
             <Button
               variant="outlined"
@@ -199,6 +196,9 @@ const Cart = () => {
                 textTransform: "none",
                 opacity: activeStep === 0 ? 0 : 1,
                 flex: 1,
+                py: 1.8,
+                px: 4,
+                minWidth: 220,
               }}
             >
               {activeStep === 0 ? "" : `Back to ${steps[activeStep - 1]}`}
@@ -210,6 +210,9 @@ const Cart = () => {
                 textTransform: "none",
                 flex: 1,
                 opacity: activeStep === steps.length - 1 ? 0 : 1,
+                py: 1.8,
+                px: 4,
+                minWidth: 220,
               }}
               onClick={handleNext}
               disabled={

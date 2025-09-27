@@ -28,7 +28,7 @@ const CategoryCard = ({ name, image, _id }) => (
       >
         <CardMedia
           component="img"
-          height="160"
+          height="170"
           image={image?.url}
           alt={name}
           sx={{

@@ -21,7 +21,6 @@ import { getOrderMessage } from "../../features/order/orderSlice";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import PropTypes from "prop-types";
 
 const CustomDivider = styled(Divider)`
@@ -33,80 +32,119 @@ const CustomDivider = styled(Divider)`
 
 const CartCard = ({ name, image, id, price, count, total }) => {
   const dispatch = useDispatch();
-  const Mobile = useMediaQuery("(min-width:600px)");
   return (
     <Paper
-      elevation={1}
+      elevation={3}
       sx={{
-        bgcolor: "white",
+        bgcolor: "background.paper",
         borderRadius: "10px",
-        paddingY: Mobile ? 2 : 0,
-        paddingX: Mobile ? 2 : 0,
+        p: 3,
         position: "relative",
+        width: "100%",
+        maxWidth: "cover",
+        transition: "box-shadow 0.3s",
+        "&:hover": {
+          boxShadow: 6,
+        },
       }}
     >
       <IconButton
         onClick={() => dispatch(removeFromCart(id))}
         sx={{
           position: "absolute",
-          top: "15px",
-          right: "15px",
+          top: "10px",
+          right: "10px",
+          color: "text.secondary",
+          "&:hover": {
+            color: "text.primary",
+          },
         }}
       >
         <ClearIcon />
       </IconButton>
 
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={3}
-        alignItems={{ sm: "center" }}
-      >
-        <Box width={{ sm: "160px" }}>
+      <Stack direction="column" spacing={2} alignItems="center">
+        <Box
+          sx={{
+            width: 250,
+            height: 250,
+            flexShrink: 0,
+            mb: 2,
+          }}
+        >
           <img
             src={image}
             alt={name}
-            className="image-r"
-            style={{ width: "100%", objectFit: "cover" }}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         </Box>
-        <Box padding={{ xs: 2, sm: 0 }}>
-          <Stack spacing={1.5}>
-            <Typography
-              variant="subtitle1"
-              color="#373F50"
-              fontSize={{ xs: "14px", md: "16px" }}
-            >
-              {name}
+        <Stack spacing={1.5} alignItems="center" sx={{ width: "100%" }}>
+          <Typography variant="h6" fontWeight="600" textAlign="center">
+            {name}
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography color="text.secondary" variant="body1">
+              {`£${price.toLocaleString()}`} x {count}
             </Typography>
-            <Stack direction="row" spacing={2}>
-              <Typography color="text.secondary" variant="subtitle2">
-                {`£ ${price.toLocaleString()}`} X {count}
-              </Typography>
-              <Typography color="primary.main" variant="subtitle1">
-                {`£ ${total?.toLocaleString()}`}
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1.5} alignItems="center">
-              <Button
-                disabled={count === 1}
-                onClick={() => dispatch(decreaseQuantity(id))}
-                variant="outlined"
-                sx={{ padding: "1px", minWidth: 0 }}
-              >
-                <RemoveIcon />
-              </Button>
-              <Typography>{count}</Typography>
-              <Button
-                onClick={() => dispatch(increaseQuantity(id))}
-                variant="outlined"
-                sx={{ padding: "1px", minWidth: 0 }}
-              >
-                <AddIcon />
-              </Button>
-            </Stack>
+            <Typography color="primary.main" variant="body1" fontWeight="bold">
+              {`£${total?.toLocaleString()}`}
+            </Typography>
           </Stack>
-        </Box>
+
+          <Stack direction="row" alignItems="center" sx={{ mt: 2 }}>
+            <Button
+              variant="outlined"
+              disabled={count === 1}
+              onClick={() => dispatch(decreaseQuantity(id))}
+              sx={{
+                minWidth: "40px",
+                height: "40px",
+                borderRight: "none",
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                borderColor: "divider",
+                "&:hover": {
+                  borderRight: "none",
+                },
+              }}
+            >
+              <RemoveIcon fontSize="small" />
+            </Button>
+            <Typography
+              variant="body1"
+              fontWeight="500"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "40px",
+                width: "48px",
+                borderTop: "1px solid",
+                borderBottom: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              {count}
+            </Typography>
+            <Button
+              onClick={() => dispatch(increaseQuantity(id))}
+              variant="outlined"
+              sx={{
+                minWidth: "40px",
+                height: "40px",
+                borderLeft: "none",
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+                borderColor: "divider",
+                "&:hover": {
+                  borderLeft: "none",
+                },
+              }}
+            >
+              <AddIcon fontSize="small" />
+            </Button>
+          </Stack>
+        </Stack>
       </Stack>
     </Paper>
   );
@@ -132,16 +170,16 @@ const CartPage = ({ updateStepCompletion }) => {
   }, [updateStepCompletion]);
 
   return (
-    <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
+    <Grid container spacing={{ xs: 4, md: 6 }} mt={{ xs: 2, sm: 4 }}>
       <Grid item xs={12} md={8}>
         {products.length > 0 ? (
-          <Stack spacing={2.5}>
+          <Stack spacing={2}>
             {products.map((product, index) => (
               <CartCard key={index} {...product} />
             ))}
           </Stack>
         ) : (
-          <Stack spacing={2}>
+          <Stack spacing={2} alignItems="center">
             <Typography textAlign="center" variant="h6">
               To proceed with the checkout, kindly add items to your cart first.
             </Typography>
@@ -152,33 +190,67 @@ const CartPage = ({ updateStepCompletion }) => {
         )}
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid
+        item
+        xs={12}
+        md={4}
+        sx={{
+          display: "flex",
+          justifyContent: { xs: "center", md: "flex-end" },
+          alignSelf: "flex-start",
+        }}
+      >
         <Paper
+          elevation={3}
           sx={{
-            bgcolor: "white",
-            borderRadius: "8px",
-            paddingY: 3,
-            paddingX: 2,
-            position: "relative",
+            bgcolor: "background.paper",
+            borderRadius: "12px",
+            p: { xs: 3, md: 4 },
+            width: { xs: "100%", sm: "100%", md: 400 },
+            transition: "box-shadow 0.3s",
+            "&:hover": { boxShadow: 8 },
           }}
         >
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle2" color="text.secondary">
-              Total:
+          {/* Total Amount */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={3}
+          >
+            <Typography
+              variant="h5"
+              color="text.secondary"
+              sx={{ fontWeight: 600 }}
+            >
+              Total
             </Typography>
-            <Typography variant="subtitle1">{`£ ${cartTotal.toLocaleString()}`}</Typography>
+            <Typography
+              variant="h4"
+              color="text.primary"
+              sx={{ fontWeight: 700 }}
+            >
+              {`£ ${cartTotal.toLocaleString()}`}
+            </Typography>
           </Stack>
+
           <CustomDivider />
-          <Stack spacing={1.5}>
+
+          {/* Additional Comments Section */}
+          <Stack spacing={1.5} mt={3}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="subtitle1">Additional Comments</Typography>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                Additional Comments
+              </Typography>
               <Typography
-                fontSize="13px"
+                fontSize="12px"
                 sx={{
-                  backgroundColor: "#fce9ec",
+                  bgcolor: "#fce9ec",
                   color: "#d23f57",
-                  borderRadius: "3px",
-                  padding: "3px 8px",
+                  borderRadius: 1,
+                  px: 1.5,
+                  py: 0.5,
+                  fontWeight: 500,
                 }}
               >
                 Note
@@ -192,35 +264,43 @@ const CartPage = ({ updateStepCompletion }) => {
               multiline
               rows={5}
               size="small"
-              onChange={(e) => {
-                dispatch(getOrderMessage(e.target.value));
-              }}
+              onChange={(e) => dispatch(getOrderMessage(e.target.value))}
+              placeholder="Write any instructions or notes for your order..."
               sx={{
-                gridColumn: "span 2",
-                "& .MuiInputBase-root": { fontSize: "15px" },
+                "& .MuiInputBase-root": { fontSize: 15 },
+                "& .MuiOutlinedInput-root": { borderRadius: 2 },
               }}
-              InputLabelProps={{ style: { fontSize: "14px" } }}
+              InputLabelProps={{ style: { fontSize: 14 } }}
             />
           </Stack>
-          <CustomDivider />
 
-          <Stack spacing={1.5}>
+          <CustomDivider sx={{ my: 3 }} />
+
+          {/* Voucher Section */}
+          <Stack spacing={2}>
             <TextField
               fullWidth
               variant="outlined"
               type="text"
               label="Voucher"
-              placeholder="Voucher"
+              placeholder="Enter your voucher code"
               size="small"
               sx={{
-                gridColumn: "span 2",
-                "& .MuiInputBase-root": { fontSize: "15px" },
+                "& .MuiInputBase-root": { fontSize: 15 },
+                "& .MuiOutlinedInput-root": { borderRadius: 2 },
               }}
-              InputLabelProps={{ style: { fontSize: "14px" } }}
+              InputLabelProps={{ style: { fontSize: 14 } }}
             />
             <Button
-              variant="outlined"
-              sx={{ textTransform: "none", fontWeight: 600 }}
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                bgcolor: "primary.main",
+                color: "white",
+                py: 1.5,
+                "&:hover": { bgcolor: "#d23f57" },
+              }}
             >
               Apply Voucher
             </Button>

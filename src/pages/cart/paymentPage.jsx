@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import { base_url } from "../../utils/baseUrl";
 import axios from "axios";
 import makeToast from "../../utils/toaster";
@@ -16,38 +17,35 @@ import {
   Radio,
   FormControlLabel,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import Cards from "./cards";
 import { useSelector, useDispatch } from "react-redux";
 import { resetState } from "../../features/cart/cartSlice";
 import { resetState as resetOrderState } from "../../features/order/orderSlice";
 import { useNavigate } from "react-router-dom";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
-export const CustomDivider = styled(Divider)`
-  margin: 5px 0px 5px;
-  border-width: 0px 0px thin;
-  border-style: solid;
-  border-color: rgb(243, 245, 249);
+// Styled Divider
+const CustomDivider = styled(Divider)`
+  margin: 12px 0;
+  border-width: 0 0 1px 0;
+  border-color: #f3f5f9;
 `;
 
-const PaymentPage = () => {
+const PaymentPage = ({ defaultDeliveryDate }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const Mobile = useMediaQuery("(min-width:600px)");
-  const { cartTotal } = useSelector((state) => state.cart);
-  const auth = useSelector((state) => state.auth);
+  const isMobile = useMediaQuery("(max-width:600px)");
+
+  const { cartTotal, products } = useSelector((state) => state.cart) || {};
+  const { user } = useSelector((state) => state.auth) || {};
   const { orderMessage, selectedCard, selectedAddress } = useSelector(
     (state) => state.order
   );
-  const { user } = auth;
 
-  const [option, setOption] = useState(null);
-  const handleSelectedOption = (event) => {
-    event.stopPropagation();
-    const selectedOption = event.target.value;
-    setOption(selectedOption);
-  };
+  const [option, setOption] = useState("");
+
+  const handleSelectedOption = (event) => setOption(event.target.value);
 
   const clearCartAndNavigate = () => {
     localStorage.removeItem("cartState");
@@ -58,10 +56,7 @@ const PaymentPage = () => {
 
   const createOrder = async () => {
     if (option === "voucher") {
-      makeToast(
-        "error",
-        "Apologies! Currently, only cash/card payments are accepted."
-      );
+      makeToast("error", "Only cash or card payments are currently accepted.");
       return;
     }
 
@@ -69,55 +64,60 @@ const PaymentPage = () => {
       const response = await axios.post(
         `${base_url}user/order`,
         {
-          address: selectedAddress._id,
+          address: selectedAddress?._id,
           paymentMethod: option,
-          deliveryDate: "2-2-23",
+          deliveryDate: defaultDeliveryDate || "2-2-23",
           deliveryTime: "9am",
           comment: orderMessage,
           cardId: selectedCard,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${user?.token}` } }
       );
 
       if (option === "card" && response.data.authorizationUrl) {
         window.location.href = response.data.authorizationUrl;
-        localStorage.removeItem("cartState");
       } else if (response.data.status === "success") {
-        makeToast("success", "Successfully Paid with Card");
+        makeToast("success", "Order successfully paid with card");
         clearCartAndNavigate();
       } else {
         makeToast(
           "success",
-          "Your Order has been Confirmed, Our Sales Team will contact you soon!"
+          "Order confirmed! Our team will contact you shortly."
         );
         clearCartAndNavigate();
       }
     } catch (error) {
-      makeToast("error", "Please try again, something went wrong");
+      makeToast("error", "Something went wrong. Please try again.");
     }
   };
+
   return (
-    <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
+    <Grid container spacing={3} mt={{ xs: 2, sm: 4 }}>
+      {/* Payment Method Card */}
       <Grid item xs={12} md={8}>
         <Paper
-          elevation={1}
+          elevation={4}
           sx={{
-            backgroundColor: "white",
+            borderRadius: 3,
+            p: { xs: 2, sm: 4 },
             display: "flex",
             flexDirection: "column",
-            gap: 2,
-            borderRadius: "8px",
+            gap: 3,
+            bgcolor: "background.paper",
           }}
         >
-          <FormGroup>
+          <Typography variant="h5" color="primary.main" textAlign="center" fontWeight={700} mb={2}>
+            Select Payment Method
+          </Typography>
+          <FormGroup sx={{ gap: 1.5 }}>
             <FormControlLabel
               sx={{
-                paddingY: 2,
-                paddingX: Mobile ? 3 : 2,
+                py: 2,
+                px: isMobile ? 2 : 3,
+                borderRadius: 2,
+                border:
+                  option === "card" ? "1px solid #d23f57" : "1px solid #e0e0e0",
+                transition: "border 0.2s",
               }}
               control={
                 <Radio
@@ -127,34 +127,30 @@ const PaymentPage = () => {
                 />
               }
               label={
-                <Typography variant={{ xs: "subtitle2", sm: "body2" }}>
+                <Typography variant="subtitle1" fontWeight={600}>
                   Pay with Card
                 </Typography>
               }
             />
             {option === "card" && (
-              <Stack spacing={2}>
-                <Typography
-                  fontSize="12px"
-                  color="text.secondary"
-                  sx={{
-                    paddingBottom: 2,
-                    paddingX: Mobile ? 3 : 2,
-                  }}
-                >
-                  Kindly note that you will be redirected to Paystack Checkout
-                  Page to complete your purchase.
+              <Stack spacing={2} sx={{ px: isMobile ? 2 : 3 }}>
+                <Typography variant="body2" color="text.secondary">
+                  You will be redirected to a secure Paystack Checkout page to
+                  complete your purchase.
                 </Typography>
-
                 <Cards option={option} />
               </Stack>
             )}
+
             <CustomDivider />
 
             <FormControlLabel
               sx={{
-                paddingY: 2,
-                paddingX: Mobile ? 3 : 2,
+                py: 2,
+                px: isMobile ? 2 : 3,
+                borderRadius: 2,
+                border:
+                  option === "cash" ? "1px solid #d23f57" : "1px solid #e0e0e0",
               }}
               control={
                 <Radio
@@ -164,16 +160,23 @@ const PaymentPage = () => {
                 />
               }
               label={
-                <Typography variant={{ xs: "subtitle2", sm: "body2" }}>
-                  Pay with Cash on Collection or Delivery
+                <Typography variant="subtitle1" fontWeight={600}>
+                  Cash on Collection/Delivery
                 </Typography>
               }
             />
+
             <CustomDivider />
+
             <FormControlLabel
               sx={{
-                paddingY: 2,
-                paddingX: Mobile ? 3 : 2,
+                py: 2,
+                px: isMobile ? 2 : 3,
+                borderRadius: 2,
+                border:
+                  option === "voucher"
+                    ? "1px solid #d23f57"
+                    : "1px solid #e0e0e0",
               }}
               control={
                 <Radio
@@ -183,130 +186,158 @@ const PaymentPage = () => {
                 />
               }
               label={
-                <Typography variant={{ xs: "subtitle2", sm: "body2" }}>
-                  I have a Voucher
+                <Typography variant="subtitle1" fontWeight={600}>
+                  Redeem Voucher
                 </Typography>
               }
             />
             {option === "voucher" && (
-              <>
-                <CustomDivider />
-                <Stack
-                  py={2}
-                  px={{ xs: 2, sm: 3 }}
-                  pb={3}
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={3}
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={2}
+                sx={{ py: 2, px: isMobile ? 2 : 3 }}
+              >
+                <TextField
+                  placeholder="Enter voucher code"
+                  size="small"
+                  fullWidth
+                  sx={{ "& .MuiInputBase-root": { fontSize: 15 } }}
+                />
+                <Button
+                  sx={{
+                    textTransform: "none",
+                    bgcolor: "primary.main",
+                    color: "white",
+                    fontWeight: 600,
+                    "&:hover": { bgcolor: "#E3364E" },
+                  }}
                 >
-                  <TextField
-                    variant="outlined"
-                    type="text"
-                    placeholder="Enter voucher code here"
-                    size="small"
-                    sx={{
-                      width: Mobile ? "50%" : "100%",
-                      "& .MuiInputBase-root": {
-                        fontSize: "15px",
-                      },
-                    }}
-                    InputLabelProps={{
-                      style: { fontSize: "14px" },
-                    }}
-                  />
-                  <Button
-                    sx={{
-                      mt: 4,
-                      textTransform: "none",
-                      bgcolor: "primary.main",
-                      color: "white",
-                      fontSize: "14px",
-                      paddingX: "20px",
-                      fontWeight: 500,
-                      alignSelf: Mobile ? "start" : "stretch",
-                      "&:hover": {
-                        backgroundColor: "#E3364E",
-                      },
-                    }}
-                  >
-                    Apply
-                  </Button>
-                </Stack>
-              </>
+                  Apply
+                </Button>
+              </Stack>
             )}
           </FormGroup>
         </Paper>
       </Grid>
+
       <Grid item xs={12} md={4}>
         <Paper
+          elevation={4}
           sx={{
-            bgcolor: "white",
-            borderRadius: "8px",
-            paddingY: 3,
-            paddingX: 2,
-            paddingBottom: 6,
-            position: "relative",
+            borderRadius: 3,
+            p: { xs: 2, sm: 4 },
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
           }}
         >
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle2" color="text.secondary">
-              Subtotal:
-            </Typography>
-            <Typography fontWeight="600">{`£ ${cartTotal.toLocaleString()}`}</Typography>
-          </Stack>
-          <Stack direction="row" justifyContent="space-between" mt={0.7}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Shipping:
-            </Typography>
-            <Typography fontWeight="600">{`£ 0`}</Typography>
-          </Stack>{" "}
-          <Stack direction="row" justifyContent="space-between" mt={0.7}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Tax:
-            </Typography>
-            <Typography fontWeight="600">{`£ 0`}</Typography>
-          </Stack>
-          <Stack direction="row" justifyContent="space-between" mt={0.7}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Discount:
-            </Typography>
-            <Typography fontWeight="600">{`£ 0`}</Typography>
-          </Stack>
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            mb={1}
+            color="primary.main"
+            textAlign="center"
+            sx={{}}
+          >
+            Order Summary
+          </Typography>
+          {products?.map((item) => (
+            <Stack
+              key={item.id || item._id || item.name}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography variant="body2">{item.name}</Typography>
+              <Typography variant="body2">
+                £{item.total?.toLocaleString() || 0}
+              </Typography>
+            </Stack>
+          ))}
+
           <CustomDivider />
-          <Typography variant="h5" textAlign="right" my={1}>
-            {`£ ${cartTotal.toLocaleString()}`}
+
+          <Stack direction="column" spacing={1}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" color="text.secondary">
+                Subtotal
+              </Typography>
+              <Typography variant="subtitle1" fontWeight={600}>
+                £{cartTotal?.toLocaleString() || 0}
+              </Typography>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" color="text.secondary">
+                Shipping
+              </Typography>
+              <Typography variant="subtitle1" fontWeight={600}>
+                £0
+              </Typography>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" color="text.secondary">
+                Tax
+              </Typography>
+              <Typography variant="subtitle1" fontWeight={600}>
+                £0
+              </Typography>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" color="text.secondary">
+                Discount
+              </Typography>
+              <Typography variant="subtitle1" fontWeight={600}>
+                £0
+              </Typography>
+            </Stack>
+          </Stack>
+
+          <CustomDivider />
+
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            textAlign="right"
+            color="primary.main"
+          >
+            £{cartTotal?.toLocaleString() || 0}
           </Typography>
         </Paper>
       </Grid>
+
+      {/* Buy Now Button */}
       <Grid item xs={12} md={8}>
         <Button
           fullWidth
           disabled={!option}
-          onClick={() => createOrder()}
+          onClick={createOrder}
           sx={{
             mt: 4,
+            py: 1.5,
             textTransform: "none",
             bgcolor: !option ? "#0000001f" : "primary.main",
             color: "white",
-            fontSize: "14px",
-            paddingX: "20px",
-            fontWeight: 500,
+            fontWeight: 700,
+            fontSize: 15,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             gap: 1,
-
-            "&:hover": {
-              backgroundColor: "#E3364E",
-            },
+            borderRadius: 2,
+            "&:hover": { bgcolor: "#E3364E" },
           }}
         >
-          <ShoppingCartOutlinedIcon
-            sx={{
-              fontSize: "20px",
-            }}
-          />
-          Buy now{" "}
+          <ShoppingCartOutlinedIcon sx={{ fontSize: 20 }} />
+          Buy Now
         </Button>
       </Grid>
     </Grid>
   );
+};
+
+PaymentPage.propTypes = {
+  defaultDeliveryDate: PropTypes.string,
 };
 
 export default PaymentPage;

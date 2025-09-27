@@ -29,6 +29,7 @@ import { setSelectedAddress } from "../../features/order/orderSlice";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import makeToast from "../../utils/toaster";
+import { PropTypes } from 'prop-types';
 
 const Address = (prop) => {
   const {
@@ -113,7 +114,6 @@ const Address = (prop) => {
 
 export const DeliveryAddress = ({ updateStepCompletion }) => {
   const [editMode, setEditMode] = useState(false);
-  const Mobile = useMediaQuery("(min-width:968px)");
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const dispatch = useDispatch();
   const {
@@ -139,7 +139,6 @@ export const DeliveryAddress = ({ updateStepCompletion }) => {
 
   useEffect(() => {
     if ((isSuccess && createdAddress) || (isSuccess && updatedAddress)) {
-      // makeToast("success", "Address Added Sucessfully!");
       handleClose();
       dispatch(resetState());
     }
@@ -220,7 +219,7 @@ export const DeliveryAddress = ({ updateStepCompletion }) => {
       <Typography variant="subtitle2">Delivery Address</Typography>
       <Grid container spacing={2}>
         {addresses.map((address) => (
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={4} key={address._id || address.id}>
             <Address
               {...address}
               activeId={selectedAddress}
@@ -262,7 +261,7 @@ export const DeliveryAddress = ({ updateStepCompletion }) => {
             enableReinitialize={true}
             initialValues={initialValues}
             validationSchema={addressSchema}
-            onSubmit={(values, { resetForm }) => {
+            onSubmit={(values) => {
               if (editMode) {
                 const data = { id: addressData._id, addressData: values };
                 dispatch(updateAddress(data));
@@ -420,9 +419,12 @@ export const DeliveryAddress = ({ updateStepCompletion }) => {
                 </Button>
               </form>
             )}
-          </Formik>{" "}
+          </Formik>
         </Paper>
       </Modal>
     </Paper>
   );
+};
+DeliveryAddress.propTypes = {
+  updateStepCompletion: PropTypes.func.isRequired,
 };
