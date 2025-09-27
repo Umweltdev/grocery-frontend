@@ -34,7 +34,6 @@ const Address = ({ _id, fullName, address, phone, state }) => {
         // border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
-        transition: "all 0.3s ease",
         bgcolor: "#fff",
         boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
         transition: "all 0.3s ease-in-out",

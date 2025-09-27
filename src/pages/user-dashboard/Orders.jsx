@@ -65,11 +65,6 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 color="text.secondary"
                 fontWeight={600}
               >
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-              >
                 ORDER ID
               </Typography>
               <Typography
@@ -80,16 +75,12 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 #{orderId.substring(0, 8).toUpperCase()}
               </Typography>
             </Stack>
+
           </Grid>
 
 
           <Grid item xs={6} sm={2}>
             <Stack spacing={1}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-              >
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -120,11 +111,6 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 color="text.secondary"
                 fontWeight={600}
               >
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-              >
                 DATE
               </Typography>
               <Typography variant="body2">
@@ -140,11 +126,6 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
 
           <Grid item xs={8} sm={3}>
             <Stack spacing={1}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-              >
               <Typography
                 variant="caption"
                 color="text.secondary"

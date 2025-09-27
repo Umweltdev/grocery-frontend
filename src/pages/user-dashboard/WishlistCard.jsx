@@ -76,6 +76,7 @@ const WishListCard = ({
         position: "relative",
         bgcolor: "#fff",
         boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.1)",
+        pb: 2,
         "&:hover": {
           borderColor: "primary.300",
           boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.3)",
@@ -90,7 +91,7 @@ const WishListCard = ({
           alt={name}
           sx={{
             width: "100%",
-            height: { xs: 250, sm: 300, md: 350 },
+            height: { xs: 250, sm: 300, md: 300 },
             objectFit: "contain",
           }}
         />
@@ -127,13 +128,12 @@ const WishListCard = ({
             {name}
           </Typography>
         </Link>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          mt={0.5}
-          noWrap
-        >
-          {description ? (description.length > 100 ? `${description.substring(0, 90)}...` : description) : ""}
+        <Typography variant="subtitle2" color="text.secondary" mt={0.5} noWrap>
+          {description
+            ? description.length > 100
+              ? `${description.substring(0, 90)}...`
+              : description
+            : ""}
         </Typography>
       </Box>
 
