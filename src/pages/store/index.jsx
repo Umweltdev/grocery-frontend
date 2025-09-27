@@ -132,11 +132,24 @@ const Store = () => {
                 setSort={setSort}
                 openDrawer={toggleDrawer}
               />
-              <Products
+              <Box
+                bgcolor="white"
+                p={{ xs: 1.5, sm: 3 }}
+                justifyContent="center"
+                boxShadow="0px 3px 10px rgba(0,0,0,0.08)"
+                sx={{ width: "100%" }}
+              >
+                <Products
+                  activeIcon={activeIcon}
+                  category={category}
+                  search={search}
+                />
+              </Box>
+              {/* <Products
                 activeIcon={activeIcon}
                 category={category}
                 search={search}
-              />
+              /> */}
             </Grid>
           </Grid>
         </Container>
