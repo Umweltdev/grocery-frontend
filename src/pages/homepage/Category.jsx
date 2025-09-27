@@ -91,9 +91,9 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
         {products.slice(0, 6).map((product) => (
           <Grid
             item
-            xs={12} // full width on mobile
-            sm={6} // 2 per row on tablets
-            md={3} // 4 per row on desktop
+            xs={12}
+            sm={6}
+            md={3}
             key={product._id}
           >
             <Card

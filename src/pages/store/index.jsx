@@ -145,11 +145,7 @@ const Store = () => {
                   search={search}
                 />
               </Box>
-              {/* <Products
-                activeIcon={activeIcon}
-                category={category}
-                search={search}
-              /> */}
+
             </Grid>
           </Grid>
         </Container>
