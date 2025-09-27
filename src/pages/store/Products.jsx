@@ -5,12 +5,12 @@ import {
   searchProduct,
 } from "../../features/product/productSlice";
 import {
-  Stack,
   Grid,
   CircularProgress,
   Box,
   Typography,
   Pagination,
+  Paper,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import ICard from "../../components/ui-elements/Card";
@@ -39,9 +39,7 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
+  const handlePageChange = (event, value) => setCurrentPage(value);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -55,10 +53,10 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
-          height: "300px",
+          minHeight: 300,
         }}
       >
-        <CircularProgress />
+        <CircularProgress size={60} />
       </Box>
     );
   }
@@ -68,61 +66,72 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          alignItems: "center",
           justifyContent: "center",
           width: "100%",
-          height: "500px",
-          textAlign: "center",
+          mt: 5,
         }}
       >
-        <SentimentVeryDissatisfiedIcon
-          sx={{ fontSize: 50, color: "text.secondary" }}
-        />
-        <Typography variant="h6">
-          Sorry, we couldn&apos;t find the product you are looking for.
-        </Typography>
-        <Typography variant="h6">
-          Please explore our other exciting products!
-        </Typography>
+        <Paper
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+            p: 4,
+            width: { xs: "90%", sm: "70%", md: "400px" },
+            minHeight: 400,
+            textAlign: "center",
+          }}
+        >
+          <SentimentVeryDissatisfiedIcon
+            sx={{ fontSize: 60, color: "text.secondary" }}
+          />
+          <Typography variant="h6" fontWeight={500}>
+            Sorry, we couldn&apos;t find the product you are looking for.
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Please explore our other exciting products!
+          </Typography>
+        </Paper>
       </Box>
     );
   }
 
   return (
-    <Stack spacing={3}>
-      <Grid container spacing={3} justifyContent="center">
+    <>
+      <Grid container spacing={3} justifyContent="center" alignItems="stretch">
         {paginatedData.map((item) => (
           <Grid
             item
-            xs={12}
-            sm={activeIcon === "apps" ? 6 : 12}
-            md={activeIcon === "apps" ? 4 : 12}
             key={item._id}
+            xs={12}
+            sm={activeIcon === "apps" ? 6 : 12} 
+            md={activeIcon === "apps" ? 4 : 12}
+            display="flex"
+            justifyContent="center"
           >
-            {activeIcon === "apps" ? (
-              <ICard {...item} />
-            ) : (
-              <ProductCard {...item} />
-            )}
+            <Box sx={{ width: "100%", maxWidth: 384, display: "flex" }}>
+              {activeIcon === "apps" ? (
+                <ICard {...item} />
+              ) : (
+                <ProductCard {...item} />
+              )}
+            </Box>
           </Grid>
         ))}
       </Grid>
 
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={handlePageChange}
-        variant="outlined"
-        color="primary"
-        sx={{
-          display: "flex",
-          justifyContent: { xs: "center", sm: "flex-end" },
-          mt: 3,
-        }}
-      />
-    </Stack>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          variant="outlined"
+          color="primary"
+        />
+      </Box>
+    </>
   );
 };
 

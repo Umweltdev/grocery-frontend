@@ -17,7 +17,6 @@ import {
   Dashboard,
   CardGiftcard,
   PeopleAlt,
-  TrendingUp,
   Logout,
   Place,
   Book,
@@ -74,16 +73,16 @@ const menuConfig = [
     ],
   },
   { label: "Customers", icon: <PeopleAlt />, path: "/admin/customers" },
-  {
-    label: "RCD-MCD",
-    icon: <TrendingUp />,
-    children: [
-      { label: "MCD Settings", path: "/admin/pricing/mcd" },
-      { label: "RCD Settings", path: "/admin/pricing/rcd" },
-      { label: "AED Dashboard", path: "/admin/pricing/aed" },
-      { label: "Pricing Dashboard", path: "/admin/pricing/dashboard" },
-    ],
-  },
+  // {
+  //   label: "RCD-MCD",
+  //   icon: <TrendingUp />,
+  //   children: [
+  //     { label: "MCD Settings", path: "/admin/pricing/mcd" },
+  //     { label: "RCD Settings", path: "/admin/pricing/rcd" },
+  //     { label: "AED Dashboard", path: "/admin/pricing/aed" },
+  //     { label: "Pricing Dashboard", path: "/admin/pricing/dashboard" },
+  //   ],
+  // },
 ];
 
 const SideBar = ({ handleDrawerClose }) => {
