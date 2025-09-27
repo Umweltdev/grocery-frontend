@@ -5,7 +5,6 @@ import {
   searchProduct,
 } from "../../features/product/productSlice";
 import {
-  Stack,
   Grid,
   CircularProgress,
   Box,
@@ -107,8 +106,8 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
             item
             key={item._id}
             xs={12}
-            sm={activeIcon === "apps" ? 6 : 12} // 2 per row on tablet in grid mode
-            md={activeIcon === "apps" ? 4 : 12} // 3 per row on desktop in grid mode
+            sm={activeIcon === "apps" ? 6 : 12} 
+            md={activeIcon === "apps" ? 4 : 12}
             display="flex"
             justifyContent="center"
           >
