@@ -12,21 +12,94 @@ import { Carousel, Carousel1, Carousel2 } from "./Carousel";
 import CategoryCard from "./CategoryCard";
 
 const fallbackCategories = [
-  { _id: "electronics", name: "Electronics", image: { url: "https://picsum.photos/300/200?random=1" } },
-  { _id: "fashion", name: "Fashion", image: { url: "https://picsum.photos/300/200?random=2" } },
-  { _id: "home-kitchen", name: "Home & Kitchen", image: { url: "https://picsum.photos/300/200?random=3" } },
-  { _id: "sports", name: "Sports & Outdoors", image: { url: "https://picsum.photos/300/200?random=4" } },
-  { _id: "beauty", name: "Beauty & Personal Care", image: { url: "https://picsum.photos/300/200?random=5" } },
-  { _id: "Headphone", name: "Wireless Headphones", image: {url: "https://picsum.photos/300?random=11"}, price: 99, stock: 10 },
-  { _id: "p2", name: "Smart Watch", image: {url: "https://picsum.photos/300?random=12"}, price: 150, stock: 8 },
-  { _id: "p3", name: "Running Shoes", image: {url: "https://picsum.photos/300?random=13"}, price: 120, stock: 12 },
-  { _id: "p4", name: "Organic Juice Pack", image: {url: "https://picsum.photos/300?random=14"}, price: 20, stock: 30 },
-  { _id: "p5", name: "Gaming Laptop", image: {url: "https://picsum.photos/300?random=15"}, price: 999, stock: 5 },
-  { _id: "p6", name: "Bluetooth Speaker", image: {url: "https://picsum.photos/200/200?random=16"}, price: 60, stock: 15 },
-  { _id: "p7", name: "Leather Wallet", image: {url: "https://picsum.photos/200/200?random=17"}, price: 45, stock: 20 },
-  { _id: "p8", name: "Fitness Tracker", image: {url: "https://picsum.photos/200/200?random=18"}, price: 80, stock: 7 },
-  { _id: "p9", name: "Electric Kettle", image: {url: "https://picsum.photos/200/200?random=19"}, price: 35, stock: 25 },
-
+  {
+    _id: "electronics",
+    name: "Electronics",
+    image: { url: "https://picsum.photos/300/200?random=1" },
+  },
+  {
+    _id: "fashion",
+    name: "Fashion",
+    image: { url: "https://picsum.photos/300/200?random=2" },
+  },
+  {
+    _id: "home-kitchen",
+    name: "Home & Kitchen",
+    image: { url: "https://picsum.photos/300/200?random=3" },
+  },
+  {
+    _id: "sports",
+    name: "Sports & Outdoors",
+    image: { url: "https://picsum.photos/300/200?random=4" },
+  },
+  {
+    _id: "beauty",
+    name: "Beauty & Personal Care",
+    image: { url: "https://picsum.photos/300/200?random=5" },
+  },
+  {
+    _id: "Headphone",
+    name: "Wireless Headphones",
+    image: "https://picsum.photos/300?random=11",
+    price: 99,
+    stock: 10,
+  },
+  {
+    _id: "p2",
+    name: "Smart Watch",
+    image: { url: "https://picsum.photos/300?random=12" },
+    price: 150,
+    stock: 8,
+  },
+  {
+    _id: "p3",
+    name: "Running Shoes",
+    image: { url: "https://picsum.photos/300?random=13" },
+    price: 120,
+    stock: 12,
+  },
+  {
+    _id: "p4",
+    name: "Organic Juice Pack",
+    image: { url: "https://picsum.photos/300?random=14" },
+    price: 20,
+    stock: 30,
+  },
+  {
+    _id: "p5",
+    name: "Gaming Laptop",
+    image: { url: "https://picsum.photos/300?random=15" },
+    price: 999,
+    stock: 5,
+  },
+  {
+    _id: "p6",
+    name: "Bluetooth Speaker",
+    image: { url: "https://picsum.photos/200/200?random=16" },
+    price: 60,
+    stock: 15,
+  },
+  {
+    _id: "p7",
+    name: "Leather Wallet",
+    image: { url: "https://picsum.photos/200/200?random=17" },
+    price: 45,
+    stock: 20,
+  },
+  {
+    _id: "p8",
+    name: "Fitness Tracker",
+    image: { url: "https://picsum.photos/200/200?random=18" },
+    price: 80,
+    stock: 7,
+  },
+  {
+    _id: "p9",
+    name: "Electric Kettle",
+    image: { url: "https://picsum.photos/200/200?random=19" },
+    price: 35,
+    stock: 25,
+  },
 ];
 
 const fallbackBestSellers = [

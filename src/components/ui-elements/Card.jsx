@@ -45,7 +45,7 @@ const ICard = ({
       addToCart({
         id: _id,
         image: images[0]?.url || "/placeholder.png",
-        price: salePrice || regularPrice,
+        price: salePrice ?? regularPrice,
         name,
       })
     );
@@ -73,9 +73,7 @@ const ICard = ({
       .catch(() => makeToast("error", "Unable to update wishlist"));
   };
 
-  const imageUrl =
-    images[0]?.url ||
-    "";
+  const imageUrl = images[0]?.url || "/placeholder.png";
 
   return (
     <Card

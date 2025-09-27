@@ -77,7 +77,11 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
       if (option === "card" && response.data.authorizationUrl) {
         window.location.href = response.data.authorizationUrl;
       } else if (response.data.status === "success") {
-        makeToast("success", "Order successfully paid with card");
+        const successMessage =
+          option === "card"
+            ? "Order successfully paid with card"
+            : "Order confirmed! Our team will contact you shortly.";
+        makeToast("success", successMessage);
         clearCartAndNavigate();
       } else {
         makeToast(

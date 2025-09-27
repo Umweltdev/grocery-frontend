@@ -5,6 +5,7 @@ const OrderDetails = () => {
   const { products, cartTotal } = useSelector((state) => state.cart);
 
   return (
+
       <>
         <Stack spacing={2}>
           {products.map((product) => (

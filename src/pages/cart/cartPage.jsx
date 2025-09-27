@@ -86,7 +86,11 @@ const CartCard = ({ name, image, id, price, count, total }) => {
             <Typography color="text.secondary" variant="body1">
               {`£${price.toLocaleString()}`} x {count}
             </Typography>
-            <Typography color="primary.main" variant="body1" fontWeight="bold">
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              sx={{ color: "primary.main" }}
+            >
               {`£${total?.toLocaleString()}`}
             </Typography>
           </Stack>

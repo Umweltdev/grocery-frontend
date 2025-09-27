@@ -29,7 +29,7 @@ import { setSelectedAddress } from "../../features/order/orderSlice";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import makeToast from "../../utils/toaster";
-import { PropTypes } from 'prop-types';
+import PropTypes from "prop-types";
 
 const Address = (prop) => {
   const {
