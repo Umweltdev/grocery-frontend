@@ -100,23 +100,25 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
   }
 
   return (
-    <Stack spacing={3} width="100%">
+    <>
       <Grid container spacing={3} justifyContent="center" alignItems="stretch">
         {paginatedData.map((item) => (
           <Grid
             item
             key={item._id}
             xs={12}
-            sm={activeIcon === "apps" ? 6 : 12}
-            md={activeIcon === "apps" ? 4 : 12}
+            sm={activeIcon === "apps" ? 6 : 12} // 2 per row on tablet in grid mode
+            md={activeIcon === "apps" ? 4 : 12} // 3 per row on desktop in grid mode
             display="flex"
             justifyContent="center"
           >
-            {activeIcon === "apps" ? (
-              <ICard {...item} />
-            ) : (
-              <ProductCard {...item} />
-            )}
+            <Box sx={{ width: "100%", maxWidth: 384, display: "flex" }}>
+              {activeIcon === "apps" ? (
+                <ICard {...item} />
+              ) : (
+                <ProductCard {...item} />
+              )}
+            </Box>
           </Grid>
         ))}
       </Grid>
@@ -130,7 +132,7 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
           color="primary"
         />
       </Box>
-    </Stack>
+    </>
   );
 };
 
