@@ -227,7 +227,7 @@ const Dashboard = () => {
 
               <Box sx={{ width: "195px", height: "auto" }}>
                 <img
-                  src="https://bazaar.ui-lib.com/assets/images/illustrations/dashboard/welcome.svg"
+                  src="https://res.cloudinary.com/dlst0is1v/image/upload/v1759063260/Gemini_Generated_Image_9a3gep9a3gep9a3g_1_qxkjji.png"
                   alt="welcome"
                   style={{ width: "100%", height: "100%" }}
                 />

@@ -106,7 +106,7 @@ const CheckoutPage = ({ updateStepCompletion }) => {
             <Typography
               variant="subtitle1"
               fontWeight={600}
-              color={isDeliveryAllowed ? "text.primary" : "error.main"}
+              color={isDeliveryAllowed ? "primary.main" : "error.main"}
             >
               {isDeliveryAllowed ? "£ 0" : "Not Available"}
             </Typography>
@@ -137,7 +137,7 @@ const CheckoutPage = ({ updateStepCompletion }) => {
             fontWeight={700}
             textAlign="right"
             mb={3}
-            color="text.primary"
+            color="primary.main"
           >
             {`£ ${cartTotal.toLocaleString()}`}
           </Typography>

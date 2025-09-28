@@ -27,7 +27,7 @@ const AlgorithmPerformance = ({ data }) => {
       <Typography
         variant="h6"
         fontWeight={600}
-        color="text.primary"
+        color="primary.main"
         gutterBottom
       >
         Algorithm Performance Over Time

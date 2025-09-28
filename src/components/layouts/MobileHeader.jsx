@@ -53,7 +53,7 @@ const MobileHeader = ({
     dispatch(logout());
     dispatch(resetState());
     handleClose();
-    navigate("/login"); // send back to login after logout
+    navigate("/login");
   };
 
   return (
@@ -65,21 +65,20 @@ const MobileHeader = ({
       justifyContent="space-between"
       display={{ xs: "flex", lg: "none" }}
     >
-      {/* Logo */}
-      <Link to="/" style={{ display: "flex" }}>
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/logo2.svg"
-          alt="logo"
-        />
+      <Link to="/">
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <img
+            src="https://res.cloudinary.com/dlst0is1v/image/upload/v1759063260/Gemini_Generated_Image_9a3gep9a3gep9a3g_1_qxkjji.png"
+            alt="logo"
+            style={{ height: "100px" }}
+          />
+        </Box>
       </Link>
-
-      {/* Actions */}
       <Stack
         direction="row"
         alignItems="center"
         sx={{ flex: "1 1 0%", justifyContent: "end" }}
       >
-        {/* Search */}
         <IconButton
           component="span"
           onClick={handleDrawerOpen}
@@ -91,8 +90,6 @@ const MobileHeader = ({
         >
           <SearchIcon />
         </IconButton>
-
-        {/* Profile / User menu */}
         <div>
           <IconButton sx={{ color: "black" }} onClick={handleClick}>
             <PersonOutlineOutlinedIcon />
@@ -139,8 +136,6 @@ const MobileHeader = ({
             )}
           </Menu>
         </div>
-
-        {/* Cart */}
         <IconButton onClick={handleCartOpen} sx={{ color: "black" }}>
           <StyledBadge
             badgeContent={products?.reduce(
@@ -152,8 +147,6 @@ const MobileHeader = ({
           </StyledBadge>
         </IconButton>
       </Stack>
-
-      {/* Drawer for Search */}
       <Drawer
         open={drawerOpen}
         onClose={handleDrawerClose}

@@ -3,10 +3,8 @@ import {
   Box,
   Stack,
   Button,
-  IconButton,
   Paper,
   TextField,
-  Rating,
   styled,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -52,7 +50,7 @@ const ForgotPassword = () => {
         <form>
           <Link to={"/"} style={{ textDecoration: "none" }}>
             <img
-              src="https://bazaar.ui-lib.com/assets/images/bazaar-black-sm.svg"
+              src="https://res.cloudinary.com/dlst0is1v/image/upload/v1759063260/Gemini_Generated_Image_9a3gep9a3gep9a3g_1_qxkjji.png"
               alt="bazaar logo"
               style={{
                 margin: "0 auto",
@@ -95,7 +93,7 @@ const ForgotPassword = () => {
           </Button>
         </form>
         <Stack direction="row" spacing={1} justifyContent="center" mt={3}>
-          <Typography variant="subtitle2">Don't have account?</Typography>
+          <Typography variant="subtitle2">Don&apos;t have account?</Typography>
           <Link to={"/signup"} style={{ textDecoration: "none" }}>
             <Typography
               variant="subtitle1"

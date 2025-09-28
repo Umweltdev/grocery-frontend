@@ -64,14 +64,14 @@ const TopBar = ({ handleDrawerOpen }) => {
               <SvgIcon
                 sx={{
                   fontSize: "25px",
-                  color: "text.primary",
+                  color: "primary.main",
                 }}
               >
                 <Browse />
               </SvgIcon>
 
               <Link to={"/"} style={{ textDecoration: "none" }}>
-                <Typography variant="subtitle1" color="text.primary">
+                <Typography variant="subtitle1" color="primary.main">
                   Browse Website
                 </Typography>
               </Link>

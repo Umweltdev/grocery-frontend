@@ -218,9 +218,10 @@ const Shop = () => {
             </Box>
           ) : (
             <Grid
-              container
-              spacing={1}
+                container
+              spacing={{ xs: 2, md: 4 }}
               justifyContent="center"
+              alignItems="stretch"
             >
               {categoriesToShow.map((item) => (
                 <CategoryCard key={item._id} {...item} />

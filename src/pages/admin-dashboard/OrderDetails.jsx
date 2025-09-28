@@ -123,7 +123,7 @@ const OrderDetails = () => {
             <Typography
               variant="subtitle2"
               sx={{
-                color: "text.primary",
+                color: "primary.main",
               }}
             >
               {order?.orderId}
@@ -136,7 +136,7 @@ const OrderDetails = () => {
             <Typography
               variant="subtitle2"
               sx={{
-                color: "text.primary",
+                color: "primary.main",
               }}
             >
               {new Date(order?.orderDate).toLocaleDateString("en-US", {
@@ -215,24 +215,24 @@ const OrderDetails = () => {
           }}
         >
           <Stack>
-            <Typography fontWeight="600" color="text.primary">
+            <Typography fontWeight="600" color="primary.main">
               Shipping Address
             </Typography>
             <Typography
               variant="subtitle2"
-              color="text.primary"
+              color="primary.main"
               textTransform="capitalize"
             >
               {`${order?.address?.address} ${order?.address?.state}`}
             </Typography>
           </Stack>
           <Stack>
-            <Typography fontWeight="600" color="text.primary">
+            <Typography fontWeight="600" color="primary.main">
               Customer&apos;s Note
             </Typography>
             <Typography
               variant="subtitle2"
-              color="text.primary"
+              color="primary.main"
               textTransform="capitalize"
             >
               {order?.comment ? order?.comment : "No Comment "}
@@ -252,7 +252,7 @@ const OrderDetails = () => {
             boxShadow: " 0px 1px 3px rgba(3, 0, 71, 0.09)",
           }}
         >
-          <Typography variant="h6" color="text.primary">
+          <Typography variant="h6" color="primary.main">
             Total Summary
           </Typography>
           <Stack spacing={1}>
@@ -260,7 +260,7 @@ const OrderDetails = () => {
               <Typography variant="subtitle2" color="text.secondary">
                 Subtotal:
               </Typography>
-              <Typography variant="subtitle1" color="text.primary">
+              <Typography variant="subtitle1" color="primary.main">
                 {`£ ${order?.totalPrice.toLocaleString()}`}
               </Typography>
             </Stack>
@@ -269,7 +269,7 @@ const OrderDetails = () => {
               <Typography variant="subtitle2" color="text.secondary">
                 Shipping Fee:
               </Typography>
-              <Typography variant="subtitle1" color="text.primary">
+              <Typography variant="subtitle1" color="primary.main">
                 £ 0.00
               </Typography>
             </Stack>
@@ -278,24 +278,24 @@ const OrderDetails = () => {
               <Typography variant="subtitle2" color="text.secondary">
                 Discount:
               </Typography>
-              <Typography variant="subtitle1" color="text.primary">
+              <Typography variant="subtitle1" color="primary.main">
                 £ 0.00
               </Typography>
             </Stack>
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle1" color="text.primary">
+            <Typography variant="subtitle1" color="primary.main">
               Total:
             </Typography>
-            <Typography variant="subtitle1" color="text.primary">
+            <Typography variant="subtitle1" color="primary.main">
               {`£ ${order?.totalPrice.toLocaleString()}`}
             </Typography>
           </Stack>
 
           <Typography
             variant="subtitle2"
-            color="text.primary"
+            color="primary.main"
             textTransform="capitalize"
           >
             {order?.isPaid ? `Paid by ${order?.paymentMethod}` : "Pending"}

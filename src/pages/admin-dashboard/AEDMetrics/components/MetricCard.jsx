@@ -38,7 +38,7 @@ const MetricCard = memo(({ title, value, status, trendData }) => {
           {title}
         </Typography>
 
-        <Typography variant="h4" fontWeight="bold" color="text.primary">
+        <Typography variant="h4" fontWeight="bold" color="primary.main">
           {value}
         </Typography>
 

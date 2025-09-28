@@ -43,7 +43,7 @@ const AdsPerformance = ({ adsData }) => {
       <Typography
         variant="h6"
         fontWeight={600}
-        color="text.primary"
+        color="primary.main"
         gutterBottom
       >
         Ads Performance (Comparative)
@@ -92,7 +92,7 @@ const AdsPerformance = ({ adsData }) => {
               <Typography
                 variant="subtitle1"
                 fontWeight={600}
-                color="text.primary"
+                color="primary.main"
               >
                 {month} Rankings:
               </Typography>

@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const companyInfo = {
-  logo: "https://bazaar.ui-lib.com/assets/images/logo.svg",
+  logo: "https://res.cloudinary.com/dlst0is1v/image/upload/v1759063244/Gemini_Generated_Image_9a3gep9a3gep9a3g_wdlmyf.png",
   description:
     "Your one-stop online store for everything you love. Fast delivery, best prices, and quality guaranteed.",
   address: "70 Washington Square South, New York, NY 10012, United States",

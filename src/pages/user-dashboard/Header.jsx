@@ -49,7 +49,7 @@ const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
             </Box>
             <Typography
               variant="h4"
-              color="text.primary"
+              color="primary.main"
               fontWeight={700}
               fontSize={{ xs: "24px", md: "28px" }}
             >

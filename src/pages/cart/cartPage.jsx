@@ -56,7 +56,7 @@ const CartCard = ({ name, image, id, price, count, total }) => {
           right: "10px",
           color: "text.secondary",
           "&:hover": {
-            color: "text.primary",
+            color: "primary.main",
           },
         }}
       >
@@ -231,7 +231,7 @@ const CartPage = ({ updateStepCompletion }) => {
             </Typography>
             <Typography
               variant="h4"
-              color="text.primary"
+              color="primary.main"
               sx={{ fontWeight: 700 }}
             >
               {`£ ${cartTotal.toLocaleString()}`}

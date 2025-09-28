@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <Typography
           variant="subtitle2"
           fontWeight="bold"
-          color="text.primary"
+          color="primary.main"
           gutterBottom
         >
           {label}
