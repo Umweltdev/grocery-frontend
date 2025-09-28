@@ -84,7 +84,7 @@ const Homepage = () => {
         display={{ xs: "flex", md: "none" }}
         sx={{
           px: 2,
-          py: 1.5,
+          py: 1.8,
           alignItems: "center",
           justifyContent: "space-between",
           borderBottom: "1px solid #e5e7eb",

@@ -25,10 +25,10 @@ function SampleNextArrow({ onClick }) {
         top: "50%",
         right: "-5px",
         transform: "translateY(-50%)",
-        background: "#0f3460",
-        color: "white",
+        background: "#FFD700",
+        color: "black",
         zIndex: 2,
-        "&:hover": { background: "#0f3460" },
+        "&:hover": { background: "#FFC300" },
       }}
     >
       <ArrowForwardIcon fontSize="small" />
@@ -49,10 +49,10 @@ function SamplePrevArrow({ onClick }) {
         top: "50%",
         left: "-5px",
         transform: "translateY(-50%)",
-        background: "#0f3460",
-        color: "white",
+        background: "#FFD700",
+        color: "black",
         zIndex: 2,
-        "&:hover": { background: "#0f3460" },
+        "&:hover": { background: "#FFC300" },
       }}
     >
       <ArrowBackIcon fontSize="small" />

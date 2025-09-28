@@ -68,9 +68,9 @@ const MobileHeader = ({
       <Link to="/">
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <img
-            src="https://res.cloudinary.com/dlst0is1v/image/upload/v1759063260/Gemini_Generated_Image_9a3gep9a3gep9a3g_1_qxkjji.png"
+            src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
             alt="logo"
-            style={{ height: "100px" }}
+            style={{ height: "70px" }}
           />
         </Box>
       </Link>
@@ -156,7 +156,7 @@ const MobileHeader = ({
           "& .MuiPaper-root": { backgroundColor: "white" },
         }}
       >
-        <Box sx={{ width: "auto", padding: "20px", height: "100vh" }}>
+        <Box sx={{ width: "auto", padding: "20px", height: "90vh" }}>
           <Stack
             direction="row"
             justifyContent="space-between"
