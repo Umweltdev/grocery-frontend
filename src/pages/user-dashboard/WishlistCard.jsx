@@ -1,171 +1,232 @@
 import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 import {
-  Typography,
   Box,
   Stack,
-  Tooltip,
   IconButton,
   Button,
-  Paper,
+  Typography,
+  Card,
+  CardMedia,
+  CardContent,
+  Rating,
 } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { base_url } from "../../utils/baseUrl";
-import makeToast from "../../utils/toaster";
-import { addToCart } from "../../features/cart/cartSlice";
+import {
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  ShoppingCartOutlined as ShoppingCartOutlinedIcon,
+  Block as BlockIcon,
+} from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 const WishListCard = ({
-  images = [],
-  name = "Unnamed Product",
-  description = "No description available",
-  regularPrice = 0,
+  _id,
+  name,
+  images,
+  regularPrice,
   salePrice,
-  toggle,
-  setToggle,
-  _id = "no-id",
+  description,
+  stock,
+  totalStar,
+  count,
+  onAddToCart,
+  onRemoveFromCart,
+  onToggleWishlist,
+  wishlist,
+  pricing,
 }) => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-
-  const finalPrice = salePrice || regularPrice;
-  const hasDiscount = salePrice && salePrice < regularPrice;
-
-  const removeFromWishList = () => {
-    if (!user?.token) {
-      makeToast("error", "You must be logged in");
-      return;
-    }
-    axios
-      .put(`${base_url}product/wishlist/${_id}`, null, {
-        headers: { Authorization: `Bearer ${user?.token}` },
-      })
-      .then(() => setToggle(!toggle))
-      .catch(() => makeToast("error", "Unable to update wishlist"));
-  };
-
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    dispatch(
-      addToCart({
-        id: _id,
-        image: images?.[0]?.url || "/placeholder.png",
-        price: finalPrice,
-        name,
-      })
-    );
-    makeToast("success", "Added to cart");
-  };
+  const imageUrl = images?.[0]?.url || "/placeholder.png";
 
   return (
-    <Paper
-      elevation={3}
+    <Card
       sx={{
-        backgroundColor: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        borderRadius: 3,
-        overflow: "hidden",
+        maxWidth: 384,
         width: "100%",
-        maxWidth: 380,
-        margin: "auto",
-        position: "relative",
-        pb: 2,
+        borderRadius: 3,
+        fontFamily: "sans-serif",
+        boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+        transition: "all 500ms ease-in-out",
+        overflow: "hidden",
+        "&:hover": {
+          transform: "translateY(-6px)",
+          boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.35)",
+        },
       }}
     >
-      <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
-        <Box
-          component="img"
-          src={images?.[0]?.url || "/placeholder.png"}
-          alt={name}
+      <Box sx={{ position: "relative" }}>
+        <Link
+          to={`/product/${_id}`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <CardMedia
+            component="img"
+            image={imageUrl}
+            alt={name}
+            sx={{
+              height: 240,
+              objectFit: "contain",
+              bgcolor: "#fafafa",
+              transition: "transform 500ms",
+              "&:hover": { transform: "scale(1.05)" },
+            }}
+          />
+        </Link>
+
+        <IconButton
+          onClick={onToggleWishlist}
           sx={{
-            width: "100%",
-            height: { xs: 250, sm: 300, md: 350 },
-            objectFit: "contain",
+            position: "absolute",
+            top: 16,
+            right: 16,
+            color: wishlist ? "#E3364E" : "white",
+            bgcolor: "rgba(0, 0, 0, 0.3)",
+            "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
+            transition: "all 300ms",
           }}
-        />
-      </Link>
-
-      {/* Wishlist & Price */}
-      <Stack direction="row" justifyContent="space-between" px={2} mt={2}>
-        <Stack direction="column" spacing={0.5}>
-          {hasDiscount && (
-            <Typography
-              color="text.secondary"
-              variant="subtitle2"
-              sx={{ textDecoration: "line-through" }}
-            >
-              £{regularPrice.toLocaleString()}
-            </Typography>
-          )}
-          <Typography color="primary.main" variant="subtitle1" fontWeight={600}>
-            £{finalPrice.toLocaleString()}
-          </Typography>
-        </Stack>
-
-        <Tooltip title="Remove from wishlist">
-          <IconButton onClick={removeFromWishList} sx={{ color: "#D23F57" }}>
-            <FavoriteIcon fontSize="medium" />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-
-      {/* Product Info */}
-      <Box px={2} pt={1} textAlign="center">
+        >
+          {wishlist ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        </IconButton>
+      </Box>
+      <CardContent sx={{ p: 2.5 }}>
         <Link to={`/product/${_id}`} style={{ textDecoration: "none" }}>
-          <Typography variant="body1" color="text.primary" noWrap>
+          <Typography
+            gutterBottom
+            variant="h6"
+            component="h3"
+            sx={{
+              fontWeight: 700,
+              textAlign: "left",
+              lineHeight: 1.3,
+              color: "text.primary",
+            }}
+          >
             {name}
           </Typography>
         </Link>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          mt={0.5}
-          noWrap
-        >
-          {description ? (description.length > 100 ? `${description.substring(0, 90)}...` : description) : ""}
-        </Typography>
-      </Box>
-
-      {/* Add to Cart Button */}
-      <Box px={2} pt={2}>
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={<ShoppingCartIcon />}
-          onClick={handleAddToCart}
-          sx={{
-            textTransform: "none",
-            fontWeight: 600,
-            borderRadius: 2,
-            py: 1,
-            boxShadow: "none",
-            color: "#fff",
-            "&:hover": { boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.15)" },
-          }}
-        >
-          Add to Cart
-        </Button>
-      </Box>
-    </Paper>
+        {totalStar > 0 && (
+          <Rating value={totalStar} readOnly size="small" sx={{ mb: 1 }} />
+        )}
+        {description && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              mb: 1,
+            }}
+          >
+            {description}
+          </Typography>
+        )}
+        <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+          {salePrice && (
+            <Typography
+              color="text.secondary"
+              sx={{ textDecoration: "line-through", fontSize: "0.875rem" }}
+            >
+              £{regularPrice?.toLocaleString()}
+            </Typography>
+          )}
+          <Typography color="primary" variant="h6" sx={{ fontWeight: "bold" }}>
+            £
+            {(
+              pricing?.finalPrice ||
+              salePrice ||
+              regularPrice
+            )?.toLocaleString()}
+          </Typography>
+          {pricing?.discount > 0 && (
+            <Typography variant="caption" color="success.main" fontWeight={600}>
+              -{pricing.discount.toFixed(1)}% RCD
+            </Typography>
+          )}
+        </Stack>
+        <Stack direction="row" spacing={1} alignItems="center">
+          {stock <= 0 ? (
+            <Button
+              disabled
+              startIcon={<BlockIcon />}
+              sx={{
+                flex: 1,
+                textTransform: "none",
+                bgcolor: "#f0f0f0",
+                color: "rgba(0,0,0,0.5)",
+                borderRadius: 2,
+                py: 1,
+              }}
+            >
+              Out of Stock
+            </Button>
+          ) : count > 0 ? (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Button onClick={onRemoveFromCart} size="small">
+                <RemoveIcon fontSize="small" />
+              </Button>
+              <Typography>{count}</Typography>
+              <Button onClick={onAddToCart} size="small">
+                <AddIcon fontSize="small" />
+              </Button>
+            </Stack>
+          ) : (
+            <Button
+              onClick={onAddToCart}
+              startIcon={<ShoppingCartOutlinedIcon />}
+              fullWidth
+              sx={{
+                textTransform: "none",
+                bgcolor: "#D23F57",
+                color: "#fff",
+                borderRadius: 2,
+                py: 1.2,
+                fontWeight: 600,
+                "&:hover": { bgcolor: "#B93247" },
+              }}
+            >
+              Add to Cart
+            </Button>
+          )}
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 
 WishListCard.propTypes = {
-  images: PropTypes.arrayOf(
-    PropTypes.shape({
-      url: PropTypes.string,
-    })
-  ),
-  name: PropTypes.string,
-  description: PropTypes.string,
-  regularPrice: PropTypes.number,
+  _id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  images: PropTypes.arrayOf(PropTypes.shape({ url: PropTypes.string })),
+  regularPrice: PropTypes.number.isRequired,
   salePrice: PropTypes.number,
-  toggle: PropTypes.bool.isRequired,
-  setToggle: PropTypes.func.isRequired,
-  _id: PropTypes.string,
+  description: PropTypes.string,
+  stock: PropTypes.number,
+  totalStar: PropTypes.number,
+  count: PropTypes.number,
+  onAddToCart: PropTypes.func,
+  onRemoveFromCart: PropTypes.func,
+  onToggleWishlist: PropTypes.func,
+  wishlist: PropTypes.bool,
+  pricing: PropTypes.shape({
+    finalPrice: PropTypes.number,
+    discount: PropTypes.number,
+    mcdMultiplier: PropTypes.number,
+  }),
+};
+
+WishListCard.defaultProps = {
+  images: [],
+  salePrice: null,
+  description: "",
+  stock: 0,
+  totalStar: 0,
+  count: 0,
+  onAddToCart: () => {},
+  onRemoveFromCart: () => {},
+  onToggleWishlist: () => {},
+  wishlist: false,
 };
 
 export default WishListCard;

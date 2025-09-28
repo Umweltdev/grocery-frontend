@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Typography,
   Stack,
@@ -24,22 +25,22 @@ import {
 } from "../../features/address/addressSlice";
 import Header from "./Header";
 
-
 const Address = ({ _id, fullName, address, phone, state }) => {
   const dispatch = useDispatch();
-  
+
   return (
     <Card
       elevation={0}
       sx={{
-        border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
-        transition: "all 0.3s ease",
+        bgcolor: "#fff",
+        boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
+        transition: "all 0.3s ease-in-out",
         "&:hover": {
           borderColor: "primary.300",
           transform: "translateY(-2px)",
-          boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
         },
       }}
     >
@@ -53,7 +54,11 @@ const Address = ({ _id, fullName, address, phone, state }) => {
             <Box>
               <Stack direction="row" alignItems="center" spacing={1} mb={1}>
                 <PersonIcon sx={{ fontSize: 20, color: "primary.main" }} />
-                <Typography variant="h6" fontWeight={600} sx={{ textTransform: "capitalize" }}>
+                <Typography
+                  variant="h6"
+                  fontWeight={600}
+                  sx={{ textTransform: "capitalize" }}
+                >
                   {fullName}
                 </Typography>
               </Stack>
@@ -67,7 +72,7 @@ const Address = ({ _id, fullName, address, phone, state }) => {
                 }}
               />
             </Box>
-            
+
             <Stack direction="row" spacing={0.5}>
               <Link
                 to={`/user/addresses/${_id}`}
@@ -84,7 +89,7 @@ const Address = ({ _id, fullName, address, phone, state }) => {
                   <EditIcon fontSize="small" />
                 </IconButton>
               </Link>
-              
+
               <IconButton
                 size="small"
                 onClick={() => dispatch(deleteAddress(_id))}
@@ -98,9 +103,9 @@ const Address = ({ _id, fullName, address, phone, state }) => {
               </IconButton>
             </Stack>
           </Stack>
-          
+
           <Divider />
-          
+
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -113,15 +118,20 @@ const Address = ({ _id, fullName, address, phone, state }) => {
                 {phone}
               </Typography>
             </Grid>
-            
+
             <Grid item xs={12}>
               <Stack direction="row" alignItems="flex-start" spacing={1}>
-                <LocationOnIcon sx={{ fontSize: 18, color: "text.secondary", mt: 0.2 }} />
+                <LocationOnIcon
+                  sx={{ fontSize: 18, color: "text.secondary", mt: 0.2 }}
+                />
                 <Box>
                   <Typography variant="body2" color="text.secondary" mb={0.5}>
                     Address
                   </Typography>
-                  <Typography variant="body1" sx={{ textTransform: "capitalize" }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ textTransform: "capitalize" }}
+                  >
                     {address}, {state} State
                   </Typography>
                 </Box>
@@ -132,6 +142,14 @@ const Address = ({ _id, fullName, address, phone, state }) => {
       </CardContent>
     </Card>
   );
+};
+
+Address.propTypes = {
+  _id: PropTypes.string.isRequired,
+  fullName: PropTypes.string.isRequired,
+  address: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
+  state: PropTypes.string.isRequired,
 };
 
 const Addresses = ({ openDrawer }) => {
@@ -184,7 +202,7 @@ const Addresses = ({ openDrawer }) => {
           <Typography variant="body2" color="text.secondary">
             {addresses.length} saved address{addresses.length !== 1 ? "es" : ""}
           </Typography>
-          
+
           <Grid container spacing={3}>
             {addresses.map((address, index) => (
               <Grid item xs={12} md={6} key={address._id || index}>
@@ -196,6 +214,10 @@ const Addresses = ({ openDrawer }) => {
       )}
     </Stack>
   );
+};
+
+Addresses.propTypes = {
+  openDrawer: PropTypes.func.isRequired,
 };
 
 export default Addresses;

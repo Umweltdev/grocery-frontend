@@ -1,20 +1,17 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
   Paper,
   Stack,
   TextField,
-  Typography,
   Autocomplete,
 } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { statesInNigeria } from "./data";
-// import Header from "../../components/Header";
-import { Link, useNavigate } from "react-router-dom";
 import PlaceIcon from "@mui/icons-material/Place";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -25,6 +22,7 @@ import {
 } from "../../features/address/addressSlice";
 import makeToast from "../../utils/toaster";
 import Header from "./Header";
+import PropTypes from "prop-types";
 
 const Address = ({ openDrawer }) => {
   const { id } = useParams();
@@ -32,7 +30,6 @@ const Address = ({ openDrawer }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const addressState = useSelector((state) => state.address);
   const {
     isSuccess,
     isError,
@@ -40,34 +37,33 @@ const Address = ({ openDrawer }) => {
     createdAddress,
     updatedAddress,
     addressData,
-  } = addressState;
+  } = useSelector((state) => state.address);
+
   useEffect(() => {
     if (id !== "new") {
       dispatch(getAddress(id));
     } else {
       dispatch(resetState());
     }
-  }, [id]);
+  }, [id, dispatch]);
+
   useEffect(() => {
-    if (isSuccess && createdAddress) {
-      dispatch(resetState());
-      navigate("/user/addresses");
-    }
-    if (isSuccess && updatedAddress) {
+    if (isSuccess && (createdAddress || updatedAddress)) {
       dispatch(resetState());
       navigate("/user/addresses");
     }
     if (isError) {
       makeToast("error", "Something went wrong");
-      // dispatch(resetState())
     }
-  }, [isSuccess, createdAddress, isError, updatedAddress]);
+  }, [isSuccess, createdAddress, updatedAddress, isError, dispatch, navigate]);
+
   const initialValues = {
     fullName: addressData?.fullName || "",
     phone: addressData?.phone || "",
     address: addressData?.address || "",
     state: addressData?.state || "",
   };
+
   return (
     <Stack spacing={2}>
       <Header
@@ -75,29 +71,28 @@ const Address = ({ openDrawer }) => {
         title={id === "new" ? "Add Address" : "Edit Address"}
         openDrawer={openDrawer}
         button="Back To Address"
-        link={`/user/addresses`}
+        link="/user/addresses"
       />
 
       <Paper
         elevation={0}
         sx={{
           bgcolor: "white",
-          paddingX: isNonMobile ? 5 : 2,
-          paddingY: 4,
+          px: isNonMobile ? 5 : 2,
+          py: 4,
         }}
       >
         <Formik
-          enableReinitialize={true}
+          enableReinitialize
+          initialValues={initialValues}
+          validationSchema={addressSchema}
           onSubmit={(values) => {
             if (id !== "new") {
-              const data = { id: id, addressData: values };
-              dispatch(updateAddress(data));
+              dispatch(updateAddress({ id, addressData: values }));
             } else {
               dispatch(createAddress(values));
             }
           }}
-          initialValues={initialValues}
-          validationSchema={addressSchema}
         >
           {({
             values,
@@ -106,7 +101,6 @@ const Address = ({ openDrawer }) => {
             handleBlur,
             handleChange,
             handleSubmit,
-
             isValid,
             dirty,
           }) => (
@@ -119,115 +113,88 @@ const Address = ({ openDrawer }) => {
                   "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
                 }}
               >
+                {/* Full Name */}
                 <TextField
                   fullWidth
-                  variant="outlined"
-                  type="text"
                   label="Enter Fullname"
                   size="small"
+                  name="fullName"
+                  value={values.fullName}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.fullName}
-                  name="fullName"
-                  error={!!touched.fullName && !!errors.fullName}
+                  error={touched.fullName && Boolean(errors.fullName)}
                   helperText={touched.fullName && errors.fullName}
                   sx={{
                     gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
+                    "& .MuiInputBase-root": { fontSize: "15px" },
                   }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
+                  InputLabelProps={{ style: { fontSize: "14px" } }}
                 />
+
+                {/* Phone */}
                 <TextField
                   fullWidth
-                  variant="outlined"
-                  type="text"
                   label="Enter Phone-Number"
                   size="small"
+                  name="phone"
+                  value={values.phone}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.phone}
-                  name="phone"
-                  error={!!touched.phone && !!errors.phone}
+                  error={touched.phone && Boolean(errors.phone)}
                   helperText={touched.phone && errors.phone}
                   sx={{
                     gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
+                    "& .MuiInputBase-root": { fontSize: "15px" },
                   }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
+                  InputLabelProps={{ style: { fontSize: "14px" } }}
                 />
+
+                {/* Address */}
                 <TextField
                   fullWidth
-                  variant="outlined"
-                  type="text"
                   label="Address"
                   size="small"
+                  name="address"
+                  value={values.address}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.address}
-                  name="address"
-                  error={!!touched.address && !!errors.address}
+                  error={touched.address && Boolean(errors.address)}
                   helperText={touched.address && errors.address}
                   sx={{
                     gridColumn: "span 2",
-                    "& .MuiInputBase-root": {
-                      fontSize: "15px",
-                    },
+                    "& .MuiInputBase-root": { fontSize: "15px" },
                   }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
+                  InputLabelProps={{ style: { fontSize: "14px" } }}
                 />
 
+                {/* State */}
                 <Autocomplete
                   fullWidth
                   options={statesInNigeria}
-                  value={values.state}
+                  value={values.state || ""}
                   isOptionEqualToValue={(option, value) => option === value}
-                  onChange={(event, newValue) => {
-                    handleChange({
-                      target: {
-                        name: "state",
-                        value: newValue,
-                      },
-                    });
-                  }}
+                  onChange={(event, newValue) =>
+                    handleChange({ target: { name: "state", value: newValue } })
+                  }
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      fullWidth
-                      variant="outlined"
-                      type="text"
                       label="State"
                       size="small"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
                       name="state"
-                      error={!!touched.state && !!errors.state}
+                      error={touched.state && Boolean(errors.state)}
                       helperText={touched.state && errors.state}
-                      InputLabelProps={{
-                        style: { fontSize: "14px" },
-                      }}
+                      InputLabelProps={{ style: { fontSize: "14px" } }}
                       sx={{
                         gridColumn: "span 2",
-                        "& .MuiInputBase-root": {
-                          fontSize: "15px",
-                        },
+                        "& .MuiInputBase-root": { fontSize: "15px" },
                       }}
                     />
                   )}
-                  sx={{
-                    gridColumn: "span 2",
-                  }}
+                  sx={{ gridColumn: "span 2" }}
                 />
               </Box>
+
               <Button
                 type="submit"
                 disabled={!isValid || (!dirty && id === "new") || isLoading}
@@ -240,38 +207,39 @@ const Address = ({ openDrawer }) => {
                       : "primary.main",
                   color: isLoading ? "#00000042 !important" : "white",
                   fontSize: "14px",
-                  paddingX: "20px",
+                  px: "20px",
+                  py: "8px",
                   fontWeight: 500,
-                  paddingY: "8px",
                   alignSelf: "start",
-                  "&:hover": {
-                    backgroundColor: "#E3364E",
-                  },
+                  "&:hover": { backgroundColor: "#E3364E" },
                 }}
               >
-                {/* {isLoading && !addressData  ? "Saving..." : id === "new" ? "Save Address" : "Save Changes"} */}
-
                 {id === "new" ? "Save Address" : "Save Changes"}
               </Button>
             </form>
           )}
-        </Formik>{" "}
+        </Formik>
       </Paper>
     </Stack>
   );
 };
 
+Address.propTypes = {
+  openDrawer: PropTypes.func,
+};
+
 export default Address;
 
+// Validation schema
 const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const addressSchema = yup.object().shape({
-  fullName: yup.string().required("required"),
+  fullName: yup.string().required("Full name is required"),
   phone: yup
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
-  address: yup.string().required("required"),
-  state: yup.string().required("required"),
+    .required("Phone number is required"),
+  address: yup.string().required("Address is required"),
+  state: yup.string().required("State is required"),
 });

@@ -1,12 +1,13 @@
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Typography,
   Stack,
   IconButton,
+  Chip,
   Card,
   CardContent,
   Grid,
-  Chip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -14,21 +15,31 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../../features/auth/authSlice";
 import DashboardHeader from "./Header";
-import PropTypes from "prop-types";
 
-const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
-  const getStatusColor = (status) => {
+const Order = ({
+  _id,
+  orderId,
+  orderStatus,
+  orderDate,
+  totalPrice,
+  className,
+  sx,
+  style,
+}) => {
+  const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "delivered":
-        return "success";
+        return { bgcolor: "#4CAF50", color: "white" };
       case "processing":
-        return "info";
+        return { bgcolor: "#1552bcff", color: "white" };
+      case "dispatched":
+        return { bgcolor: "#9819caff", color: "white" };
       case "pending":
-        return "warning";
+        return { bgcolor: "#FF9800", color: "white" };
       case "cancelled":
-        return "error";
+        return { bgcolor: "#F44336", color: "white" };
       default:
-        return "default";
+        return { bgcolor: "#9E9E9E", color: "white" };
     }
   };
 
@@ -37,17 +48,20 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
       component={Link}
       to={`/user/orders/${_id}`}
       elevation={0}
+      className={className}
+      style={style}
       sx={{
         textDecoration: "none",
-        border: "1px solid",
+        boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
         borderColor: "divider",
         borderRadius: 3,
         transition: "all 0.2s ease-in-out",
+        bgcolor: "#fff",
         "&:hover": {
-          borderColor: "primary.300",
-          boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
+          boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.2)",
           transform: "translateY(-2px)",
         },
+        ...sx,
       }}
     >
       <CardContent sx={{ p: 3 }}>
@@ -66,7 +80,7 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 fontWeight={600}
                 fontFamily="monospace"
               >
-                £{orderId?.substring(0, 8).toUpperCase()}
+                #{orderId.substring(0, 8).toUpperCase()}
               </Typography>
             </Stack>
           </Grid>
@@ -82,12 +96,14 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
               </Typography>
               <Chip
                 label={orderStatus}
-                color={getStatusColor(orderStatus)}
-                variant="outlined"
                 size="small"
                 sx={{
                   fontWeight: 600,
+                  width: "fit-content",
+                  px: 1,
+                  py: 0.5,
                   textTransform: "capitalize",
+                  ...getStatusStyle(orderStatus),
                 }}
               />
             </Stack>
@@ -122,7 +138,7 @@ const Order = ({ _id, orderId, orderStatus, orderDate, totalPrice }) => {
                 TOTAL
               </Typography>
               <Typography variant="h6" color="primary.main" fontWeight={700}>
-                £{totalPrice?.toLocaleString()}
+                ₦{totalPrice.toLocaleString()}
               </Typography>
             </Stack>
           </Grid>
@@ -153,9 +169,12 @@ Order.propTypes = {
   orderStatus: PropTypes.string.isRequired,
   orderDate: PropTypes.string.isRequired,
   totalPrice: PropTypes.number.isRequired,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  sx: PropTypes.object,
 };
 
-const Orders = ({ openDrawer }) => {
+const Orders = ({ openDrawer, className, style, sx }) => {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.auth);
 
@@ -164,10 +183,10 @@ const Orders = ({ openDrawer }) => {
   }, [dispatch]);
 
   return (
-    <Stack spacing={4}>
+    <Stack spacing={4} className={className} style={style} sx={sx}>
       <DashboardHeader
         Icon={ShoppingBagIcon}
-        title="My Orders"
+        title={"My Orders"}
         openDrawer={openDrawer}
       />
 
@@ -211,6 +230,9 @@ const Orders = ({ openDrawer }) => {
 
 Orders.propTypes = {
   openDrawer: PropTypes.func,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  sx: PropTypes.object,
 };
 
 export default Orders;
