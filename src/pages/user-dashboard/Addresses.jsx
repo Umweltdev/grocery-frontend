@@ -203,7 +203,7 @@ const Addresses = ({ openDrawer }) => {
             {addresses.length} saved address{addresses.length !== 1 ? "es" : ""}
           </Typography>
 
-          <Grid container spacing={3}>
+          <Grid>
             {addresses.map((address, index) => (
               <Grid item xs={12} md={6} key={address._id || index}>
                 <Address {...address} />

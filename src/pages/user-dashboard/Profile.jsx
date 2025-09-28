@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Divider,
   IconButton,
   Badge,
 } from "@mui/material";
@@ -15,10 +14,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CakeIcon from "@mui/icons-material/Cake";
-import EditIcon from "@mui/icons-material/Edit";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { useSelector } from "react-redux";
 import DashboardHeader from "./Header";
+import { PropTypes } from 'prop-types';
 
 const Profile = ({ openDrawer }) => {
   const auth = useSelector((state) => state.auth);
@@ -39,8 +38,6 @@ const Profile = ({ openDrawer }) => {
         button="Edit Profile"
         link={`/user/profile/${user?._id}`}
       />
-
-      {/* Hero Profile Card */}
       <Card
         elevation={0}
         sx={{
@@ -130,128 +127,19 @@ const Profile = ({ openDrawer }) => {
           </Grid>
         </CardContent>
       </Card>
-
-      {/* Stats Cards */}
-      {/* <Grid container spacing={3}>
-        <Grid item xs={6} sm={3}>
-          <Card
-            elevation={0}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 3,
-              textAlign: "center",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                borderColor: "primary.300",
-                transform: "translateY(-4px)",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h4" color="primary.main" fontWeight={700}>
-                {orders?.length || 0}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
-                Total Orders
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Card
-            elevation={0}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 3,
-              textAlign: "center",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                borderColor: "success.300",
-                transform: "translateY(-4px)",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h4" color="success.main" fontWeight={700}>
-                {Math.floor(Math.random() * 50) + 10}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
-                Items Bought
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Card
-            elevation={0}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 3,
-              textAlign: "center",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                borderColor: "warning.300",
-                transform: "translateY(-4px)",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h4" color="warning.main" fontWeight={700}>
-                ₦
-                {(Math.random() * 50000 + 10000).toLocaleString("en-US", {
-                  maximumFractionDigits: 0,
-                })}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
-                Total Spent
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Card
-            elevation={0}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 3,
-              textAlign: "center",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                borderColor: "error.300",
-                transform: "translateY(-4px)",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h4" color="error.main" fontWeight={700}>
-                ₦
-                {(Math.random() * 5000 + 500).toLocaleString("en-US", {
-                  maximumFractionDigits: 0,
-                })}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
-                Saved (RCD)
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid> */}
-
-      {/* Personal Information */}
       <Card
         elevation={0}
         sx={{
-          border: "1px solid",
           borderColor: "divider",
           borderRadius: 3,
+          bgcolor: "#FFF",
+          boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.1)",
+          transition: "all 0.3s ease-in-out",
+          "&:hover": {
+            borderColor: "primary.300",
+            boxShadow: "0 8px 25px 0 rgb(0 0 0 / 0.3)",
+            transform: "translateY(-4px)",
+          },
         }}
       >
         <CardContent sx={{ p: 4 }}>
@@ -264,16 +152,6 @@ const Profile = ({ openDrawer }) => {
             <Typography variant="h6" fontWeight={600}>
               Personal Information
             </Typography>
-            {/* <IconButton
-              size="small"
-              sx={{
-                bgcolor: "primary.50",
-                color: "primary.main",
-                "&:hover": { bgcolor: "primary.100" },
-              }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton> */}
           </Stack>
 
           <Grid container spacing={4}>
@@ -395,6 +273,10 @@ const Profile = ({ openDrawer }) => {
       </Card>
     </Stack>
   );
+};
+
+Profile.propTypes = {
+  openDrawer: PropTypes.func,
 };
 
 export default Profile;

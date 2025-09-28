@@ -1,193 +1,174 @@
 import { useEffect, useState } from "react";
-import { Typography, Stack, Paper, IconButton, Box } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  Card,
+  CardContent,
+  IconButton,
+  Box,
+  Chip,
+  Divider,
+  Grid,
+} from "@mui/material";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import PersonIcon from "@mui/icons-material/Person";
+import PropTypes from "prop-types";
 import { base_url } from "../../utils/baseUrl";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getCards } from "../../features/auth/authSlice";
 import Header from "./Header";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
-// helper to render correct card image
+
 export const getCardImage = (brand) => {
-  switch (brand?.toLowerCase()) {
-    case "visa":
-      return (
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg"
-          alt="Visa"
-          width="100%"
-        />
-      );
-    case "master":
-    case "mastercard":
-      return (
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/payment-methods/Mastercard.svg"
-          alt="Mastercard"
-          width="100%"
-        />
-      );
-    case "verve":
-      return (
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg"
-          alt="Verve"
-          width="100%"
-        />
-      );
-    default:
-      return (
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            bgcolor: "grey.300",
-          }}
-        />
-      );
-  }
+  const cardLogos = {
+    visa: "https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg",
+    master:
+      "https://bazaar.ui-lib.com/assets/images/payment-methods/Mastercard.svg",
+    verve: "https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg",
+  };
+
+  const logo = cardLogos[brand?.toLowerCase()];
+  if (!logo) return null;
+
+  return (
+    <img
+      src={logo}
+      alt={`${brand} logo`}
+      width="100%"
+      height="100%"
+      style={{ objectFit: "contain" }}
+    />
+  );
 };
 
 const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
   const { user } = useSelector((state) => state.auth);
-  const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const deleteCard = () => {
-    axios
-      .delete(`${base_url}card/${_id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      })
-      .then(() => {
-        setIsDeleted(!isDeleted);
-      })
-      .catch((error) => console.error(error));
+  const deleteCard = async () => {
+    try {
+      await axios.delete(`${base_url}card/${_id}`, {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      });
+      setIsDeleted(!isDeleted);
+    } catch (error) {
+      console.error("Failed to delete card", error);
+    }
   };
 
   return (
-    <Paper
+    <Card
       elevation={0}
       sx={{
-        px: 2,
-        py: 1.5,
-        display: "flex",
-        flexDirection: isNonMobile ? "row" : "column",
-        alignItems: isNonMobile ? "center" : "flex-start",
-        gap: isNonMobile ? 2 : 1.5,
-        bgcolor: "white",
-        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
+        transition: "all 0.3s ease",
+        "&:hover": {
+          borderColor: "primary.300",
+          transform: "translateY(-2px)",
+          boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
+        },
       }}
     >
-      {/* Brand + Name */}
-      <Stack
-        direction="row"
-        spacing={1.5}
-        alignItems="center"
-        flex={isNonMobile ? "1 1 0" : "unset"}
-        width="100%"
-      >
-        <Box
-          sx={{
-            backgroundColor: "#fff",
-            boxShadow: "rgba(3, 0, 71, 0.09) 0px 1px 3px",
-            overflow: "hidden",
-            width: 42,
-            height: 28,
-            borderRadius: "2px",
-            flexShrink: 0,
-          }}
-        >
-          {getCardImage(cardDetails?.brand)}
-        </Box>
-        <Typography variant="subtitle1" sx={{ fontWeight: 500, flexGrow: 1 }}>
-          {cardDetails?.account_name}
-        </Typography>
-      </Stack>
+      <CardContent sx={{ p: 3 }}>
+        <Stack spacing={2}>
+          {/* Card Top */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="flex-start"
+          >
+            <Box>
+              <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+                <Box
+                  sx={{
+                    backgroundColor: "#fff",
+                    boxShadow: "rgba(3, 0, 71, 0.09) 0px 1px 3px",
+                    overflow: "hidden",
+                    width: "42px",
+                    height: "28px",
+                    borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {getCardImage(cardDetails?.brand)}
+                </Box>
+                <Typography variant="h6" fontWeight={600}>
+                  **** **** **** {cardDetails?.last4}
+                </Typography>
+              </Stack>
+              <Chip
+                label={cardDetails?.brand?.toUpperCase() || "UNKNOWN"}
+                size="small"
+                sx={{
+                  bgcolor: "primary.50",
+                  color: "primary.main",
+                  fontWeight: 500,
+                }}
+              />
+            </Box>
 
-      {/* Card Number */}
-      <Typography
-        variant="subtitle2"
-        flex={isNonMobile ? "1 1 0" : "unset"}
-        textAlign={isNonMobile ? "left" : "center"}
-        width="100%"
-      >
-        {`**** **** **** ${cardDetails?.last4}`}
-      </Typography>
+            <IconButton
+              size="small"
+              onClick={deleteCard}
+              sx={{
+                bgcolor: "error.50",
+                color: "error.main",
+                "&:hover": { bgcolor: "error.100" },
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Stack>
 
-      {/* Expiry */}
-      <Typography
-        variant="subtitle2"
-        mx={isNonMobile ? 3 : 0}
-        textAlign={isNonMobile ? "left" : "center"}
-        width="100%"
-      >
-        {`${cardDetails?.exp_month}/${String(cardDetails?.exp_year).slice(-2)}`}
-      </Typography>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <PersonIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                <Typography variant="body2" color="text.secondary">
+                  Cardholder
+                </Typography>
+              </Stack>
+              <Typography variant="body1" fontWeight={500} ml={3}>
+                {cardDetails?.account_name || "N/A"}
+              </Typography>
+            </Grid>
 
-      {/* Delete Button */}
-      <Stack
-        direction="row"
-        justifyContent={isNonMobile ? "flex-end" : "center"}
-        width="100%"
-      >
-        <IconButton onClick={deleteCard}>
-          <DeleteIcon sx={{ fontSize: "1.8rem" }} />
-        </IconButton>
-      </Stack>
-    </Paper>
+            <Grid item xs={12} sm={6}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <CalendarTodayIcon
+                  sx={{ fontSize: 18, color: "text.secondary" }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  Expires
+                </Typography>
+              </Stack>
+              <Typography variant="body1" fontWeight={500} ml={3}>
+                {cardDetails?.exp_month || "MM"}/
+                {cardDetails?.exp_year
+                  ? cardDetails.exp_year.toString().slice(-2)
+                  : "YY"}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 
-const Payments = ({ openDrawer }) => {
-  const dispatch = useDispatch();
-  const { cards } = useSelector((state) => state.auth);
-  const [isDeleted, setIsDeleted] = useState(false);
-
-  useEffect(() => {
-    dispatch(getCards());
-  }, [isDeleted, dispatch]);
-
-  return (
-    <Stack spacing={2}>
-      <Header
-        Icon={CreditCardIcon}
-        title="Payment Methods"
-        openDrawer={openDrawer}
-      />
-      <Stack spacing={2}>
-        {cards?.length ? (
-          cards.map((card) => (
-            <PaymentCard
-              key={card._id}
-              {...card}
-              isDeleted={isDeleted}
-              setIsDeleted={setIsDeleted}
-            />
-          ))
-        ) : (
-          <Typography variant="body2" color="text.secondary" textAlign="center">
-            No saved cards available.
-          </Typography>
-        )}
-      </Stack>
-    </Stack>
-  );
-};
-
-export default Payments;
-
-import PropTypes from "prop-types";
-
-// If your card component is named PaymentCard, use that instead of Card
 PaymentCard.propTypes = {
   _id: PropTypes.string.isRequired,
   cardDetails: PropTypes.shape({
     brand: PropTypes.string,
+    last4: PropTypes.string,
     account_name: PropTypes.string,
-    last4: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     exp_month: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     exp_year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
@@ -195,7 +176,76 @@ PaymentCard.propTypes = {
   setIsDeleted: PropTypes.func.isRequired,
 };
 
-// ✅ Payments Component PropTypes
-Payments.propTypes = {
-  openDrawer: PropTypes.func, // If it's optional, don’t mark as required
+const Payments = ({ openDrawer }) => {
+  const dispatch = useDispatch();
+  const { cards = [] } = useSelector((state) => state.auth);
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  useEffect(() => {
+    dispatch(getCards());
+  }, [isDeleted, dispatch]);
+
+  return (
+    <Stack spacing={4}>
+      <Header
+        Icon={CreditCardIcon}
+        title="Payment Methods"
+        openDrawer={openDrawer}
+      />
+
+      {cards.length === 0 ? (
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 3,
+            textAlign: "center",
+            py: 8,
+          }}
+        >
+          <CardContent>
+            <CreditCardIcon
+              sx={{
+                fontSize: 64,
+                color: "text.disabled",
+                mb: 2,
+              }}
+            />
+            <Typography variant="h6" color="text.secondary" mb={1}>
+              No Payment Methods Found
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Add a payment method to get started
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <Typography variant="body2" color="text.secondary">
+            {cards.length} saved payment method{cards.length !== 1 ? "s" : ""}
+          </Typography>
+
+          <Grid container spacing={3}>
+            {cards.map((card) => (
+              <Grid item xs={12} md={6} key={card._id}>
+                <PaymentCard
+                  _id={card._id}
+                  cardDetails={card}
+                  isDeleted={isDeleted}
+                  setIsDeleted={setIsDeleted}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
+    </Stack>
+  );
 };
+
+Payments.propTypes = {
+  openDrawer: PropTypes.func.isRequired,
+};
+
+export default Payments;
