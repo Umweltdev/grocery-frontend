@@ -138,7 +138,7 @@ const Order = ({
                 TOTAL
               </Typography>
               <Typography variant="h6" color="primary.main" fontWeight={700}>
-                ₦{totalPrice.toLocaleString()}
+                £{totalPrice.toLocaleString()}
               </Typography>
             </Stack>
           </Grid>

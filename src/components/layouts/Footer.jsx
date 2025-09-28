@@ -100,7 +100,7 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
-        bgcolor: "secondary.dark",
+        bgcolor: "rgba(80, 78, 78, 0.95)",
         color: "white",
         pt: 8,
         pb: 5,
@@ -111,7 +111,7 @@ const Footer = () => {
         <Grid container spacing={8} justifyContent="space-between">
           <Grid item xs={12} md={4}>
             <Stack
-              spacing={2}
+              spacing={1}
               alignItems={{ xs: "center", sm: "flex-start" }}
               textAlign={{ xs: "center", sm: "left" }}
             >
@@ -119,7 +119,7 @@ const Footer = () => {
                 <img
                   src={companyInfo.logo}
                   alt="Brand Logo"
-                  style={{ height: 60 }}
+                  style={{ height: 150 }}
                 />
               </Box>
               <Typography color="rgba(255,255,255,0.7)" maxWidth="90%">
