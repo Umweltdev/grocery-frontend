@@ -218,10 +218,11 @@ const Shop = () => {
             </Box>
           ) : (
             <Grid
-                container
-              spacing={{ xs: 2, md: 4 }}
+              container
+              spacing={{ xs: 1, md: 2 }}
               justifyContent="center"
               alignItems="stretch"
+              sx={{ maxWidth: { xs: "100%", md: "1200px" } }}
             >
               {categoriesToShow.map((item) => (
                 <CategoryCard key={item._id} {...item} />
