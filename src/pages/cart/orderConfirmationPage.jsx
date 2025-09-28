@@ -94,7 +94,7 @@ const OrderConfirmationPage = ({ updateStepCompletion }) => {
               </Typography>
               <CustomDivider />
               <Typography variant="body1" color="primary.main">
-                Delivery scheduled on 23 June
+                Delivery scheduled ✅
               </Typography>
             </Stack>
           </Stack>

@@ -62,7 +62,7 @@ const ResetPassword = () => {
         <form>
           <Link to={"/"} style={{ textDecoration: "none" }}>
             <img
-              src="https://res.cloudinary.com/dlst0is1v/image/upload/v1759063260/Gemini_Generated_Image_9a3gep9a3gep9a3g_1_qxkjji.png"
+              src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
               alt="bazaar logo"
               style={{
                 margin: "0 auto",
