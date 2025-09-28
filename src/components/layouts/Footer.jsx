@@ -107,7 +107,7 @@ const Footer = () => {
         width: "100%",
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Grid container spacing={8} justifyContent="space-between">
           <Grid item xs={12} md={4}>
             <Stack
