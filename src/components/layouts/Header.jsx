@@ -9,13 +9,14 @@ import {
   Typography,
   Menu,
   MenuItem,
+  useTheme,
 } from "@mui/material";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PersonAdd from "@mui/icons-material/PersonAdd";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
@@ -26,6 +27,8 @@ import SearchInput from "../forms/SearchInput";
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+
   const { products } = useSelector((state) => state.cart);
   const user = useSelector((state) => state.auth.user);
 
@@ -62,6 +65,7 @@ const Header = () => {
         position: "sticky",
         top: 0,
         py: 1,
+        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
       }}
     >
       <Container maxWidth="xl">
@@ -69,22 +73,28 @@ const Header = () => {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          height={{ xs: 50, md: 72 }}
+          height={{ xs: 60, md: 80 }}
           spacing={2}
           display={{ xs: "none", lg: "flex" }}
         >
           <Link to="/">
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <img
-                src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
+                src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
                 alt="logo"
-                style={{ height: "100px" }}
+                style={{
+                  height: "80px",
+                  transition: "all 0.3s",
+                  cursor: "pointer",
+                }}
               />
             </Box>
           </Link>
+
           <Box sx={{ flex: 1, maxWidth: "670px" }}>
             <SearchInput />
           </Box>
+
           <Stack direction="row" spacing={2} alignItems="center">
             <IconButton
               onClick={handleCartOpen}
@@ -104,6 +114,22 @@ const Header = () => {
                 <ShoppingCartOutlinedIcon />
               </StyledBadge>
             </IconButton>
+
+            {user?.role === "admin" && (
+              <IconButton
+                onClick={() => navigate("/admin")}
+                sx={{
+                  bgcolor: theme.palette.primary.main,
+                  color: "#fff",
+                  width: 50,
+                  height: 50,
+                  "&:hover": { bgcolor: theme.palette.primary.dark },
+                }}
+              >
+                <AdminPanelSettingsIcon />
+              </IconButton>
+            )}
+
             <div>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <IconButton
@@ -128,37 +154,41 @@ const Header = () => {
                   </Typography>
                 )}
               </Stack>
+
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "center",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                sx={{
-                  marginTop: "10px",
-                  "& .MuiList-root": {
-                    width: 200,
-                  },
-                }}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                transformOrigin={{ vertical: "top", horizontal: "left" }}
+                sx={{ marginTop: "10px", "& .MuiList-root": { width: 200 } }}
               >
                 {user && (
                   <Link
                     to="/user/profile"
-                    style={{
-                      textDecoration: "none",
-                      color: "#2b3445",
-                    }}
+                    style={{ textDecoration: "none", color: "#2b3445" }}
                   >
                     <MenuItem onClick={handleClose}>
                       <Stack direction="row" spacing={2} alignItems="center">
-                        <PersonAdd fontSize="small" />
+                        <DashboardOutlinedIcon fontSize="small" />
                         <Typography>My Dashboard</Typography>
+                      </Stack>
+                    </MenuItem>
+                  </Link>
+                )}
+
+                {user?.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    style={{ textDecoration: "none", color: "#2b3445" }}
+                  >
+                    <MenuItem onClick={handleClose}>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <AdminPanelSettingsIcon
+                          fontSize="small"
+                          sx={{ color: theme.palette.primary.main }}
+                        />
+                        <Typography>Admin Panel</Typography>
                       </Stack>
                     </MenuItem>
                   </Link>
@@ -167,7 +197,7 @@ const Header = () => {
                 {user ? (
                   <MenuItem onClick={handleLogout}>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <LogoutIcon fontSize="small" />
+                      <ExitToAppOutlinedIcon fontSize="small" />
                       <Typography>Logout</Typography>
                     </Stack>
                   </MenuItem>
@@ -192,6 +222,7 @@ const Header = () => {
           anchorEl={anchorEl}
         />
       </Container>
+
       <Cart open={cartOpen} onClose={handleCartClose} />
     </Box>
   );

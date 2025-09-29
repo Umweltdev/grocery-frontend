@@ -12,11 +12,11 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const companyInfo = {
-  logo: "https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png",
+  logo: "https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png",
   description:
     "Your one-stop online store for everything you love. Fast delivery, best prices, and quality guaranteed.",
-  address: "70 Washington Square South, New York, NY 10012, United States",
-  email: "uilib.help@gmail.com",
+  address: "Unit 18 Catford Broadway, London SE9 3QN",
+  email: "kaccocashandcarry@gmail.com",
   phone: "+1 1123 456 780",
 };
 

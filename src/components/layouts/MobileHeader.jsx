@@ -9,14 +9,16 @@ import {
   styled,
   Typography,
   Drawer,
+  useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
 import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PersonAdd from "@mui/icons-material/PersonAdd";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import SearchInput from "../forms/SearchInput";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, resetState } from "../../features/auth/authSlice";
@@ -30,9 +32,11 @@ const MobileHeader = ({
   handleClose,
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const theme = useTheme();
+
   const { products } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
 
   const StyledBadge = styled(Badge)(() => ({
     "& .MuiBadge-badge": {
@@ -68,12 +72,17 @@ const MobileHeader = ({
       <Link to="/">
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <img
-            src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
+            src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
             alt="logo"
-            style={{ height: "70px" }}
+            style={{
+              height: "70px",
+              transition: "all 0.3s",
+              cursor: "pointer",
+            }}
           />
         </Box>
       </Link>
+
       <Stack
         direction="row"
         alignItems="center"
@@ -90,8 +99,25 @@ const MobileHeader = ({
         >
           <SearchIcon />
         </IconButton>
+
+        {user?.role === "admin" && (
+          <IconButton
+            onClick={() => navigate("/admin")}
+            sx={{
+              bgcolor: theme.palette.primary.main,
+              color: "#fff",
+              width: 40,
+              height: 40,
+              ml: 1,
+              "&:hover": { bgcolor: theme.palette.primary.dark },
+            }}
+          >
+            <AdminPanelSettingsIcon fontSize="small" />
+          </IconButton>
+        )}
+
         <div>
-          <IconButton sx={{ color: "black" }} onClick={handleClick}>
+          <IconButton sx={{ color: "black", ml: 1 }} onClick={handleClick}>
             <PersonOutlineOutlinedIcon />
           </IconButton>
           <Menu
@@ -100,10 +126,7 @@ const MobileHeader = ({
             onClose={handleClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             transformOrigin={{ vertical: "top", horizontal: "left" }}
-            sx={{
-              marginTop: "10px",
-              "& .MuiList-root": { width: "200px" },
-            }}
+            sx={{ marginTop: "10px", "& .MuiList-root": { width: "200px" } }}
           >
             {user && (
               <Link
@@ -112,8 +135,25 @@ const MobileHeader = ({
               >
                 <MenuItem onClick={handleClose}>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <PersonAdd fontSize="small" />
+                    <DashboardOutlinedIcon fontSize="small" />
                     <Typography>My Dashboard</Typography>
+                  </Stack>
+                </MenuItem>
+              </Link>
+            )}
+
+            {user?.role === "admin" && (
+              <Link
+                to="/admin"
+                style={{ textDecoration: "none", color: "#2b3445" }}
+              >
+                <MenuItem onClick={handleClose}>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <AdminPanelSettingsIcon
+                      fontSize="small"
+                      sx={{ color: theme.palette.primary.main }}
+                    />
+                    <Typography>Admin Panel</Typography>
                   </Stack>
                 </MenuItem>
               </Link>
@@ -122,7 +162,7 @@ const MobileHeader = ({
             {user ? (
               <MenuItem onClick={handleLogoutClick}>
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <LogoutIcon fontSize="small" />
+                  <ExitToAppOutlinedIcon fontSize="small" />
                   <Typography>Logout</Typography>
                 </Stack>
               </MenuItem>
@@ -136,7 +176,8 @@ const MobileHeader = ({
             )}
           </Menu>
         </div>
-        <IconButton onClick={handleCartOpen} sx={{ color: "black" }}>
+
+        <IconButton onClick={handleCartOpen} sx={{ color: "black", ml: 1 }}>
           <StyledBadge
             badgeContent={products?.reduce(
               (sum, product) => sum + (product.count || 0),
@@ -147,6 +188,7 @@ const MobileHeader = ({
           </StyledBadge>
         </IconButton>
       </Stack>
+
       <Drawer
         open={drawerOpen}
         onClose={handleDrawerClose}
@@ -171,12 +213,7 @@ const MobileHeader = ({
             </IconButton>
           </Stack>
           <Box
-            sx={{
-              position: "relative",
-              maxWidth: "670px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
+            sx={{ position: "relative", maxWidth: "670px", margin: "0 auto" }}
           >
             <SearchInput
               drawerOpen={drawerOpen}
