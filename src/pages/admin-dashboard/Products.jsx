@@ -83,7 +83,7 @@ const Products = () => {
     action: null,
     basePrice: product.regularPrice,
     stock: product?.stock,
-  }));
+  })).reverse();
 
   return (
     <Stack spacing={3} bgcolor="background.paper" py={3}>

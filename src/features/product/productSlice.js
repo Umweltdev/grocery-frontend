@@ -23,23 +23,36 @@ export const createProducts = createAsyncThunk(
       formData.append("name", productData.name);
       formData.append("description", productData.description);
       formData.append("regularPrice", productData.regularPrice);
-      formData.append("mcdPrice", productData.mcdPrice);   // ✅ Added
-      formData.append("rcdPrice", productData.rcdPrice);   // ✅ Added
-      formData.append("tags", productData.tags);
-      formData.append("salePrice", productData.salePrice);
+      if (productData.salePrice) formData.append("salePrice", productData.salePrice);
       formData.append("stock", productData.stock);
       formData.append("category", productData.category);
       formData.append("brand", productData.brand);
       formData.append("published", productData.published);
+      formData.append("isFeatured", productData.isFeatured);
       formData.append("reStock", productData.reStock);
+      
+      // Handle tags array
+      if (productData.tags && productData.tags.length > 0) {
+        productData.tags.forEach((tag, index) => {
+          if (tag && tag.trim()) formData.append(`tags[${index}]`, tag.trim());
+        });
+      }
 
-      productData.images.forEach((image) => {
-        formData.append("images", image);
-      });
+      if (productData.images && productData.images.length > 0) {
+        productData.images.forEach((image) => {
+          formData.append("images", image);
+        });
+      }
 
+      // Debug: Log form data
+      console.log('FormData entries:');
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+      
       return await productService.createProduct(formData);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
@@ -66,17 +79,20 @@ export const updateProduct = createAsyncThunk(
       formData.append("name", productData.name);
       formData.append("description", productData.description);
       formData.append("regularPrice", productData.regularPrice);
-      formData.append("mcdPrice", productData.mcdPrice);   // ✅ Added
-      formData.append("rcdPrice", productData.rcdPrice);   // ✅ Added
-      productData.tags.forEach((tag, index) => {
-        formData.append(`tags[${index}]`, tag);
-      });
-      formData.append("salePrice", productData.salePrice);
+      if (productData.salePrice) formData.append("salePrice", productData.salePrice);
       formData.append("stock", productData.stock);
       formData.append("brand", productData.brand);
       formData.append("category", productData.category);
       formData.append("published", productData.published);
+      formData.append("isFeatured", productData.isFeatured);
       formData.append("reStock", productData.reStock);
+      
+      // Handle tags array
+      if (productData.tags && productData.tags.length > 0) {
+        productData.tags.forEach((tag, index) => {
+          if (tag && tag.trim()) formData.append(`tags[${index}]`, tag.trim());
+        });
+      }
 
       productData.previousImages.forEach((image, index) => {
         formData.append(`previousImages[${index}]`, JSON.stringify(image));
@@ -206,7 +222,7 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload;
       })
 
       // Get Single Product
