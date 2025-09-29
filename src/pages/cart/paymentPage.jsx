@@ -86,11 +86,13 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
       );
 
       if (option === "card" && response.data.sessionId) {
-        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+        const stripe = await loadStripe(
+          import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+        );
         if (stripe) {
           localStorage.removeItem("cartState");
           const result = await stripe.redirectToCheckout({
-            sessionId: response.data.sessionId
+            sessionId: response.data.sessionId,
           });
           if (result.error) {
             makeToast("error", result.error.message);
@@ -99,12 +101,10 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           makeToast("error", "Stripe failed to initialize");
         }
         return;
-      } 
-      else if (response.data.status === "succeeded") {
+      } else if (response.data.status === "succeeded") {
         makeToast("success", "Successfully Paid with Card");
         clearCartAndNavigate();
-      } 
-      else {
+      } else {
         makeToast(
           "success",
           "Order confirmed! Our team will contact you shortly."
@@ -133,7 +133,13 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
             bgcolor: "background.paper",
           }}
         >
-          <Typography variant="h5" color="primary.main" textAlign="center" fontWeight={700} mb={2}>
+          <Typography
+            variant="h5"
+            color="primary.main"
+            textAlign="center"
+            fontWeight={700}
+            mb={2}
+          >
             Select Payment Method
           </Typography>
           <FormGroup sx={{ gap: 1.5 }}>
@@ -166,7 +172,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
                   color="text.secondary"
                   sx={{
                     paddingBottom: 2,
-                    paddingX: Mobile ? 3 : 2,
+                    paddingX: isMobile ? 3 : 2,
                   }}
                 >
                   Kindly note that you will be redirected to Stripe Checkout

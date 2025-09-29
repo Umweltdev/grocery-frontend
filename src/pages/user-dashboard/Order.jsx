@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { Typography, Box, Stack, Button, IconButton } from "@mui/material";
+import { Typography, Box, Stack, Button, IconButton, CircularProgress } from "@mui/material";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useParams, useNavigate } from "react-router-dom";
@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import OrderedProducts from "./OrderedProducts";
-import Delivery from "./Delivery";
+import OrderStatusStepper from "../../components/OrderStatusStepper";
 import { addAllToCart } from "../../features/cart/cartSlice";
 import { base_url } from "../../utils/baseUrl";
 
@@ -20,21 +20,46 @@ const Order = ({ openDrawer }) => {
   const { id } = useParams();
 
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { user } = useSelector((state) => state.auth);
 
   const getOrder = () => {
-    if (!user?.token) return;
+    if (!user?.token) {
+      setLoading(false);
+      return;
+    }
     axios
       .get(`${base_url}user/order/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       })
-      .then((response) => setOrder(response.data))
-      .catch((err) => console.error(err));
+      .then((response) => {
+        setOrder(response.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
     getOrder();
-  }, [id, user?.token]);
+    
+    // Set up polling for real-time status updates only for non-final states
+    const shouldPoll = order?.orderStatus && 
+      !['Delivered', 'Cancelled'].includes(order.orderStatus);
+    
+    let interval;
+    if (shouldPoll) {
+      interval = setInterval(() => {
+        getOrder();
+      }, 30000); // Poll every 30 seconds
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [id, user?.token, order?.orderStatus]);
 
   const handleOrderAgain = () => {
     if (!order?.products) return;
@@ -48,6 +73,24 @@ const Order = ({ openDrawer }) => {
     dispatch(addAllToCart(products));
     navigate("/cart");
   };
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!order) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <Typography variant="h6" color="text.secondary">
+          Order not found
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -106,7 +149,7 @@ const Order = ({ openDrawer }) => {
           </IconButton>
         </Stack>
 
-        <Delivery />
+        <OrderStatusStepper orderStatus={order?.orderStatus} />
 
         <OrderedProducts order={order} />
 
