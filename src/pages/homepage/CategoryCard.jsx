@@ -9,7 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 const CategoryCard = ({ name, image, _id }) => (
-  <Grid item xs={6} sm={4} md={3} lg={2}>
+  <Grid item xs={6} sm={4} md={2}>
     <Card
       sx={{
         borderRadius: "12px",
@@ -28,7 +28,7 @@ const CategoryCard = ({ name, image, _id }) => (
       >
         <CardMedia
           component="img"
-          height="160"
+          height="150"
           image={image?.url}
           alt={name}
           sx={{
@@ -41,17 +41,26 @@ const CategoryCard = ({ name, image, _id }) => (
         />
         <CardContent
           sx={{
+            flexGrow: 1,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            py: 2,
+            textAlign: "center",
+            minHeight: "40px",
+            p: 1.5,
           }}
         >
           <Typography
-            variant="subtitle1"
+            variant="subtitle2"
             fontWeight={600}
             color="text.primary"
-            textAlign="center"
+            noWrap
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "100%",
+            }}
           >
             {name}
           </Typography>

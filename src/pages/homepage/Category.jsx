@@ -1,6 +1,5 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   Box,
   Stack,
@@ -11,16 +10,63 @@ import {
   Card,
   CardMedia,
   CardContent,
+  Divider,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CheckroomIcon from "@mui/icons-material/Checkroom";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
+import ChairIcon from "@mui/icons-material/Chair";
+import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import SpaIcon from "@mui/icons-material/Spa";
+import ToysIcon from "@mui/icons-material/Toys";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import EmojiFoodBeverageIcon from "@mui/icons-material/EmojiFoodBeverage";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
+import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
+import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
+import LocalDiningIcon from "@mui/icons-material/LocalDining";
+import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 
 const fallbackCategories = [
-  { _id: "electronics", name: "Electronics", children: [] },
   { _id: "fashion", name: "Fashion", children: [] },
-  { _id: "home-kitchen", name: "Home & Kitchen", children: [] },
-  { _id: "sports", name: "Sports & Outdoors", children: [] },
-  { _id: "beauty", name: "Beauty & Personal Care", children: [] },
+  { _id: "groceries", name: "Groceries", children: [] },
+  { _id: "home-living", name: "Home & Living", children: [] },
 ];
+
+const iconProps = {
+  sx: { color: "grey.700", fontSize: { xs: "20px", sm: "26px" } },
+};
+
+const categoryIcons = {
+  fashion: <CheckroomIcon {...iconProps} />,
+  groceries: <LocalGroceryStoreIcon {...iconProps} />,
+  "home & living": <ChairIcon {...iconProps} />,
+  sports: <SportsSoccerIcon {...iconProps} />,
+  books: <MenuBookIcon {...iconProps} />,
+  "beauty & personal care": <SpaIcon {...iconProps} />,
+  "toys & games": <ToysIcon {...iconProps} />,
+  automotive: <DirectionsCarIcon {...iconProps} />,
+  bakery: <BakeryDiningIcon {...iconProps} />,
+  condiments: <EmojiFoodBeverageIcon {...iconProps} />,
+  "health & wellness": <HealthAndSafetyIcon {...iconProps} />,
+  "breakfast items": <FreeBreakfastIcon {...iconProps} />,
+  "herbs & spices": <LocalFloristIcon {...iconProps} />,
+  "nuts & seeds": <RestaurantIcon {...iconProps} />,
+  "ready-to-eat": <FastfoodIcon {...iconProps} />,
+  "sauces & dressings": <LocalDiningIcon {...iconProps} />,
+  "beverage mixes": <LocalDrinkIcon {...iconProps} />,
+};
+
+const getCategoryIcon = (categoryName) => {
+  if (!categoryName) return null;
+  const normalizedName = categoryName.toLowerCase();
+  return categoryIcons[normalizedName] || null;
+};
 
 const Category = ({ visibleCategories, loading, productsByCategory }) => {
   const [expandedCategories, setExpandedCategories] = useState([]);
@@ -41,14 +87,22 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
     if (!products.length) return null;
 
     return (
-      <Grid container spacing={2} mt={1}>
+      <Grid container spacing={{ xs: 1, sm: 2 }} mt={1} alignItems="stretch">
         {products.slice(0, 6).map((product) => (
-          <Grid item xs={6} sm={4} md={3} key={product._id}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={3}
+            key={product._id}
+          >
             <Card
               sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
                 boxShadow: "none",
                 border: "1px solid #f0f0f0",
-                // borderRadius: "10px",
                 "&:hover": {
                   boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                   transform: "translateY(-2px)",
@@ -58,25 +112,37 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
             >
               <Link
                 to={`/product/${product._id}`}
-                style={{ textDecoration: "none" }}
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                }}
               >
                 <CardMedia
                   component="img"
-                  height="120"
                   image={product.image}
                   alt={product.name}
                   sx={{
+                    height: { xs: 120, sm: 140 },
                     objectFit: "cover",
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
                   }}
                 />
-                <CardContent sx={{ p: 1 }}>
+                <CardContent
+                  sx={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    p: { xs: 1, sm: 1.5 },
+                  }}
+                >
                   <Typography
                     variant="body2"
                     color="text.primary"
                     noWrap
                     fontWeight={500}
+                    sx={{ fontSize: { xs: "0.85rem", sm: "0.9rem" } }}
                   >
                     {product.name}
                   </Typography>
@@ -84,7 +150,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
                     variant="body2"
                     color="primary"
                     fontWeight={600}
-                    display="block"
+                    sx={{ fontSize: { xs: "0.85rem", sm: "0.95rem" } }}
                   >
                     ${product.price.toFixed(2)}
                   </Typography>
@@ -109,7 +175,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
           justifyContent="space-between"
           alignItems="center"
           px={1}
-          py={topLevel ? 1.5 : 1}
+          py={topLevel ? 1.2 : 1}
           sx={{
             cursor: "pointer",
             borderRadius: "8px",
@@ -122,21 +188,23 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
             to={`/store?category=${category._id}`}
             style={{ textDecoration: "none", flexGrow: 1 }}
           >
-            <Typography
-              variant="body1"
-              fontSize={topLevel ? "16px" : "14px"}
-              fontWeight={topLevel ? 600 : 500}
-              color="#2C3E50"
-              sx={{ "&:hover": { color: "#E3364E" }, display: "block" }}
-            >
-              {category.name}
-            </Typography>
+            <Stack direction="row" alignItems="center" spacing={1.2}>
+              {topLevel && getCategoryIcon(category.name)}
+              <Typography
+                fontSize={{ xs: "14px", sm: topLevel ? "18px" : "14px" }}
+                fontWeight={topLevel ? 500 : 400}
+                color="#2C3E50"
+                sx={{ "&:hover": { color: "#E3364E" }, display: "block" }}
+              >
+                {category.name}
+              </Typography>
+            </Stack>
           </Link>
 
           {(hasChildren || hasProducts) && (
             <ChevronRightIcon
               sx={{
-                fontSize: 20,
+                fontSize: { xs: 20, sm: 26 },
                 color: "#555",
                 transition: "transform 0.3s ease",
                 transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
@@ -146,7 +214,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
         </Stack>
 
         <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-          <Box ml={2} mt={1}>
+          <Box ml={{ xs: 2, sm: topLevel ? 4.5 : 2 }} mt={1}>
             {hasChildren &&
               category.children.map((subcategory) =>
                 renderCategory(subcategory, false)
@@ -165,6 +233,16 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
 
   return (
     <Box>
+      <Typography
+        variant="subtitle1"
+        fontWeight={700}
+        px={{ xs: 1, sm: 2 }}
+        py={1}
+        color="grey.600"
+        fontSize={{ xs: "14px", sm: "16px" }}
+      >
+        CATEGORIES
+      </Typography>
       {loading ? (
         <Box
           display="flex"
@@ -175,7 +253,14 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
           <CircularProgress size={28} thickness={4} />
         </Box>
       ) : (
-        categoriesToShow.map((category) => renderCategory(category, true))
+        categoriesToShow.map((category, index) => (
+          <React.Fragment key={category._id}>
+            {renderCategory(category, true)}
+            {index < categoriesToShow.length - 1 && (
+              <Divider sx={{ my: 0.5 }} />
+            )}
+          </React.Fragment>
+        ))
       )}
     </Box>
   );

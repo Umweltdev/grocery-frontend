@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import {
   Stack,
   Grid,
@@ -7,7 +6,6 @@ import {
   TextField,
   Paper,
   Avatar,
-  MenuItem,
   Button,
   IconButton,
   Box,
@@ -23,7 +21,6 @@ import {
 } from "../../features/address/addressSlice";
 import { setBillingAddress } from "../../features/order/orderSlice";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import makeToast from "../../utils/toaster";
 
@@ -163,7 +160,7 @@ const BillingAddressForm = () => {
 
       <Grid container spacing={2}>
         {billingAddresses.map((address) => (
-          <Grid item sm={4}>
+          <Grid item sm={4} key={address.id || address._id}>
             <Address {...address} />
           </Grid>
         ))}
@@ -198,7 +195,7 @@ const BillingAddressForm = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={addressSchema}
-            onSubmit={(values, { resetForm }) => {
+            onSubmit={(values) => {
               dispatch(createAddress({ ...values, type: "billing" }));
             }}
           >

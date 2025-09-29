@@ -119,31 +119,33 @@ const Store = () => {
           disableGutters
           sx={{ px: { xs: 1, sm: 2, md: 3 } }}
         >
-          <Sort
-            activeIcon={activeIcon}
-            setActiveIcon={setActiveIcon}
-            sort={sort}
-            setSort={setSort}
-            openDrawer={toggleDrawer}
-          />
-          <Grid
-            container
-            spacing={3}
-            sx={{
-              display: "flex",
-              justifyContent: { xs: "center", sm: "flex-end" },
-              mt: { xs: "0", md: "1" },
-            }}
-          >
+          <Grid container spacing={3}>
             <Grid item md={3} display={{ xs: "none", md: "block" }}>
               <Filters />
             </Grid>
+            <Grid item xs={12} md={9}>
+              <Sort
+                activeIcon={activeIcon}
+                setActiveIcon={setActiveIcon}
+                sort={sort}
+                setSort={setSort}
+                openDrawer={toggleDrawer}
+              />
+              <Box
+                bgcolor="white"
+                p={{ xs: 1.5, sm: 3 }}
+                justifyContent="center"
+                boxShadow="0px 3px 10px rgba(0,0,0,0.08)"
+                sx={{ width: "100%" }}
+              >
+                <Products
+                  activeIcon={activeIcon}
+                  category={category}
+                  search={search}
+                />
+              </Box>
 
-            <Products
-              activeIcon={activeIcon}
-              category={category}
-              search={search}
-            />
+            </Grid>
           </Grid>
         </Container>
       </Box>

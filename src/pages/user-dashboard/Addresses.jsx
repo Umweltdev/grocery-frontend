@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Typography,
   Stack,
@@ -31,13 +32,11 @@ const Address = ({ _id, fullName, address, phone, state }) => {
     <Card
       elevation={0}
       sx={{
-        // border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
         bgcolor: "#fff",
         boxShadow: "0 4px 12px 0 rgb(0 0 0 / 0.1)",
         transition: "all 0.3s ease-in-out",
-
         "&:hover": {
           borderColor: "primary.300",
           transform: "translateY(-2px)",
@@ -145,6 +144,14 @@ const Address = ({ _id, fullName, address, phone, state }) => {
   );
 };
 
+Address.propTypes = {
+  _id: PropTypes.string.isRequired,
+  fullName: PropTypes.string.isRequired,
+  address: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
+  state: PropTypes.string.isRequired,
+};
+
 const Addresses = ({ openDrawer }) => {
   const dispatch = useDispatch();
   const { addresses, deletedAddress } = useSelector((state) => state.address);
@@ -196,7 +203,7 @@ const Addresses = ({ openDrawer }) => {
             {addresses.length} saved address{addresses.length !== 1 ? "es" : ""}
           </Typography>
 
-          <Grid container spacing={3}>
+          <Grid>
             {addresses.map((address, index) => (
               <Grid item xs={12} md={6} key={address._id || index}>
                 <Address {...address} />
@@ -207,6 +214,10 @@ const Addresses = ({ openDrawer }) => {
       )}
     </Stack>
   );
+};
+
+Addresses.propTypes = {
+  openDrawer: PropTypes.func.isRequired,
 };
 
 export default Addresses;

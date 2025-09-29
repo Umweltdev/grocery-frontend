@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Typography,
   Box,
-  Stack,
   Button,
   IconButton,
   Paper,
   TextField,
-  Rating,
   styled,
 } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -64,7 +62,7 @@ const ResetPassword = () => {
         <form>
           <Link to={"/"} style={{ textDecoration: "none" }}>
             <img
-              src="https://bazaar.ui-lib.com/assets/images/bazaar-black-sm.svg"
+              src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
               alt="bazaar logo"
               style={{
                 margin: "0 auto",

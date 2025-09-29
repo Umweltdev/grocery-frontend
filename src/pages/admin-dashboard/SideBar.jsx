@@ -17,7 +17,6 @@ import {
   Dashboard,
   CardGiftcard,
   PeopleAlt,
-  TrendingUp,
   Logout,
   Place,
   Book,
@@ -74,16 +73,16 @@ const menuConfig = [
     ],
   },
   { label: "Customers", icon: <PeopleAlt />, path: "/admin/customers" },
-  {
-    label: "RCD-MCD",
-    icon: <TrendingUp />,
-    children: [
-      { label: "MCD Settings", path: "/admin/pricing/mcd" },
-      { label: "RCD Settings", path: "/admin/pricing/rcd" },
-      { label: "AED Dashboard", path: "/admin/pricing/aed" },
-      { label: "Pricing Dashboard", path: "/admin/pricing/dashboard" },
-    ],
-  },
+  // {
+  //   label: "RCD-MCD",
+  //   icon: <TrendingUp />,
+  //   children: [
+  //     { label: "MCD Settings", path: "/admin/pricing/mcd" },
+  //     { label: "RCD Settings", path: "/admin/pricing/rcd" },
+  //     { label: "AED Dashboard", path: "/admin/pricing/aed" },
+  //     { label: "Pricing Dashboard", path: "/admin/pricing/dashboard" },
+  //   ],
+  // },
 ];
 
 const SideBar = ({ handleDrawerClose }) => {
@@ -119,7 +118,7 @@ const SideBar = ({ handleDrawerClose }) => {
         }}
       >
         <img
-          src="https://bazaar.ui-lib.com/assets/images/logo.svg"
+          src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
           alt="logo"
           style={{ height: 40 }}
         />

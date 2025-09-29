@@ -1,12 +1,11 @@
-import { Typography, Stack, Button, IconButton, Box } from "@mui/material";
+import { Typography, Stack, IconButton, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
+const DashboardHeader = ({ title, button, openDrawer,}) => {
   const isNonMobile = useMediaQuery("(min-width:968px)");
   const marginBottom = button ? { xs: 1.5, md: 0 } : 0;
-  const alignment = button ? "start" : "center";
 
   return (
     <Box
@@ -17,16 +16,12 @@ const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
         borderColor: "divider",
       }}
     >
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems={alignment}
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack
           direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
-          alignItems={{ xs: "start", md: "center" }}
-          width={{ xs: "auto", md: "100%" }}
+          justifyContent={{ xs: "flex-start", md: "center" }}
+          alignItems="center"
+          width="100%"
         >
           <Stack
             direction="row"
@@ -45,43 +40,19 @@ const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
                 justifyContent: "center",
               }}
             >
-              <Icon />
             </Box>
             <Typography
               variant="h4"
-              color="text.primary"
+              color="primary.main"
               fontWeight={700}
-              fontSize={{ xs: "24px", md: "28px" }}
+              p="2"
+              fontSize={{ xs: "28px", md: "32px" }}
+              textAlign={{ xs: "left", md: "center" }}
+              sx={{ width: "100%" }}
             >
               {title}
             </Typography>
           </Stack>
-          {button && (
-            <Link
-              to={link}
-              style={{
-                textDecoration: "none",
-              }}
-            >
-              <Button
-                variant="contained"
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  px: 3,
-                  py: 1.5,
-                  boxShadow: "none",
-                  color: "#FFF",
-                  "&:hover": {
-                    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 0.12)",
-                  },
-                }}
-              >
-                {button}
-              </Button>
-            </Link>
-          )}
         </Stack>
 
         <IconButton
@@ -99,6 +70,14 @@ const DashboardHeader = ({ Icon, title, button, openDrawer, link }) => {
       </Stack>
     </Box>
   );
+};
+
+DashboardHeader.propTypes = {
+  title: PropTypes.string.isRequired,
+  button: PropTypes.node,
+  link: PropTypes.string,
+  openDrawer: PropTypes.func.isRequired,
+  Icon: PropTypes.node,
 };
 
 export default DashboardHeader;

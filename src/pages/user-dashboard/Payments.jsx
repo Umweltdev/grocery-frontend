@@ -14,6 +14,7 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PersonIcon from "@mui/icons-material/Person";
+import PropTypes from "prop-types";
 import { base_url } from "../../utils/baseUrl";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,49 +22,40 @@ import { getCards } from "../../features/auth/authSlice";
 import Header from "./Header";
 
 
-export const getCardImage = (card) => {
-  switch (card) {
-    case "visa":
-      return (
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg"
-          width="100%"
-        />
-      );
-    case "master":
-      return (
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/payment-methods/Mastercard.svg"
-          width="100%"
-        />
-      );
-    case "verve":
-      return (
-        <img
-          src="https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg"
-          width="100%"
-        />
-      );
-    default:
-      return true;
-  }
+export const getCardImage = (brand) => {
+  const cardLogos = {
+    visa: "https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg",
+    master:
+      "https://bazaar.ui-lib.com/assets/images/payment-methods/Mastercard.svg",
+    verve: "https://bazaar.ui-lib.com/assets/images/payment-methods/Visa.svg",
+  };
+
+  const logo = cardLogos[brand?.toLowerCase()];
+  if (!logo) return null;
+
+  return (
+    <img
+      src={logo}
+      alt={`${brand} logo`}
+      width="100%"
+      height="100%"
+      style={{ objectFit: "contain" }}
+    />
+  );
 };
 
 const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
-  const auth = useSelector((state) => state.auth);
-  const { user } = auth;
-  
-  const deleteCard = () => {
-    axios
-      .delete(`${base_url}card/${_id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      })
-      .then((response) => {
-        setIsDeleted(!isDeleted);
-      })
-      .catch((error) => console.log(error));
+  const { user } = useSelector((state) => state.auth);
+
+  const deleteCard = async () => {
+    try {
+      await axios.delete(`${base_url}card/${_id}`, {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      });
+      setIsDeleted(!isDeleted);
+    } catch (error) {
+      console.error("Failed to delete card", error);
+    }
   };
 
   return (
@@ -83,6 +75,7 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
     >
       <CardContent sx={{ p: 3 }}>
         <Stack spacing={2}>
+          {/* Card Top */}
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -98,6 +91,9 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
                     width: "42px",
                     height: "28px",
                     borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   {getCardImage(cardDetails?.brand)}
@@ -107,7 +103,7 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
                 </Typography>
               </Stack>
               <Chip
-                label={cardDetails?.brand?.toUpperCase()}
+                label={cardDetails?.brand?.toUpperCase() || "UNKNOWN"}
                 size="small"
                 sx={{
                   bgcolor: "primary.50",
@@ -116,7 +112,7 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
                 }}
               />
             </Box>
-            
+
             <IconButton
               size="small"
               onClick={deleteCard}
@@ -129,9 +125,8 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
               <DeleteIcon fontSize="small" />
             </IconButton>
           </Stack>
-          
+
           <Divider />
-          
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -141,19 +136,24 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
                 </Typography>
               </Stack>
               <Typography variant="body1" fontWeight={500} ml={3}>
-                {cardDetails?.account_name}
+                {cardDetails?.account_name || "N/A"}
               </Typography>
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <Stack direction="row" alignItems="center" spacing={1}>
-                <CalendarTodayIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                <CalendarTodayIcon
+                  sx={{ fontSize: 18, color: "text.secondary" }}
+                />
                 <Typography variant="body2" color="text.secondary">
                   Expires
                 </Typography>
               </Stack>
               <Typography variant="body1" fontWeight={500} ml={3}>
-                {cardDetails?.exp_month}/{cardDetails?.exp_year.substr(2)}
+                {cardDetails?.exp_month || "MM"}/
+                {cardDetails?.exp_year
+                  ? cardDetails.exp_year.toString().slice(-2)
+                  : "YY"}
               </Typography>
             </Grid>
           </Grid>
@@ -163,11 +163,24 @@ const PaymentCard = ({ _id, cardDetails, isDeleted, setIsDeleted }) => {
   );
 };
 
+PaymentCard.propTypes = {
+  _id: PropTypes.string.isRequired,
+  cardDetails: PropTypes.shape({
+    brand: PropTypes.string,
+    last4: PropTypes.string,
+    account_name: PropTypes.string,
+    exp_month: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    exp_year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }).isRequired,
+  isDeleted: PropTypes.bool.isRequired,
+  setIsDeleted: PropTypes.func.isRequired,
+};
+
 const Payments = ({ openDrawer }) => {
   const dispatch = useDispatch();
-  const { cards } = useSelector((state) => state.auth);
+  const { cards = [] } = useSelector((state) => state.auth);
   const [isDeleted, setIsDeleted] = useState(false);
-  
+
   useEffect(() => {
     dispatch(getCards());
   }, [isDeleted, dispatch]);
@@ -212,12 +225,13 @@ const Payments = ({ openDrawer }) => {
           <Typography variant="body2" color="text.secondary">
             {cards.length} saved payment method{cards.length !== 1 ? "s" : ""}
           </Typography>
-          
+
           <Grid container spacing={3}>
-            {cards.map((card, index) => (
-              <Grid item xs={12} md={6} key={card._id || index}>
+            {cards.map((card) => (
+              <Grid item xs={12} md={6} key={card._id}>
                 <PaymentCard
-                  {...card}
+                  _id={card._id}
+                  cardDetails={card}
                   isDeleted={isDeleted}
                   setIsDeleted={setIsDeleted}
                 />
@@ -228,6 +242,10 @@ const Payments = ({ openDrawer }) => {
       )}
     </Stack>
   );
+};
+
+Payments.propTypes = {
+  openDrawer: PropTypes.func.isRequired,
 };
 
 export default Payments;

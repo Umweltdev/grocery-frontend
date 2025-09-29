@@ -25,10 +25,10 @@ function SampleNextArrow({ onClick }) {
         top: "50%",
         right: "-5px",
         transform: "translateY(-50%)",
-        background: "#0f3460",
-        color: "white",
+        background: "#FFD700",
+        color: "black",
         zIndex: 2,
-        "&:hover": { background: "#0f3460" },
+        "&:hover": { background: "#FFC300" },
       }}
     >
       <ArrowForwardIcon fontSize="small" />
@@ -49,10 +49,10 @@ function SamplePrevArrow({ onClick }) {
         top: "50%",
         left: "-5px",
         transform: "translateY(-50%)",
-        background: "#0f3460",
-        color: "white",
+        background: "#FFD700",
+        color: "black",
         zIndex: 2,
-        "&:hover": { background: "#0f3460" },
+        "&:hover": { background: "#FFC300" },
       }}
     >
       <ArrowBackIcon fontSize="small" />
@@ -76,8 +76,13 @@ const Offer = () => {
       <Grid container spacing={{ xs: 4, sm: 0 }} alignItems="center">
         <Grid item xs={12} sm={7} order={{ xs: 1, sm: 0 }}>
           <Stack spacing={2.5}>
-            <Typography variant="h6" fontWeight={500}>
-              Till 10 Sept, 2021
+            <Typography
+              variant="h6"
+              fontWeight={500}
+              color="primary.main"
+              fontSize={{ sm: "25px", md: "30px" }}
+            >
+              Closing on
             </Typography>
             <Typography
               variant="h5"

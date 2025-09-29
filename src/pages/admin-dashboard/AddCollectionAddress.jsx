@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Box,
   Paper,
@@ -10,8 +10,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { statesInNigeria } from "../user-dashboard/data";
@@ -24,6 +23,7 @@ import {
 import { getCategories } from "../../features/category/categorySlice";
 import { useDispatch, useSelector } from "react-redux";
 import makeToast from "../../utils/toaster";
+
 const CustomTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
@@ -38,6 +38,9 @@ const AddCollectionAddress = () => {
   const dispatch = useDispatch();
   const isNonMobile = useMediaQuery("(min-width:968px)");
   const addressState = useSelector((state) => state.address);
+  const categoryState = useSelector((state) => state.category);
+  const { categories } = categoryState;
+
   const {
     isSuccess,
     isError,
@@ -46,17 +49,25 @@ const AddCollectionAddress = () => {
     updatedAddress,
     addressData,
   } = addressState;
+
   const resetFormRef = useRef();
   const navigate = useNavigate();
 
+  // fetch address if editing
   useEffect(() => {
     if (id !== "create") {
       dispatch(getAddress(id));
     } else {
       dispatch(resetState());
     }
-  }, [id]);
+  }, [id, dispatch]);
 
+  // fetch categories once
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
+
+  // handle toast + reset after action
   useEffect(() => {
     if (isSuccess && createdAddress) {
       makeToast("success", "Address Added Sucessfully!");
@@ -72,7 +83,15 @@ const AddCollectionAddress = () => {
       makeToast("error", "Something went wrong");
       dispatch(resetState());
     }
-  }, [isSuccess, isError, isLoading]);
+  }, [
+    isSuccess,
+    isError,
+    isLoading,
+    createdAddress,
+    updatedAddress,
+    dispatch,
+    navigate,
+  ]);
 
   const initialValues = {
     fullName: addressData?.fullName || "",
@@ -80,10 +99,16 @@ const AddCollectionAddress = () => {
     address: addressData?.address || "",
     state: addressData?.state || "",
     email: addressData?.email || "",
+    category: addressData?.category || "",
   };
 
   return (
-    <Box bgcolor="background.paper" px={{ xs: 2, md: 4 }} py={{ xs: 4, md: 4 }} height="calc(100vh - 75px)">
+    <Box
+      bgcolor="background.paper"
+      px={{ xs: 2, md: 4 }}
+      py={{ xs: 4, md: 4 }}
+      height="calc(100vh - 75px)"
+    >
       <Stack spacing={3}>
         <Typography variant="h6" fontSize={{ xs: "19px", sm: "21px" }}>
           {id === "create"
@@ -136,6 +161,7 @@ const AddCollectionAddress = () => {
                     },
                   }}
                 >
+                  {/* Full Name */}
                   <CustomTextField
                     fullWidth
                     variant="outlined"
@@ -147,13 +173,11 @@ const AddCollectionAddress = () => {
                     name="fullName"
                     error={!!touched.fullName && !!errors.fullName}
                     helperText={touched.fullName && errors.fullName}
-                    sx={{
-                      gridColumn: "span 2",
-                    }}
-                    InputLabelProps={{
-                      style: { fontSize: "15px" },
-                    }}
+                    sx={{ gridColumn: "span 2" }}
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
                   />
+
+                  {/* Phone */}
                   <CustomTextField
                     fullWidth
                     variant="outlined"
@@ -165,13 +189,11 @@ const AddCollectionAddress = () => {
                     name="phone"
                     error={!!touched.phone && !!errors.phone}
                     helperText={touched.phone && errors.phone}
-                    sx={{
-                      gridColumn: "span 2",
-                    }}
-                    InputLabelProps={{
-                      style: { fontSize: "15px" },
-                    }}
+                    sx={{ gridColumn: "span 2" }}
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
                   />
+
+                  {/* Address */}
                   <CustomTextField
                     fullWidth
                     variant="outlined"
@@ -183,47 +205,36 @@ const AddCollectionAddress = () => {
                     name="address"
                     error={!!touched.address && !!errors.address}
                     helperText={touched.address && errors.address}
-                    sx={{
-                      gridColumn: "span 2",
-                    }}
-                    InputLabelProps={{
-                      style: { fontSize: "15px" },
-                    }}
-                  />{" "}
+                    sx={{ gridColumn: "span 2" }}
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
+                  />
+
+                  {/* State */}
                   <Autocomplete
                     fullWidth
                     options={statesInNigeria}
-                    value={values.state}
+                    value={values.state || null}
                     isOptionEqualToValue={(option, value) => option === value}
                     onChange={(event, newValue) => {
-                      handleChange({
-                        target: {
-                          name: "state",
-                          value: newValue,
-                        },
-                      });
+                      setFieldValue("state", newValue);
                     }}
                     renderInput={(params) => (
                       <CustomTextField
                         {...params}
                         fullWidth
                         variant="outlined"
-                        type="text"
                         label="State"
                         onBlur={handleBlur}
-                        onChange={handleChange}
                         name="state"
                         error={!!touched.state && !!errors.state}
                         helperText={touched.state && errors.state}
-                        InputLabelProps={{
-                          style: { fontSize: "15px" },
-                        }}
+                        InputLabelProps={{ style: { fontSize: "15px" } }}
                       />
                     )}
-                    sx={{
-                      gridColumn: "span 2",
-                    }}
+                    sx={{ gridColumn: "span 2" }}
                   />
+
+                  {/* Email */}
                   <CustomTextField
                     fullWidth
                     variant="outlined"
@@ -235,19 +246,40 @@ const AddCollectionAddress = () => {
                     name="email"
                     error={!!touched.email && !!errors.email}
                     helperText={touched.email && errors.email}
-                    sx={{
-                      gridColumn: "span 2",
+                    sx={{ gridColumn: "span 2" }}
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
+                  />
+
+                  {/* Category */}
+                  <Autocomplete
+                    fullWidth
+                    options={categories?.map((cat) => cat.name) || []}
+                    value={values.category || null}
+                    onChange={(event, newValue) => {
+                      setFieldValue("category", newValue);
                     }}
-                    InputLabelProps={{
-                      style: { fontSize: "15px" },
-                    }}
+                    renderInput={(params) => (
+                      <CustomTextField
+                        {...params}
+                        label="Category"
+                        variant="outlined"
+                        onBlur={handleBlur}
+                        name="category"
+                        error={!!touched.category && !!errors.category}
+                        helperText={touched.category && errors.category}
+                        InputLabelProps={{ style: { fontSize: "15px" } }}
+                      />
+                    )}
+                    sx={{ gridColumn: "span 2" }}
                   />
                 </Box>
+
+                {/* Submit */}
                 <Button
                   type="submit"
-                  disabled={!isValid || (!dirty && id === "create") || isLoading}
-                  // disabled={!isValid || (!dirty || !productData)}
-
+                  disabled={
+                    !isValid || (!dirty && id === "create") || isLoading
+                  }
                   sx={{
                     textTransform: "none",
                     bgcolor:
@@ -256,9 +288,9 @@ const AddCollectionAddress = () => {
                         : "#4e97fd",
                     color: isLoading ? "#00000042" : "white",
                     fontSize: "14px",
-                    paddingX: "15px",
+                    px: "15px",
                     fontWeight: 400,
-                    paddingY: "5px",
+                    py: "5px",
                     alignSelf: "start",
                     borderRadius: "8px",
                     alignItems: "center",
@@ -297,6 +329,7 @@ const addressSchema = yup.object().shape({
     .min(3, "Name must be at least 3 characters"),
   address: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
+  category: yup.string().required("Category is required"),
 });
 
 export default AddCollectionAddress;

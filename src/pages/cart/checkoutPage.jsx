@@ -26,100 +26,140 @@ const CheckoutPage = ({ updateStepCompletion }) => {
   return (
     <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
       <Grid item xs={12} md={8}>
-        <Stack spacing={4}>
+        <Paper
+          elevation={3}
+          sx={{
+            bgcolor: "background.paper",
+            borderRadius: "10px",
+            p: 3,
+            width: "100%",
+            maxWidth: { xs: "100%", md: 600 },
+            position: "relative",
+            transition: "box-shadow 0.3s",
+            "&:hover": { boxShadow: 6 },
+          }}
+        >
           <DeliveryCollection
             updateStepCompletion={updateStepCompletion}
             disabled={!isDeliveryAllowed}
             forceCollection={!isDeliveryAllowed}
           />
-
-          {!isDeliveryAllowed && (
+        </Paper>
+        {isDeliveryAllowed === false && (
+          <Paper
+            elevation={3}
+            sx={{
+              bgcolor: "background.paper",
+              borderRadius: "10px",
+              p: 2.5,
+              mt: 4,
+              textAlign: "center",
+              border: "1px solid",
+              borderColor: "primary.light",
+            }}
+          >
             <Typography
               variant="body2"
-              color="error"
-              sx={{
-                backgroundColor: "#fce9ec",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                textAlign: "center"
-              }}
+              color="primary.main"
+              sx={{ fontWeight: 600 }}
             >
               Delivery is only available for orders above £150.
             </Typography>
-          )}
-        </Stack>
+          </Paper>
+        )}
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid
+        item
+        xs={12}
+        md={4}
+        sx={{
+          display: "flex",
+          justifyContent: { xs: "center", md: "flex-end" },
+          alignSelf: "flex-start",
+        }}
+      >
         <Paper
+          elevation={3}
           sx={{
-            bgcolor: "white",
-            borderRadius: "8px",
-            paddingY: 3,
-            paddingX: 2,
-            paddingBottom: 6,
-            position: "relative",
+            bgcolor: "background.paper",
+            borderRadius: "10px",
+            p: 3,
+            width: { xs: "100%", sm: "100%", md: "400px" },
+            transition: "box-shadow 0.3s",
+            "&:hover": { boxShadow: 6 },
           }}
         >
-          <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row" justifyContent="space-between" mb={1.5}>
             <Typography variant="subtitle2" color="text.secondary">
               Subtotal:
             </Typography>
-            <Typography fontWeight="600">{`£ ${cartTotal.toLocaleString()}`}</Typography>
+            <Typography variant="subtitle1" fontWeight={600}>
+              {`£ ${cartTotal.toLocaleString()}`}
+            </Typography>
           </Stack>
 
-          <Stack direction="row" justifyContent="space-between" mt={0.7}>
+          <Stack direction="row" justifyContent="space-between" mb={1.5}>
             <Typography variant="subtitle2" color="text.secondary">
               Shipping:
             </Typography>
-            <Typography fontWeight="600">
+            <Typography
+              variant="subtitle1"
+              fontWeight={600}
+              color={isDeliveryAllowed ? "primary.main" : "error.main"}
+            >
               {isDeliveryAllowed ? "£ 0" : "Not Available"}
             </Typography>
           </Stack>
 
-          <Stack direction="row" justifyContent="space-between" mt={0.7}>
+          <Stack direction="row" justifyContent="space-between" mb={1.5}>
             <Typography variant="subtitle2" color="text.secondary">
               Tax:
             </Typography>
-            <Typography fontWeight="600">{`£ 0`}</Typography>
+            <Typography variant="subtitle1" fontWeight={600}>
+              £ 0
+            </Typography>
           </Stack>
 
-          <Stack direction="row" justifyContent="space-between" mt={0.7}>
+          <Stack direction="row" justifyContent="space-between" mb={2}>
             <Typography variant="subtitle2" color="text.secondary">
               Discount:
             </Typography>
-            <Typography fontWeight="600">{`£ 0`}</Typography>
+            <Typography variant="subtitle1" fontWeight={600}>
+              £ 0
+            </Typography>
           </Stack>
 
-          <CustomDivider />
+          <CustomDivider sx={{ my: 2 }} />
 
-          <Typography variant="h5" textAlign="right" my={1}>
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            textAlign="right"
+            mb={3}
+            color="primary.main"
+          >
             {`£ ${cartTotal.toLocaleString()}`}
           </Typography>
 
-          <Stack spacing={1.5}>
+          <Stack spacing={2}>
             <TextField
               fullWidth
               variant="outlined"
-              type="text"
-              label="Voucher"
-              placeholder="Voucher"
+              label="Voucher Code"
+              placeholder="Enter voucher code"
               size="small"
-              sx={{
-                gridColumn: "span 2",
-                "& .MuiInputBase-root": {
-                  fontSize: "15px",
-                },
-              }}
-              InputLabelProps={{
-                style: { fontSize: "14px" },
-              }}
+              sx={{ "& .MuiInputBase-root": { fontSize: 15 } }}
+              InputLabelProps={{ style: { fontSize: 14 } }}
             />
             <Button
-              variant="outlined"
+              variant="contained"
+              color="primary"
               sx={{
                 textTransform: "none",
                 fontWeight: 600,
+                py: 1.5,
+                "&:hover": { bgcolor: "primary.dark" },
               }}
             >
               Apply Voucher

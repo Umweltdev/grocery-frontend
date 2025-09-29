@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const companyInfo = {
-  logo: "https://bazaar.ui-lib.com/assets/images/logo.svg",
+  logo: "https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png",
   description:
     "Your one-stop online store for everything you love. Fast delivery, best prices, and quality guaranteed.",
   address: "70 Washington Square South, New York, NY 10012, United States",
@@ -100,7 +100,7 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
-        bgcolor: "secondary.dark",
+        bgcolor: "rgba(51, 51, 51, 0.95)",
         color: "white",
         pt: 8,
         pb: 5,
@@ -111,7 +111,7 @@ const Footer = () => {
         <Grid container spacing={8} justifyContent="space-between">
           <Grid item xs={12} md={4}>
             <Stack
-              spacing={2}
+              spacing={1}
               alignItems={{ xs: "center", sm: "flex-start" }}
               textAlign={{ xs: "center", sm: "left" }}
             >
@@ -119,7 +119,7 @@ const Footer = () => {
                 <img
                   src={companyInfo.logo}
                   alt="Brand Logo"
-                  style={{ height: 48 }}
+                  style={{ height: 150 }}
                 />
               </Box>
               <Typography color="rgba(255,255,255,0.7)" maxWidth="90%">

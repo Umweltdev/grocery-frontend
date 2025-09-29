@@ -84,7 +84,7 @@ const Homepage = () => {
         display={{ xs: "flex", md: "none" }}
         sx={{
           px: 2,
-          py: 1.5,
+          py: 1.8,
           alignItems: "center",
           justifyContent: "space-between",
           borderBottom: "1px solid #e5e7eb",
@@ -116,9 +116,6 @@ const Homepage = () => {
         }}
       >
         <Box p={3} sx={{ height: "100vh", overflowY: "auto" }}>
-          <Typography variant="h6" fontWeight={700} mb={2} color="primary">
-            Categories
-          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Category visibleCategories={visibleCategories} />
         </Box>
@@ -220,21 +217,14 @@ const Homepage = () => {
                 },
               }}
             >
-              <Typography
-                variant="h6"
-                fontWeight={700}
-                color="text.primary"
-                mb={2}
-              >
-                Categories
-              </Typography>
               <Category visibleCategories={visibleCategories} />
             </Box>
           </Grid>
           <Grid item xs={12} md={9}>
             <Box
               bgcolor="white"
-              p={3}
+              p={{ xs: 1.5, sm: 3 }}
+              justifyContent="center"
               boxShadow="0px 3px 10px rgba(0,0,0,0.08)"
               sx={{ width: "100%" }}
             >

@@ -5,68 +5,57 @@ import {
   Typography,
   Box,
   Stack,
-  Tooltip,
   Button,
   IconButton,
-  Paper,
+  Card,
+  CardMedia,
+  CardContent,
   Rating,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, decreaseQuantity } from "../../features/cart/cartSlice";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import { addToCart } from "../../features/cart/cartSlice";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import BlockIcon from "@mui/icons-material/Block";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { base_url } from "../../utils/baseUrl";
 import makeToast from "../../utils/toaster";
 import { Link } from "react-router-dom";
 
+
 const ICard = ({
   images = [],
-  name,
-  description,
-  regularPrice,
-  salePrice,
-  stock,
-  totalstar,
+  name = "AuraPhone Pro",
+  description = "Experience the future with the A17 Bionic chip and Pro-Motion display.",
+  regularPrice = 1099,
+  salePrice = 999,
+  totalstar = 4,
   _id,
-  pricing,
+  reviewCount = 1288,
 }) => {
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.cart);
   const { user, wishlist } = useSelector((state) => state.auth);
 
-  const productInCart = products.find((p) => p.id === _id);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  // Initialize wishlist state
   useEffect(() => {
-    if (wishlist && _id) {
-      setIsWishlisted(wishlist.some((item) => item._id === _id));
-    }
+    setIsWishlisted(wishlist?.some((item) => item._id === _id) ?? false);
   }, [wishlist, _id]);
 
   const handleAddToCart = () => {
     dispatch(
       addToCart({
         id: _id,
-        image: images[0]?.url,
-        price: pricing?.finalPrice || salePrice || regularPrice,
+        image: images[0]?.url || "/placeholder.png",
+        price: salePrice ?? regularPrice,
         name,
       })
     );
-    makeToast("success", "Added to Cart");
+    makeToast("success", `${name} added to cart`);
   };
 
-  const handleRemoveCart = () => {
-    dispatch(decreaseQuantity(_id));
-    makeToast("error", "Removed from Cart");
-  };
-
-  const toggleWishlist = () => {
+  const toggleWishlist = (e) => {
+    e.preventDefault();
     if (!user?.token) {
-      makeToast("error", "You must be logged in. Sign in.");
+      makeToast("error", "You must be logged in to manage your wishlist.");
       return;
     }
 
@@ -84,204 +73,205 @@ const ICard = ({
       .catch(() => makeToast("error", "Unable to update wishlist"));
   };
 
+  const imageUrl = images[0]?.url || "/placeholder.png";
+
   return (
-    <Paper
-      elevation={3}
+    <Card
       sx={{
-        backgroundColor: "#fff",
-        height: "430px",
-        margin: "auto",
-        display: "flex",
-        flexDirection: "column",
-        borderRadius: 2,
+        maxWidth: 384,
+        width: "100%",
+        borderRadius: 3,
+        fontFamily: "sans-serif",
+        boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+        transition: "all 500ms ease-in-out",
         overflow: "hidden",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.35)",
+        },
       }}
     >
-      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          position: "relative",
+          overflow: "hidden",
+          "&:hover .overlay": { opacity: 0 },
+        }}
+      >
         <Link
           to={`/product/${_id}`}
-          style={{ textDecoration: "none", flexGrow: 1 }}
+          style={{ textDecoration: "none", color: "inherit" }}
         >
+          <CardMedia
+            component="img"
+            image={imageUrl}
+            alt={name}
+            sx={{
+              height: 288,
+              objectFit: "cover",
+              transition: "transform 500ms",
+              "&:hover": {
+                transform: "scale(1.1)",
+              },
+            }}
+          />
+          <Box
+            className="overlay"
+            sx={{
+              position: "absolute",
+              inset: 0,
+              bgcolor: "rgba(0, 0, 0, 0.2)",
+              transition: "opacity 300ms",
+            }}
+          />
+
           <Box
             sx={{
-              width: "100%",
-              height: 190,
-              borderRadius: 2,
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              bgcolor: "#f9f9f9",
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              p: 2.5,
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.6), transparent)",
+              color: "white",
             }}
           >
-            <img
-              src={images[0]?.url}
-              alt={name}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                display: "block",
-              }}
-            />
-          </Box>
-
-          <Box px={2} textAlign="center">
-            <Typography variant="body2" color="#373F50">
-              {name}
-            </Typography>
-            <Typography variant="subtitle2" color="text.secondary" mt={1}>
-              {description && description.length > 100
-                ? `${description.substring(0, 85)}...`
-                : description || "No description available"}
-            </Typography>
-            <Rating
-              name="read-only-rating"
-              value={totalstar || 0}
-              precision={0.5}
-              readOnly
-              size="small"
-              sx={{ mt: 1 }}
-            />
-
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              mt={1}
-            >
-              <Stack direction="column" spacing={0.3}>
-                {salePrice && regularPrice && (
-                  <Typography
-                    color="text.secondary"
-                    variant="subtitle2"
-                    fontSize="12px"
-                  >
-                    <del>£{regularPrice.toLocaleString()}</del>
-                  </Typography>
-                )}
-                <Typography
-                  color="primary.main"
-                  variant="subtitle1"
-                  fontSize="13px"
-                >
-                  £
-                  {(
-                    pricing?.finalPrice ||
-                    salePrice ||
-                    regularPrice ||
-                    0
-                  ).toLocaleString()}
-                </Typography>
-                {pricing?.discount && pricing.discount > 0 && (
-                  <Typography
-                    variant="caption"
-                    color="success.main"
-                    fontSize="10px"
-                  >
-                    -{pricing.discount.toFixed(1)}% RCD
-                  </Typography>
-                )}
-              </Stack>
-              <Tooltip
-                title={
-                  isWishlisted ? "Remove from wishlist" : "Add to wishlist"
-                }
-              >
-                <IconButton
-                  onClick={toggleWishlist}
-                  sx={{ color: isWishlisted ? "#D23F57" : "#00000042" }}
-                  size="small"
-                >
-                  <FavoriteIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Rating
+                name="read-only"
+                value={totalstar}
+                readOnly
+                precision={0.5}
+                size="small"
+                sx={{ color: "#FFC107" }}
+              />
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                ({reviewCount.toLocaleString()} reviews)
+              </Typography>
             </Stack>
           </Box>
         </Link>
+
+        <IconButton
+          onClick={toggleWishlist}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            color: isWishlisted ? "red" : "white",
+            bgcolor: "rgba(0, 0, 0, 0.2)",
+            transition: "all 300ms",
+            "&:hover": {
+              bgcolor: "rgba(0, 0, 0, 0.5)",
+              transform: "scale(1.1)",
+            },
+          }}
+        >
+          <FavoriteIcon />
+        </IconButton>
       </Box>
 
-      <Box
-        sx={{
-          p: 2,
-          borderTop: "1px solid #eee",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {stock > 0 ? (
-          productInCart?.count > 0 ? (
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Button
-                onClick={handleRemoveCart}
-                variant="outlined"
-                sx={{ p: 0.5, minWidth: 0 }}
-              >
-                <RemoveIcon fontSize="small" />
-              </Button>
-              <Typography>{productInCart?.count}</Typography>
-              <Button
-                onClick={handleAddToCart}
-                variant="outlined"
-                sx={{ p: 0.5, minWidth: 0 }}
-              >
-                <AddIcon fontSize="small" />
-              </Button>
-            </Stack>
-          ) : (
-            <Button
-              onClick={handleAddToCart}
+      <CardContent sx={{ p: 2.5 }}>
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="h3"
+          sx={{ fontWeight: "800", lineHeight: 1.2 }}
+        >
+          {name}
+        </Typography>
+
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mt: 1, fontWeight: 500 }}
+        >
+          {description}
+        </Typography>
+
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={2.5}
+        >
+          <Box>
+            <Typography
+              variant="h4"
+              component="span"
+              sx={{ fontWeight: "bold" }}
+            >
+              £{salePrice.toLocaleString()}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="span"
               sx={{
-                textTransform: "none",
-                bgcolor: "primary.main",
-                color: "white",
-                fontSize: 16,
-                px: 2,
-                py: 0.8,
-                borderRadius: "50px",
-                "&:hover": { backgroundColor: "#E3364E" },
+                textDecoration: "line-through",
+                color: "text.secondary",
+                ml: 1.5,
+                fontWeight: 500,
               }}
             >
-              <ShoppingCartOutlinedIcon sx={{ fontSize: 16, mr: 0.5 }} />
-              Add To Cart
-            </Button>
-          )
-        ) : (
-          <Button
-            disabled
-            sx={{
-              textTransform: "none",
-              bgcolor: "#0000001f",
-              fontSize: 12,
-              px: 2,
-              py: 0.5,
-              borderRadius: "50px",
-            }}
-          >
-            <BlockIcon sx={{ fontSize: 16, mr: 0.5 }} />
-            BACK SOON
-          </Button>
-        )}
-      </Box>
-    </Paper>
+              £{regularPrice.toLocaleString()}
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={0.5}>
+            {["#3B82F6", "#000000", "#EF4444"].map((color) => (
+              <Box
+                key={color}
+                sx={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  bgcolor: color,
+                  border: "2px solid white",
+                  boxShadow: 1,
+                }}
+              />
+            ))}
+          </Stack>
+        </Stack>
+
+        <Button
+          fullWidth
+          variant="contained"
+          startIcon={<ShoppingCartIcon />}
+          onClick={handleAddToCart}
+          sx={{
+            mt: 3,
+            py: 1.5,
+            bgcolor: "#D23F57",
+            color: "white",
+            borderRadius: 2.5,
+            fontWeight: "bold",
+            fontSize: "1rem",
+            boxShadow: 3,
+            transition: "all 300ms ease-in-out",
+            "&:hover": {
+              bgcolor: "#B93247",
+              transform: "translateY(-4px)",
+              boxShadow: 6,
+            },
+          }}
+        >
+          Add to Cart
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
 ICard.propTypes = {
   images: PropTypes.arrayOf(PropTypes.shape({ url: PropTypes.string })),
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  regularPrice: PropTypes.number.isRequired,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  regularPrice: PropTypes.number,
   salePrice: PropTypes.number,
-  stock: PropTypes.number,
   totalstar: PropTypes.number,
   _id: PropTypes.string.isRequired,
-  pricing: PropTypes.shape({
-    finalPrice: PropTypes.number,
-    discount: PropTypes.number,
-    mcdMultiplier: PropTypes.number,
-  }),
+  reviewCount: PropTypes.number,
 };
 
 export default ICard;
