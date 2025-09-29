@@ -11,6 +11,13 @@ import { getOrders } from "../../features/order/orderSlice";
 const columns = [
   { field: "id", headerName: "Order ID", width: 120 },
   {
+    field: "email",
+    headerName: "Customer Email",
+    width: 200,
+    headerAlign: "center",
+    align: "center",
+  },
+  {
     field: "qty",
     headerName: "Qty",
     width: 100,
@@ -48,19 +55,31 @@ const columns = [
           {value === "Delivered" && (
             <Chip
               label={value}
-              sx={{ color: "#33d067", bgcolor: "#e7f9ed", height: "25px" }}
+              sx={{ color: "white", bgcolor: "#4CAF50", height: "25px" }}
             />
           )}
-          {(value === "Pending" || value === "Cancelled") && (
+          {value === "Pending" && (
             <Chip
               label={value}
-              sx={{ color: "#e94560", bgcolor: "#ffeaea", height: "25px" }}
+              sx={{ color: "white", bgcolor: "#FF9800", height: "25px" }}
             />
           )}
-          {(value === "Processing" || value === "Dispatched") && (
+          {value === "Processing" && (
             <Chip
               label={value}
-              sx={{ color: "#ffcd4e", bgcolor: "#FFF8E5", height: "25px" }}
+              sx={{ color: "white", bgcolor: "#2196F3", height: "25px" }}
+            />
+          )}
+          {value === "Dispatched" && (
+            <Chip
+              label={value}
+              sx={{ color: "white", bgcolor: "#9C27B0", height: "25px" }}
+            />
+          )}
+          {value === "Cancelled" && (
+            <Chip
+              label={value}
+              sx={{ color: "white", bgcolor: "#F44336", height: "25px" }}
             />
           )}
         </Box>
@@ -89,13 +108,16 @@ const Orders = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { orders } = useSelector((state) => state.order);
 
-  const filteredOrders = orders.filter((order) =>
-    order.orderId.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredOrders = orders
+    .filter((order) =>
+      order.orderId.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .reverse();
 
   const orderData = filteredOrders.map((order) => ({
     _id: order?._id,
     id: order?.orderId.substring(0, 8),
+    email: order?.orderBy?.email || "N/A",
     date: new Date(order.orderDate).toLocaleDateString("en-US", {
       day: "numeric",
       month: "short",

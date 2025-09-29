@@ -131,9 +131,9 @@ const ICard = ({
               {name}
             </Typography>
             <Typography variant="subtitle2" color="text.secondary" mt={1}>
-              {description.length > 100
+              {description && description.length > 100
                 ? `${description.substring(0, 85)}...`
-                : description}
+                : description || "No description available"}
             </Typography>
             <Rating
               name="read-only-rating"
@@ -151,7 +151,7 @@ const ICard = ({
               mt={1}
             >
               <Stack direction="column" spacing={0.3}>
-                {salePrice && (
+                {salePrice && regularPrice && (
                   <Typography
                     color="text.secondary"
                     variant="subtitle2"
@@ -169,10 +169,11 @@ const ICard = ({
                   {(
                     pricing?.finalPrice ||
                     salePrice ||
-                    regularPrice
+                    regularPrice ||
+                    0
                   ).toLocaleString()}
                 </Typography>
-                {pricing?.discount > 0 && (
+                {pricing?.discount && pricing.discount > 0 && (
                   <Typography
                     variant="caption"
                     color="success.main"

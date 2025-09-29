@@ -48,25 +48,28 @@ const OrderDetails = () => {
   const [value, setValue] = useState({ orderStatus: "", isPaid: false });
   const auth = useSelector((state) => state.auth);
   const { user } = auth;
-  const getOrder = () => {
-    axios
-      .get(`${base_url}user/order/${id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      })
-      .then((response) => {
-        setOrder(response.data);
-        setValue({
-          orderStatus: response.data?.orderStatus,
-          isPaid: response.data?.isPaid,
-        });
-      })
-      .catch((error) => console.log(error));
-  };
   useEffect(() => {
-    getOrder();
-  }, [getOrder]);
+    const getOrder = () => {
+      axios
+        .get(`${base_url}user/order/${id}`, {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        })
+        .then((response) => {
+          setOrder(response.data);
+          setValue({
+            orderStatus: response.data?.orderStatus,
+            isPaid: response.data?.isPaid,
+          });
+        })
+        .catch((error) => console.log(error));
+    };
+    
+    if (id && user?.token) {
+      getOrder();
+    }
+  }, [id, user?.token]);
   const handleStatusChange = (event) => {
     setValue({ ...value, orderStatus: event.target.value });
   };
