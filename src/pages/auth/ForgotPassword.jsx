@@ -50,7 +50,7 @@ const ForgotPassword = () => {
         <form>
           <Link to={"/"} style={{ textDecoration: "none" }}>
             <img
-              src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759089277/Gemini_Generated_Image_9a3gep9a3gep9a3g__1_-removebg-preview_lmwpfj.png"
+              src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
               alt="bazaar logo"
               style={{
                 margin: "0 auto",
