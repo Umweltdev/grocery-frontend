@@ -90,7 +90,6 @@ const Cart = ({ open, onClose }) => {
                 <Box
                   sx={{
                     display: "flex",
-                    //   justifyContent: "space-between",
                     gap: 2,
                     width: "100%",
                     alignItems: "center",
@@ -105,8 +104,6 @@ const Cart = ({ open, onClose }) => {
                         padding: "1px",
                         minWidth: 0,
                         borderRadius: "50%",
-                        //   alignItems: "center",
-                        //   textAlign: "center",
                       }}
                     >
                       <RemoveIcon />

@@ -9,11 +9,12 @@ import {
   ListItemText,
   Collapse,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   ExpandLess,
   ExpandMore,
-  ChevronLeft,
+  Menu,
   Dashboard,
   CardGiftcard,
   PeopleAlt,
@@ -22,71 +23,87 @@ import {
   Book,
   Category,
   Apps,
+  ListAlt,
+  AddCircleOutline,
+  RateReview,
+  FormatListBulleted,
 } from "@mui/icons-material";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout, resetState } from "../../features/auth/authSlice";
 
 const drawerWidth = 280;
+const collapsedWidth = 70;
 
 const menuConfig = [
-  { label: "Dashboard", icon: <Dashboard />, path: "/admin/" },
+  { label: "Dashboard", icon: Dashboard, path: "/admin/" },
   {
     label: "Products",
-    icon: <CardGiftcard />,
+    icon: CardGiftcard,
     children: [
-      { label: "Product List", path: "/admin/products" },
-      { label: "Create Product", path: "/admin/product/create" },
-      { label: "Review", path: "/admin/product-reviews" },
+      { label: "Product List", path: "/admin/products", icon: ListAlt },
+      {
+        label: "Create Product",
+        path: "/admin/product/create",
+        icon: AddCircleOutline,
+      },
+      { label: "Review", path: "/admin/product-reviews", icon: RateReview },
     ],
   },
   {
     label: "Categories",
-    icon: <Category />,
+    icon: Category,
     children: [
-      { label: "Category List", path: "/admin/categories" },
-      { label: "Create Category", path: "/admin/category/create" },
+      {
+        label: "Category List",
+        path: "/admin/categories",
+        icon: FormatListBulleted,
+      },
+      {
+        label: "Create Category",
+        path: "/admin/category/create",
+        icon: AddCircleOutline,
+      },
     ],
   },
   {
     label: "Brands",
-    icon: <Apps />,
+    icon: Apps,
     children: [
-      { label: "Brand List", path: "/admin/brands" },
-      { label: "Create Brand", path: "/admin/brand/create" },
+      { label: "Brand List", path: "/admin/brands", icon: ListAlt },
+      {
+        label: "Create Brand",
+        path: "/admin/brand/create",
+        icon: AddCircleOutline,
+      },
     ],
   },
   {
     label: "Orders",
-    icon: <Book />,
+    icon: Book,
     children: [
-      { label: "Order List", path: "/admin/orders" },
-      { label: "Order Details", path: "/admin/order" },
+      { label: "Order List", path: "/admin/orders", icon: ListAlt },
+      { label: "Order Details", path: "/admin/order", icon: ListAlt },
     ],
   },
   {
     label: "Collection Addresses",
-    icon: <Place />,
+    icon: Place,
     children: [
-      { label: "Address List", path: "/admin/addresses" },
-      { label: "Create Address", path: "/admin/address/create" },
+      { label: "Address List", path: "/admin/addresses", icon: ListAlt },
+      {
+        label: "Create Address",
+        path: "/admin/address/create",
+        icon: AddCircleOutline,
+      },
     ],
   },
-  { label: "Customers", icon: <PeopleAlt />, path: "/admin/customers" },
-  // {
-  //   label: "RCD-MCD",
-  //   icon: <TrendingUp />,
-  //   children: [
-  //     { label: "MCD Settings", path: "/admin/pricing/mcd" },
-  //     { label: "RCD Settings", path: "/admin/pricing/rcd" },
-  //     { label: "AED Dashboard", path: "/admin/pricing/aed" },
-  //     { label: "Pricing Dashboard", path: "/admin/pricing/dashboard" },
-  //   ],
-  // },
+  { label: "Customers", icon: PeopleAlt, path: "/admin/customers" },
 ];
 
-const SideBar = ({ handleDrawerClose }) => {
+const SideBar = () => {
   const [openMenus, setOpenMenus] = useState({});
+  const [collapsed, setCollapsed] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -98,50 +115,67 @@ const SideBar = ({ handleDrawerClose }) => {
     <Drawer
       variant="permanent"
       sx={{
-        width: drawerWidth,
+        width: collapsed ? collapsedWidth : drawerWidth,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: drawerWidth,
+          width: collapsed ? collapsedWidth : drawerWidth,
+          transition: "width 0.3s",
           boxSizing: "border-box",
           backgroundColor: "#2B3445",
           color: "white",
+          overflowX: "hidden",
         },
       }}
     >
-      {/* Header */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: collapsed ? "center" : "space-between",
           p: 2,
+          cursor: "pointer",
         }}
+        onClick={() => setCollapsed((prev) => !prev)}
       >
-        <img
-          src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
-          alt="logo"
-          style={{ height: 40 }}
-        />
-        <IconButton onClick={handleDrawerClose} sx={{ color: "white" }}>
-          <ChevronLeft />
-        </IconButton>
+        {!collapsed && (
+          <img
+            src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
+            alt="logo"
+            style={{ height: 50 }}
+          />
+        )}
+        {collapsed && (
+          <IconButton sx={{ color: "white" }}>
+            <Menu />
+          </IconButton>
+        )}
       </Box>
-
-      {/* Menu Items */}
       <List>
         {menuConfig.map((item, idx) => (
           <Box key={idx}>
             {item.children ? (
               <>
-                <ListItemButton onClick={() => toggleMenu(item.label)}>
-                  <ListItemIcon sx={{ color: "white" }}>
-                    {item.icon}
+                <ListItemButton
+                  onClick={() => toggleMenu(item.label)}
+                  sx={{ justifyContent: collapsed ? "center" : "flex-start" }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      color: "white",
+                      minWidth: collapsed ? "auto" : 40,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <item.icon />
                   </ListItemIcon>
-                  <ListItemText primary={item.label} />
-                  {openMenus[item.label] ? <ExpandLess /> : <ExpandMore />}
+                  {!collapsed && <ListItemText primary={item.label} />}
+                  {!collapsed &&
+                    (openMenus[item.label] ? <ExpandLess /> : <ExpandMore />)}
                 </ListItemButton>
+
                 <Collapse
-                  in={openMenus[item.label]}
+                  in={openMenus[item.label] && !collapsed}
                   timeout="auto"
                   unmountOnExit
                 >
@@ -151,9 +185,18 @@ const SideBar = ({ handleDrawerClose }) => {
                         key={i}
                         component={NavLink}
                         to={child.path}
-                        sx={{ pl: 4 }}
-                        onClick={handleDrawerClose}
+                        sx={{ pl: 6 }}
                       >
+                        <ListItemIcon
+                          sx={{
+                            color: "white",
+                            minWidth: 40,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <child.icon />
+                        </ListItemIcon>
                         <ListItemText primary={child.label} />
                       </ListItemButton>
                     ))}
@@ -161,38 +204,57 @@ const SideBar = ({ handleDrawerClose }) => {
                 </Collapse>
               </>
             ) : (
-              <ListItemButton
-                component={NavLink}
-                to={item.path}
-                onClick={handleDrawerClose}
-              >
-                <ListItemIcon sx={{ color: "white" }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
+              <Tooltip title={collapsed ? item.label : ""} placement="right">
+                <ListItemButton
+                  component={NavLink}
+                  to={item.path}
+                  sx={{ justifyContent: collapsed ? "center" : "flex-start" }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      color: "white",
+                      minWidth: collapsed ? "auto" : 40,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <item.icon />
+                  </ListItemIcon>
+                  {!collapsed && <ListItemText primary={item.label} />}
+                </ListItemButton>
+              </Tooltip>
             )}
           </Box>
         ))}
-
-        {/* Logout */}
-        <ListItemButton
-          onClick={() => {
-            dispatch(logout());
-            dispatch(resetState());
-            navigate("/");
-          }}
-        >
-          <ListItemIcon sx={{ color: "white" }}>
-            <Logout />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItemButton>
+        <Tooltip title={collapsed ? "Logout" : ""} placement="right">
+          <ListItemButton
+            onClick={() => {
+              dispatch(logout());
+              dispatch(resetState());
+              navigate("/");
+            }}
+            sx={{ justifyContent: collapsed ? "center" : "flex-start" }}
+          >
+            <ListItemIcon
+              sx={{
+                color: "white",
+                minWidth: collapsed ? "auto" : 40,
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Logout />
+            </ListItemIcon>
+            {!collapsed && <ListItemText primary="Logout" />}
+          </ListItemButton>
+        </Tooltip>
       </List>
     </Drawer>
   );
 };
 
 SideBar.propTypes = {
-  handleDrawerClose: PropTypes.func.isRequired,
+  handleDrawerClose: PropTypes.func,
 };
 
 export default SideBar;

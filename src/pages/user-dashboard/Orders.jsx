@@ -81,7 +81,7 @@ const Order = ({
                 fontWeight={600}
                 fontFamily="monospace"
               >
-                #{orderId.substring(0, 8).toUpperCase()}
+                £ {orderId.substring(0, 8).toUpperCase()}
               </Typography>
             </Stack>
 

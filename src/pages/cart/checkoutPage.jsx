@@ -9,6 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 import DeliveryCollection from "./Delivery-Collection";
 import PropTypes from "prop-types";
 
@@ -22,6 +23,9 @@ const CustomDivider = styled(Divider)`
 const CheckoutPage = ({ updateStepCompletion }) => {
   const { cartTotal } = useSelector((state) => state.cart);
   const isDeliveryAllowed = cartTotal >= 150;
+
+  // eslint-disable-next-line no-unused-vars
+  const [isDelivery, setIsDelivery] = useState(false);
 
   return (
     <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
@@ -43,9 +47,12 @@ const CheckoutPage = ({ updateStepCompletion }) => {
             updateStepCompletion={updateStepCompletion}
             disabled={!isDeliveryAllowed}
             forceCollection={!isDeliveryAllowed}
+            onDeliverySelected={() => setIsDelivery(true)}
+            onCollectionSelected={() => setIsDelivery(false)}
           />
         </Paper>
-        {isDeliveryAllowed === false && (
+
+        {!isDeliveryAllowed && (
           <Paper
             elevation={3}
             sx={{
@@ -69,6 +76,7 @@ const CheckoutPage = ({ updateStepCompletion }) => {
         )}
       </Grid>
 
+      {/* Order summary */}
       <Grid
         item
         xs={12}
@@ -171,7 +179,8 @@ const CheckoutPage = ({ updateStepCompletion }) => {
   );
 };
 
-export default CheckoutPage;
 CheckoutPage.propTypes = {
   updateStepCompletion: PropTypes.func,
 };
+
+export default CheckoutPage;

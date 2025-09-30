@@ -22,8 +22,10 @@ import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { userCart, logout } from "./features/auth/authSlice";
 import { getUserCart } from "./features/cart/cartSlice";
+import CheckoutSuccess from "./pages/user-dashboard/CheckoutSuccess";
+import CheckoutCancel from "./pages/user-dashboard/CheckoutCancel";
+import Schedule from "./pages/Schedule";
 
-// ✅ Private Route Wrapper
 function PrivateRoute({ children, authorizedRoles }) {
   const user = useSelector((state) => state.auth.user);
   const isAuthorized = user && authorizedRoles.includes(user?.role);
@@ -84,7 +86,7 @@ function App() {
         }
       } catch (err) {
         console.error("Failed to parse stored user:", err);
-        localStorage.removeItem("user"); // cleanup invalid data
+        localStorage.removeItem("user"); 
       }
     }
 
@@ -140,7 +142,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/schedule-delivery" element={<Schedule />} />
 
+        <Route path="/checkout-success" element={<CheckoutSuccess />} />
+        <Route path="/checkout-cancel" element={<CheckoutCancel />} />
         <Route
           path="/cart"
           element={

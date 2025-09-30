@@ -5,19 +5,16 @@ import {
   Stack,
   Grid,
   Typography,
-  FormControlLabel,
-  Switch,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
-import { mockData, mockData2 } from "./data";
+import { mockData } from "./data";
 import { getProducts } from "../../features/product/productSlice";
 import { getOrders } from "../../features/order/orderSlice";
 
 import { OverviewSection } from "./components/OverviewSection";
 import { EcommerceDashboardSection } from "./components/EcommerceDashboardSection";
-import { SettingsSection } from "./components/SettingsSection";
 import { MarketTrend } from "./components/MarketTrends";
 import { ThirtyDayTrend } from "./components/ThirtyDayTrend";
 
@@ -119,7 +116,7 @@ const Dashboard = () => {
   const { user } = useSelector((state) => state.auth || {});
   const { orders } = useSelector((state) => state.order || { orders: [] });
 
-  const [config, setConfig] = useState({
+  const [config] = useState({
     mcd: { enabled: true },
     rcd: { enabled: false },
   });
@@ -129,17 +126,6 @@ const Dashboard = () => {
     initialMarketingTrends
   );
   const [thirtyDayTrend, setThirtyDayTrend] = useState([]);
-
-  const handleToggle = (key) => {
-    setConfig((prev) => ({
-      ...prev,
-      [key]: { enabled: !prev[key].enabled },
-    }));
-  };
-
-  const handleSave = () => {
-    console.log("Saving settings:", config);
-  };
 
   useEffect(() => {
     const trends = [];
@@ -224,7 +210,6 @@ const Dashboard = () => {
                   </Typography>
                 </Stack>
               </Stack>
-
               <Box sx={{ width: "195px", height: "auto" }}>
                 <img
                   src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
@@ -235,7 +220,6 @@ const Dashboard = () => {
             </Stack>
           </Stack>
         </Grid>
-
         <Grid item xs={12} md={6}>
           <Grid container flex={1} spacing={3}>
             {mockData.map((item, index) => (
@@ -246,16 +230,6 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Box mt={2}>
-        <Grid container spacing={3}>
-          {mockData2.map((item, index) => (
-            <Grid key={index} item xs={12} sm={6} md={3}>
-              <Card2 {...item} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-
       <Box sx={{ mt: 4 }}>
         <OverviewSection analytics={analytics} config={config} />
 
@@ -271,7 +245,7 @@ const Dashboard = () => {
       <Box mt={4}>
         <EcommerceDashboardSection />
       </Box>
-      <Box mt={6}>
+      {/* <Box mt={6}>
         <SettingsSection
           title="Configuration Settings"
           onSave={handleSave}
@@ -302,7 +276,7 @@ const Dashboard = () => {
             </Grid>
           </Grid>
         </SettingsSection>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

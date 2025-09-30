@@ -240,6 +240,7 @@ const AddProduct = () => {
                       accept={{ 'image/*': [] }}
                       multiple
                     >
+
                       {({ getRootProps, getInputProps }) => (
                         <Box
                           {...getRootProps()}
@@ -250,6 +251,7 @@ const AddProduct = () => {
                             textAlign: 'center',
                             cursor: 'pointer',
                             '&:hover': { borderColor: 'primary.main' }
+
                           }}
                         >
                           <input {...getInputProps()} />
@@ -257,6 +259,7 @@ const AddProduct = () => {
                           <Typography>Drag & drop images or click to select</Typography>
                         </Box>
                       )}
+
                     </Dropzone>
                     
                     {selectedFiles.length > 0 && (

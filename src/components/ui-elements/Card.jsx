@@ -76,31 +76,31 @@ const ICard = ({
   const imageUrl = images[0]?.url || "/placeholder.png";
 
   return (
-    <Card
-      sx={{
-        maxWidth: 384,
-        width: "100%",
-        borderRadius: 3,
-        fontFamily: "sans-serif",
-        boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
-        transition: "all 500ms ease-in-out",
-        overflow: "hidden",
-        "&:hover": {
-          transform: "translateY(-8px)",
-          boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.35)",
-        },
-      }}
+    <Link
+      to={`/product/${_id}`}
+      style={{ textDecoration: "none", color: "inherit" }}
     >
-      <Box
+      <Card
         sx={{
-          position: "relative",
+          maxWidth: 384,
+          width: "100%",
+          borderRadius: 3,
+          fontFamily: "sans-serif",
+          boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+          transition: "all 500ms ease-in-out",
           overflow: "hidden",
-          "&:hover .overlay": { opacity: 0 },
+          "&:hover": {
+            transform: "translateY(-8px)",
+            boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.35)",
+          },
         }}
       >
-        <Link
-          to={`/product/${_id}`}
-          style={{ textDecoration: "none", color: "inherit" }}
+        <Box
+          sx={{
+            position: "relative",
+            overflow: "hidden",
+            "&:hover .overlay": { opacity: 0 },
+          }}
         >
           <CardMedia
             component="img"
@@ -151,115 +151,115 @@ const ICard = ({
               </Typography>
             </Stack>
           </Box>
-        </Link>
 
-        <IconButton
-          onClick={toggleWishlist}
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            color: isWishlisted ? "red" : "white",
-            bgcolor: "rgba(0, 0, 0, 0.2)",
-            transition: "all 300ms",
-            "&:hover": {
-              bgcolor: "rgba(0, 0, 0, 0.5)",
-              transform: "scale(1.1)",
-            },
-          }}
-        >
-          <FavoriteIcon />
-        </IconButton>
-      </Box>
+          <IconButton
+            onClick={toggleWishlist}
+            sx={{
+              position: "absolute",
+              top: 16,
+              right: 16,
+              color: isWishlisted ? "red" : "white",
+              bgcolor: "rgba(0, 0, 0, 0.2)",
+              transition: "all 300ms",
+              "&:hover": {
+                bgcolor: "rgba(0, 0, 0, 0.5)",
+                transform: "scale(1.1)",
+              },
+            }}
+          >
+            <FavoriteIcon />
+          </IconButton>
+        </Box>
 
-      <CardContent sx={{ p: 2.5 }}>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="h3"
-          sx={{ fontWeight: "800", lineHeight: 1.2 }}
-        >
-          {name}
-        </Typography>
+        <CardContent sx={{ p: 2.5 }}>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="h3"
+            sx={{ fontWeight: "800", lineHeight: 1.2 }}
+          >
+            {name}
+          </Typography>
 
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 1, fontWeight: 500 }}
-        >
-          {description}
-        </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 1, fontWeight: 500 }}
+          >
+            {description}
+          </Typography>
 
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={2.5}
-        >
-          <Box>
-            <Typography
-              variant="h4"
-              component="span"
-              sx={{ fontWeight: "bold" }}
-            >
-              £{salePrice.toLocaleString()}
-            </Typography>
-            <Typography
-              variant="body1"
-              component="span"
-              sx={{
-                textDecoration: "line-through",
-                color: "text.secondary",
-                ml: 1.5,
-                fontWeight: 500,
-              }}
-            >
-              £{regularPrice.toLocaleString()}
-            </Typography>
-          </Box>
-          <Stack direction="row" spacing={0.5}>
-            {["#3B82F6", "#000000", "#EF4444"].map((color) => (
-              <Box
-                key={color}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mt={2.5}
+          >
+            <Box>
+              <Typography
+                variant="h4"
+                component="span"
+                sx={{ fontWeight: "bold" }}
+              >
+                £{salePrice.toLocaleString()}
+              </Typography>
+              <Typography
+                variant="body1"
+                component="span"
                 sx={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  bgcolor: color,
-                  border: "2px solid white",
-                  boxShadow: 1,
+                  textDecoration: "line-through",
+                  color: "text.secondary",
+                  ml: 1.5,
+                  fontWeight: 500,
                 }}
-              />
-            ))}
+              >
+                £{regularPrice.toLocaleString()}
+              </Typography>
+            </Box>
+            <Stack direction="row" spacing={0.5}>
+              {["#3B82F6", "#000000", "#EF4444"].map((color) => (
+                <Box
+                  key={color}
+                  sx={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    bgcolor: color,
+                    border: "2px solid white",
+                    boxShadow: 1,
+                  }}
+                />
+              ))}
+            </Stack>
           </Stack>
-        </Stack>
 
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={<ShoppingCartIcon />}
-          onClick={handleAddToCart}
-          sx={{
-            mt: 3,
-            py: 1.5,
-            bgcolor: "#D23F57",
-            color: "white",
-            borderRadius: 2.5,
-            fontWeight: "bold",
-            fontSize: "1rem",
-            boxShadow: 3,
-            transition: "all 300ms ease-in-out",
-            "&:hover": {
-              bgcolor: "#B93247",
-              transform: "translateY(-4px)",
-              boxShadow: 6,
-            },
-          }}
-        >
-          Add to Cart
-        </Button>
-      </CardContent>
-    </Card>
+          <Button
+            fullWidth
+            variant="contained"
+            startIcon={<ShoppingCartIcon />}
+            onClick={handleAddToCart}
+            sx={{
+              mt: 3,
+              py: 1.5,
+              bgcolor: "#D23F57",
+              color: "white",
+              borderRadius: 2.5,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              boxShadow: 3,
+              transition: "all 300ms ease-in-out",
+              "&:hover": {
+                bgcolor: "#B93247",
+                transform: "translateY(-4px)",
+                boxShadow: 6,
+              },
+            }}
+          >
+            Add to Cart
+          </Button>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 

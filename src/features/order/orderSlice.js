@@ -8,27 +8,28 @@ const initialState = {
   isSuccess: false,
   orderMessage: null,
   selectedCard: null,
-  deliveryOption: null,
-  selectedAddress: null,
-  billingAddress: null
+  deliveryOption: null,       
+  selectedAddress: null,       
+  scheduledOrder: null,        
+  billingAddress: null,
 };
 
 export const getOrders = createAsyncThunk(
-  "order/get-all-orders",
-  async (thunkAPI) => {
+  "orders/getAll",
+  async (_, thunkAPI) => {
     try {
       return await orderService.getAllOrders();
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error?.response?.data || error.message);
     }
   }
 );
 
-export const resetState = createAction("Reset_Order_State");
+export const resetState = createAction("orders/reset");
 
-export const orderSlice = createSlice({
+const orderSlice = createSlice({
   name: "orders",
-  initialState: initialState,
+  initialState,
   reducers: {
     getOrderMessage: (state, action) => {
       state.orderMessage = action.payload;
@@ -39,15 +40,26 @@ export const orderSlice = createSlice({
     setDeliveryOption: (state, action) => {
       state.deliveryOption = action.payload;
     },
-    setSelectedAddress: (state, action) => { 
+    setSelectedAddress: (state, action) => {
       state.selectedAddress = action.payload;
     },
-    setBillingAddress: (state, action) => { 
+    setBillingAddress: (state, action) => {
       state.billingAddress = action.payload;
     },
+    setScheduledOrder: (state, action) => {
+      const { date, time, ...rest } = action.payload || {};
+      state.scheduledOrder = {
+        ...rest,
+        date: date ? new Date(date).toISOString() : null,
+        time: time ? new Date(time).toISOString() : null,
+      };
+    },
+    clearScheduledOrder: (state) => {
+      state.scheduledOrder = null;
+    },
   },
-  extraReducers: (buildeer) => {
-    buildeer
+  extraReducers: (builder) => {
+    builder
       .addCase(getOrders.pending, (state) => {
         state.isLoading = true;
       })
@@ -55,12 +67,13 @@ export const orderSlice = createSlice({
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.orders = action.payload;
+        state.orders = action.payload || [];
       })
       .addCase(getOrders.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
         state.isLoading = false;
+        state.orderMessage = action.payload || "Failed to fetch orders";
       })
       .addCase(resetState, () => initialState);
   },
@@ -71,6 +84,9 @@ export const {
   setSelectedCard,
   setDeliveryOption,
   setSelectedAddress,
-  setBillingAddress
+  setBillingAddress,
+  setScheduledOrder,
+  clearScheduledOrder,
 } = orderSlice.actions;
+
 export default orderSlice.reducer;
