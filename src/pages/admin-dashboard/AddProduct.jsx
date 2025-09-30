@@ -295,7 +295,7 @@ const AddProduct = () => {
                           setFieldValue("images", [...files, ...values.images]);
                         }}
                         // accept="image/*"
-                        multiple={true} // Set multiple to true to allow multiple file uploads
+                        multiple={true}
                       >
                         {({ getRootProps, getInputProps }) => (
                           <div
@@ -478,7 +478,7 @@ const AddProduct = () => {
                     fullWidth
                     variant="outlined"
                     type="number"
-                    label="Sales Price"
+                    label="Item Cost"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.salePrice}
@@ -517,19 +517,6 @@ const AddProduct = () => {
                             backgroundColor: "#4e97fd !important",
                           },
                         }}
-                        // sx={{
-                        //   fontSize: "16px",
-                        //   "&.Mui-checked": {
-                        //     color: "#4e97fd",
-                        //   },
-                        //   "&:hover": {
-                        //     color: "#4e97fd",
-                        //   },
-                        //   "& .MuiSvgIcon-root": { fontSize: 25 },
-                        //   "& .MuiTypography-body1": {
-                        //     fontSize: "16px",
-                        //   },
-                        // }}
                       />
                     }
                     label={
@@ -568,8 +555,6 @@ const AddProduct = () => {
                 <Button
                   type="submit"
                   disabled={!isValid || (!dirty && id === "create") || isLoading}
-                  // disabled={!isValid || (!dirty || !productData)}
-
                   sx={{
                     textTransform: "none",
                     bgcolor:

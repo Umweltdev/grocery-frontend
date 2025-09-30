@@ -5,14 +5,19 @@ import {
   IconButton,
   Chip,
   Switch,
-  Grid,
+  Paper,
+  Tooltip,
+  Box,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Divider,
 } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
-import Table from "./Table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProducts,
@@ -22,17 +27,36 @@ import {
 import Header from "./Header";
 import makeToast from "../../utils/toaster";
 
-// Render product name with image
 const renderNameCell = (params) => {
   const { value, row } = params;
   return (
-    <Stack direction="row" alignItems="center" spacing={1}>
-      <img src={row.image} alt={value} width={40} height={40} />
-      <Stack>
-        <Typography variant="subtitle2" color="#7d879c">
+    <Stack direction="row" alignItems="center" spacing={2}>
+      <Box
+        sx={{
+          width: 80,
+          height: 80,
+          borderRadius: 2,
+          overflow: "hidden",
+          border: "1px solid #eee",
+          bgcolor: "#fafafa",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <img
+          src={row.image}
+          alt={value}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </Box>
+      <Stack spacing={0.5}>
+        <Typography variant="subtitle1" fontWeight={600}>
           {value}
         </Typography>
-        <Typography fontSize="12px">{row.id}</Typography>
+        <Typography variant="caption" color="text.secondary">
+          {row.id}
+        </Typography>
       </Stack>
     </Stack>
   );
@@ -41,6 +65,7 @@ const renderNameCell = (params) => {
 const Products = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   const {
     products: productState,
@@ -62,7 +87,6 @@ const Products = () => {
     if (isError) makeToast("error", "Something went wrong");
   }, [deletedProduct, isError, dispatch]);
 
-  // Filter products
   const filteredProducts = productState.filter(
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -71,7 +95,6 @@ const Products = () => {
       product.productId.includes(searchQuery)
   );
 
-  // Map products (only base price here)
   const products = filteredProducts.map((product) => ({
     _id: product._id,
     id: product.productId,
@@ -85,8 +108,80 @@ const Products = () => {
     stock: product?.stock,
   }));
 
+  const columns = [
+    {
+      field: "name",
+      headerName: "Product",
+      flex: 1,
+      minWidth: 220,
+      renderCell: renderNameCell,
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      width: 150,
+      renderCell: ({ value }) => <Chip label={value} />,
+    },
+    {
+      field: "brand",
+      headerName: "Brand",
+      width: 150,
+      renderCell: ({ value }) => <Chip label={value} />,
+    },
+    {
+      field: "basePrice",
+      headerName: "Price",
+      width: 120,
+      renderCell: ({ value }) => (
+        <Typography fontWeight={600}>
+          ${value ? value.toFixed(2) : "0.00"}
+        </Typography>
+      ),
+    },
+    { field: "stock", headerName: "Stock", width: 100 },
+    {
+      field: "publish",
+      headerName: "Published",
+      width: 120,
+      renderCell: ({ value }) => <Switch checked={value} />,
+    },
+    {
+      field: "action",
+      headerName: "Actions",
+      width: 200,
+      renderCell: ({ row }) => (
+        <Stack direction="row" spacing={1}>
+          <Tooltip title="Edit">
+            <Link to={`/admin/product/${row._id}`}>
+              <IconButton size="small" color="primary">
+                <EditIcon />
+              </IconButton>
+            </Link>
+          </Tooltip>
+          <Tooltip title="View">
+            <Link to={`/product/${row._id}`}>
+              <IconButton size="small" color="info">
+                <RemoveRedEyeIcon />
+              </IconButton>
+            </Link>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton
+              size="small"
+              color="error"
+              disabled={isLoading}
+              onClick={() => dispatch(deleteProduct(row._id))}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      ),
+    },
+  ];
+
   return (
-    <Stack spacing={3} bgcolor="background.paper" py={3}>
+    <Stack spacing={3} py={3}>
       <Header
         title="Product List"
         placeholder="Search Product..."
@@ -95,95 +190,88 @@ const Products = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-
-      <Grid container>
-        <Grid item xs={12}>
-          <Table>
-            <DataGrid
-              rows={products}
-              columns={[
-                {
-                  field: "name",
-                  headerName: "Name",
-                  width: 200,
-                  renderCell: renderNameCell,
-                },
-                {
-                  field: "category",
-                  headerName: "Category",
-                  width: 150,
-                  renderCell: ({ value }) => (
-                    <Chip label={value} sx={{ height: "25px" }} />
-                  ),
-                },
-                {
-                  field: "brand",
-                  headerName: "Brand",
-                  width: 150,
-                  renderCell: ({ value }) => (
-                    <Chip label={value} sx={{ height: "25px" }} />
-                  ),
-                },
-                {
-                  field: "basePrice",
-                  headerName: "Base Price",
-                  width: 120,
-                  renderCell: ({ value }) => (
-                    <Typography>
-                      ${value ? value.toFixed(2) : "0.00"}
-                    </Typography>
-                  ),
-                },
-                { field: "stock", headerName: "Stock", width: 100 },
-                {
-                  field: "publish",
-                  headerName: "Published",
-                  width: 120,
-                  renderCell: ({ value }) => (
-                    <Switch
-                      checked={value}
-                      sx={{
-                        "& .MuiSwitch-thumb": { color: "#2756b6" },
-                        "& .Mui-checked+.MuiSwitch-track": {
-                          backgroundColor: "#4e97fd !important",
-                        },
+      {!isMobile && (
+        <Paper sx={{ p: 2, borderRadius: 3 }}>
+          <DataGrid
+            autoHeight
+            rows={products}
+            columns={columns}
+            pageSize={10}
+            rowsPerPageOptions={[10, 25, 50]}
+            disableRowSelectionOnClick
+            getRowHeight={() => 120}
+            sx={{
+              border: "none",
+              "& .MuiDataGrid-columnHeaders": {
+                bgcolor: "grey.50",
+                fontWeight: 600,
+              },
+              "& .MuiDataGrid-cell": { borderBottom: "1px solid #f5f5f5" },
+            }}
+          />
+        </Paper>
+      )}
+      {isMobile && (
+        <Stack spacing={2}>
+          {products.map((row) => (
+            <Card key={row._id} sx={{ borderRadius: 2 }}>
+              <CardContent>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      border: "1px solid #eee",
+                    }}
+                  >
+                    <img
+                      src={row.image}
+                      alt={row.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                       }}
                     />
-                  ),
-                },
-                {
-                  field: "action",
-                  headerName: "Action",
-                  width: 200,
-                  headerAlign: "center",
-                  align: "center",
-                  renderCell: ({ row }) => (
-                    <Stack direction="row">
-                      <Link to={`/admin/product/${row._id}`}>
-                        <IconButton aria-label="Edit">
-                          <EditIcon />
-                        </IconButton>
-                      </Link>
-                      <Link to={`/product/${row._id}`}>
-                        <IconButton aria-label="View">
-                          <RemoveRedEyeIcon />
-                        </IconButton>
-                      </Link>
-                      <IconButton
-                        aria-label="Delete"
-                        disabled={isLoading}
-                        onClick={() => dispatch(deleteProduct(row._id))}
-                      >
-                        <DeleteIcon />
+                  </Box>
+                  <Stack flex={1}>
+                    <Typography fontWeight={600}>{row.name}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {row.category}
+                    </Typography>
+                    <Typography fontWeight={600} color="primary">
+                      ${row.basePrice ? row.basePrice.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={1}>
+                    <Link to={`/admin/product/${row._id}`}>
+                      <IconButton size="small" color="primary">
+                        <EditIcon />
                       </IconButton>
-                    </Stack>
-                  ),
-                },
-              ]}
-            />
-          </Table>
-        </Grid>
-      </Grid>
+                    </Link>
+                    <Link to={`/product/${row._id}`}>
+                      <IconButton size="small" color="info">
+                        <RemoveRedEyeIcon />
+                      </IconButton>
+                    </Link>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      disabled={isLoading}
+                      onClick={() => dispatch(deleteProduct(row._id))}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+              </CardContent>
+              <Divider />
+            </Card>
+          ))}
+        </Stack>
+      )}
     </Stack>
   );
 };
