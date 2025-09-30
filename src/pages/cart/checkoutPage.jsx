@@ -9,8 +9,10 @@ import {
   Button,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 import DeliveryCollection from "./Delivery-Collection";
 import PropTypes from "prop-types";
+import OrderDeliveryForm from "../../components/layouts/OrderDeliveryForm";
 
 const CustomDivider = styled(Divider)`
   margin: 16px 0px 20px;
@@ -22,6 +24,10 @@ const CustomDivider = styled(Divider)`
 const CheckoutPage = ({ updateStepCompletion }) => {
   const { cartTotal } = useSelector((state) => state.cart);
   const isDeliveryAllowed = cartTotal >= 150;
+
+  const [scheduledDelivery, setScheduledDelivery] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [isDelivery, setIsDelivery] = useState(false);
 
   return (
     <Grid container spacing={3} mt={{ xs: 0, sm: 4 }}>
@@ -43,9 +49,41 @@ const CheckoutPage = ({ updateStepCompletion }) => {
             updateStepCompletion={updateStepCompletion}
             disabled={!isDeliveryAllowed}
             forceCollection={!isDeliveryAllowed}
+            onDeliverySelected={() => setIsDelivery(true)}
+            onCollectionSelected={() => setIsDelivery(false)}
           />
+
+          <Paper
+            elevation={3}
+            sx={{
+              bgcolor: "background.paper",
+              borderRadius: "10px",
+              p: 3,
+              mt: 3,
+              transition: "box-shadow 0.3s",
+              "&:hover": { boxShadow: 6 },
+            }}
+          >
+            <OrderDeliveryForm
+              defaultData={{}}
+              onSubmit={(data) => setScheduledDelivery(data)}
+            />
+
+            {scheduledDelivery?.mode === "delivery" && (
+              <Typography
+                variant="body1"
+                color="primary.main"
+                sx={{ mt: 2, fontWeight: 600 }}
+              >
+                Delivery scheduled ✅ <br />
+                Date: {scheduledDelivery.date?.format("DD/MM/YYYY")} <br />
+                Time: {scheduledDelivery.time?.format("HH:mm")}
+              </Typography>
+            )}
+          </Paper>
         </Paper>
-        {isDeliveryAllowed === false && (
+
+        {!isDeliveryAllowed && (
           <Paper
             elevation={3}
             sx={{
@@ -69,6 +107,7 @@ const CheckoutPage = ({ updateStepCompletion }) => {
         )}
       </Grid>
 
+      {/* Order summary */}
       <Grid
         item
         xs={12}
@@ -171,7 +210,8 @@ const CheckoutPage = ({ updateStepCompletion }) => {
   );
 };
 
-export default CheckoutPage;
 CheckoutPage.propTypes = {
   updateStepCompletion: PropTypes.func,
 };
+
+export default CheckoutPage;

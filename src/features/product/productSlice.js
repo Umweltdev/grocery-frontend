@@ -23,8 +23,8 @@ export const createProducts = createAsyncThunk(
       formData.append("name", productData.name);
       formData.append("description", productData.description);
       formData.append("regularPrice", productData.regularPrice);
-      formData.append("mcdPrice", productData.mcdPrice);   // ✅ Added
-      formData.append("rcdPrice", productData.rcdPrice);   // ✅ Added
+      formData.append("mcdPrice", productData.mcdPrice);
+      formData.append("rcdPrice", productData.rcdPrice);
       formData.append("tags", productData.tags);
       formData.append("salePrice", productData.salePrice);
       formData.append("stock", productData.stock);
@@ -33,14 +33,18 @@ export const createProducts = createAsyncThunk(
       formData.append("published", productData.published);
       formData.append("reStock", productData.reStock);
 
-      productData.images.forEach((image) => {
-        formData.append("images", image);
+      Object.entries(productData).forEach(([key, value]) => {
+        if (key === "images" && Array.isArray(value)) {
+          value.forEach((image) => formData.append("images", image));
+        } else if (key === "tags" && Array.isArray(value)) {
+          value.forEach((tag, index) => formData.append(`tags[${index}]`, tag));
+        } else {
+          formData.append(key, value);
+        }
       });
-
       return await productService.createProduct(formData);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);    }
   }
 );
 
