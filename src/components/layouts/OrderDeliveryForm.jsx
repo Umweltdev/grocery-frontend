@@ -79,7 +79,7 @@ const OrderDeliveryForm = ({ defaultData = {}, onSubmit }) => {
           {status !== "scheduled" ? (
             <>
               <Typography variant="h5" fontWeight={700} color="primary">
-                {status === "order" ? "Create New Order" : "Schedule Delivery"}
+                {status === "order" ? "Create New" : "Schedule Delivery"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {status === "order"
