@@ -8,9 +8,9 @@ const initialState = {
   isSuccess: false,
   orderMessage: null,
   selectedCard: null,
-  deliveryOption: null,     
-  selectedAddress: null,
-  scheduledOrder: null,     
+  deliveryOption: null,       
+  selectedAddress: null,       
+  scheduledOrder: null,        
   billingAddress: null,
 };
 
@@ -47,14 +47,16 @@ const orderSlice = createSlice({
       state.billingAddress = action.payload;
     },
     setScheduledOrder: (state, action) => {
-  const { date, time, ...rest } = action.payload || {};
-  state.scheduledOrder = {
-    ...rest,
-    date: date ? new Date(date).toISOString() : null,
-    time: time ? new Date(time).toISOString() : null,
-  };
-},
-
+      const { date, time, ...rest } = action.payload || {};
+      state.scheduledOrder = {
+        ...rest,
+        date: date ? new Date(date).toISOString() : null,
+        time: time ? new Date(time).toISOString() : null,
+      };
+    },
+    clearScheduledOrder: (state) => {
+      state.scheduledOrder = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -84,6 +86,7 @@ export const {
   setSelectedAddress,
   setBillingAddress,
   setScheduledOrder,
+  clearScheduledOrder,
 } = orderSlice.actions;
 
 export default orderSlice.reducer;

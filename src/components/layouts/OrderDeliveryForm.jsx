@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Stack,
   Typography,
   TextField,
   Button,
-  MenuItem,
   Paper,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -14,7 +14,9 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
 const OrderDeliveryForm = ({ defaultData = {}, onSubmit }) => {
-  const [mode, setMode] = useState("order");
+  const user = useSelector((state) => state.user);
+
+  const [status, setStatus] = useState("order");
   const [formData, setFormData] = useState({
     orderId: "",
     customerName: "",
@@ -23,26 +25,20 @@ const OrderDeliveryForm = ({ defaultData = {}, onSubmit }) => {
     time: null,
   });
 
-  // ✅ Sync with defaultData whenever it changes
   useEffect(() => {
-    if (defaultData) {
-      setFormData((prev) => ({
-        ...prev,
-        orderId: defaultData.orderId || prev.orderId,
-        customerName: defaultData.customerName || prev.customerName,
-        address: defaultData.address || prev.address,
-        date: defaultData.date ? dayjs(defaultData.date) : prev.date,
-        time: defaultData.time ? dayjs(defaultData.time) : prev.time,
-      }));
+    setFormData((prev) => ({
+      ...prev,
+      orderId: defaultData.orderId || prev.orderId || `ORD-${Date.now()}`,
+      customerName: defaultData.customerName || user?.name || prev.customerName,
+      address: defaultData.address || user?.address || prev.address,
+      date: defaultData.date ? dayjs(defaultData.date) : prev.date,
+      time: defaultData.time ? dayjs(defaultData.time) : prev.time,
+    }));
 
-      // Auto-select mode
-      if (defaultData.date || defaultData.time) {
-        setMode("delivery");
-      } else {
-        setMode("order");
-      }
+    if (defaultData.date || defaultData.time) {
+      setStatus("delivery");
     }
-  }, [defaultData]);
+  }, [defaultData, user]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -50,10 +46,20 @@ const OrderDeliveryForm = ({ defaultData = {}, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSubmit) {
-      onSubmit({ mode, ...formData });
-    } else {
-      console.log("Form Submitted:", { mode, ...formData });
+
+    const submission = { status, ...formData };
+
+    if (status === "order") {
+      setStatus("delivery");
+      setFormData((prev) => ({
+        ...prev,
+        date: prev.date || dayjs(),
+        time: prev.time || dayjs().hour(9).minute(0),
+      }));
+    } else if (status === "delivery") {
+      setStatus("scheduled");
+      if (onSubmit) onSubmit(submission);
+      console.log("Delivery Scheduled:", submission);
     }
   };
 
@@ -69,104 +75,112 @@ const OrderDeliveryForm = ({ defaultData = {}, onSubmit }) => {
           boxShadow: "0px 4px 12px rgba(0,0,0,0.05)",
         }}
       >
-        <Stack spacing={1} mb={3} textAlign="center">
-          <Typography
-            variant="h5"
-            fontWeight={700}
-            color="primary"
-            textAlign="center"
-            sx={{ letterSpacing: 0.5 }}
-          >
-            {mode === "order" ? "Create New Order" : "Schedule Delivery"}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {mode === "order"
-              ? "Order details are prefilled from your cart/order info."
-              : "Select dispatch date & time for delivery."}
-          </Typography>
+        <Stack spacing={2} textAlign="center" mb={3}>
+          {status !== "scheduled" ? (
+            <>
+              <Typography variant="h5" fontWeight={700} color="primary">
+                {status === "order" ? "Create New Order" : "Schedule Delivery"}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {status === "order"
+                  ? "Order details are prefilled from your account."
+                  : "Select dispatch date & time for delivery."}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="h5" fontWeight={700} color="success.main">
+              Delivery Scheduled!
+            </Typography>
+          )}
         </Stack>
 
-        <TextField
-          select
-          label="Form Type"
-          value={mode}
-          onChange={(e) => setMode(e.target.value)}
-          fullWidth
-          sx={{ mb: 3 }}
-        >
-          <MenuItem value="order">Pick Up</MenuItem>
-          <MenuItem value="delivery">Delivery</MenuItem>
-        </TextField>
+        {status !== "scheduled" && (
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3}>
+              {status === "order" ? (
+                <>
+                  <TextField
+                    label="Order ID"
+                    value={formData.orderId}
+                    fullWidth
+                    InputProps={{ readOnly: true }}
+                  />
+                  <TextField
+                    label="Customer Name"
+                    value={formData.customerName}
+                    onChange={(e) =>
+                      handleChange("customerName", e.target.value)
+                    }
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Billing Address"
+                    value={formData.address}
+                    onChange={(e) => handleChange("address", e.target.value)}
+                    multiline
+                    rows={3}
+                    fullWidth
+                    required
+                  />
+                </>
+              ) : (
+                <>
+                  <DatePicker
+                    label="Dispatch Date"
+                    value={formData.date}
+                    onChange={(newValue) => handleChange("date", newValue)}
+                    minDate={dayjs()}
+                    slotProps={{
+                      textField: { fullWidth: true, required: true },
+                    }}
+                  />
+                  <TimePicker
+                    label="Dispatch Time"
+                    value={formData.time}
+                    onChange={(newValue) => handleChange("time", newValue)}
+                    minTime={
+                      formData.date && formData.date.isSame(dayjs(), "day")
+                        ? dayjs()
+                        : dayjs().hour(0).minute(0)
+                    }
+                    slotProps={{
+                      textField: { fullWidth: true, required: true },
+                    }}
+                  />
+                </>
+              )}
 
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={3}>
-            {mode === "order" ? (
-              <>
-                {/* Order ID should come from defaultData and NOT editable */}
-                <TextField
-                  label="Order ID"
-                  value={formData.orderId}
-                  fullWidth
-                  InputProps={{ readOnly: true }}
-                />
-                {/* Customer Name should be editable */}
-                <TextField
-                  label="Customer Name"
-                  value={formData.customerName}
-                  onChange={(e) => handleChange("customerName", e.target.value)}
-                  fullWidth
-                  required
-                />
-                {/* Billing Address should be editable */}
-                <TextField
-                  label="Billing Address"
-                  value={formData.address}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  multiline
-                  rows={3}
-                  fullWidth
-                  required
-                />
-              </>
-            ) : (
-              <>
-                <DatePicker
-                  label="Dispatch Date"
-                  value={formData.date}
-                  onChange={(newValue) => handleChange("date", newValue)}
-                  slotProps={{
-                    textField: { fullWidth: true, required: true },
-                  }}
-                />
-                <TimePicker
-                  label="Dispatch Time"
-                  value={formData.time}
-                  onChange={(newValue) => handleChange("time", newValue)}
-                  slotProps={{
-                    textField: { fullWidth: true, required: true },
-                  }}
-                />
-              </>
-            )}
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                sx={{
+                  bgcolor: "primary.main",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  py: 1.5,
+                  borderRadius: 2,
+                  "&:hover": { bgcolor: "primary.dark" },
+                }}
+              >
+                {status === "order" ? "Confirm Order" : "Schedule Delivery"}
+              </Button>
+            </Stack>
+          </form>
+        )}
 
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              sx={{
-                bgcolor: "primary.main",
-                textTransform: "none",
-                fontWeight: 600,
-                textAlign: "center",
-                py: 1.5,
-                borderRadius: 2,
-                "&:hover": { bgcolor: "primary.dark" },
-              }}
-            >
-              {mode === "order" ? "Confirm Order" : "Schedule Delivery"}
-            </Button>
+        {status === "scheduled" && (
+          <Stack spacing={2} mt={2}>
+            <Typography>Order ID: {formData.orderId}</Typography>
+            <Typography>Customer: {formData.customerName}</Typography>
+            <Typography>Address: {formData.address}</Typography>
+            <Typography>
+              Delivery Date: {formData.date.format("DD/MM/YYYY")} at{" "}
+              {formData.time.format("HH:mm")}
+            </Typography>
           </Stack>
-        </form>
+        )}
       </Paper>
     </LocalizationProvider>
   );
