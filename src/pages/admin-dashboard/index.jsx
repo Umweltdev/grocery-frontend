@@ -23,6 +23,8 @@ import AEDPage from "./AEDPage";
 
 const AdminDashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  
   const handleDrawerOpen = () => {
     setDrawerOpen(true);
   };
@@ -31,12 +33,20 @@ const AdminDashboard = () => {
     setDrawerOpen(false);
   };
   return (
-    <Box display={{ xs: "block", lg: "flex" }} position="relative">
-      <Box display={{ xs: "none", lg: "block" }}>
-        <Sidebar />
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Box sx={{ display: { xs: 'none', lg: 'block' }, position: 'fixed', zIndex: 1200 }}>
+        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       </Box>
 
-      <Box flex={1}>
+      <Box 
+        flex={1} 
+        sx={{ 
+          ml: { lg: collapsed ? '60px' : '240px' },
+          width: { lg: collapsed ? 'calc(100% - 60px)' : 'calc(100% - 240px)' },
+          transition: 'margin-left 0.3s ease, width 0.3s ease',
+          overflow: 'hidden'
+        }}
+      >
         <Toolbar handleDrawerOpen={handleDrawerOpen} />
         <Routes>
           <Route exact path="/" element={<Dashboard />} />
@@ -75,7 +85,7 @@ const AdminDashboard = () => {
           },
         }}
       >
-        <Sidebar handleDrawerClose={handleDrawerClose} />
+        <Sidebar collapsed={false} setCollapsed={() => {}} />
       </Drawer>
     </Box>
   );
