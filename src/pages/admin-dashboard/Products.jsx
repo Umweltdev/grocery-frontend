@@ -106,7 +106,7 @@ const Products = () => {
     action: null,
     basePrice: product.regularPrice,
     stock: product?.stock,
-  }));
+  })).reverse();
 
   const columns = [
     {

@@ -4,6 +4,8 @@ import { base_url } from "../../utils/baseUrl";
 import axios from "axios";
 import makeToast from "../../utils/toaster";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import { loadStripe } from "@stripe/stripe-js";
+// import { Elements, useStripe, useElements } from "@stripe/react-stripe-js";
 
 import {
   Stack,
@@ -18,6 +20,7 @@ import {
   FormControlLabel,
   Typography,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import Cards from "./cards";
 import { useSelector, useDispatch } from "react-redux";
@@ -43,14 +46,20 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
     (state) => state.order
   );
 
-  const [option, setOption] = useState("");
+  const [option, setOption] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSelectedOption = (event) => setOption(event.target.value);
+  const handleSelectedOption = (event) => {
+    event.stopPropagation();
+    const selectedOption = event.target.value;
+    setOption(selectedOption);
+  };
 
   const clearCartAndNavigate = () => {
     localStorage.removeItem("cartState");
     dispatch(resetState());
     dispatch(resetOrderState());
+    setIsProcessing(false);
     navigate("/");
   };
 
@@ -59,6 +68,8 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
       makeToast("error", "Only cash or card payments are currently accepted.");
       return;
     }
+
+    setIsProcessing(true);
 
     try {
       const response = await axios.post(
@@ -74,14 +85,24 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
         { headers: { Authorization: `Bearer ${user?.token}` } }
       );
 
-      if (option === "card" && response.data.authorizationUrl) {
-        window.location.href = response.data.authorizationUrl;
-      } else if (response.data.status === "success") {
-        const successMessage =
-          option === "card"
-            ? "Order successfully paid with card"
-            : "Order confirmed! Our team will contact you shortly.";
-        makeToast("success", successMessage);
+      if (option === "card" && response.data.sessionId) {
+        const stripe = await loadStripe(
+          import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+        );
+        if (stripe) {
+          localStorage.removeItem("cartState");
+          const result = await stripe.redirectToCheckout({
+            sessionId: response.data.sessionId,
+          });
+          if (result.error) {
+            makeToast("error", result.error.message);
+          }
+        } else {
+          makeToast("error", "Stripe failed to initialize");
+        }
+        return;
+      } else if (response.data.status === "succeeded") {
+        makeToast("success", "Successfully Paid with Card");
         clearCartAndNavigate();
       } else {
         makeToast(
@@ -91,7 +112,9 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
         clearCartAndNavigate();
       }
     } catch (error) {
-      makeToast("error", "Something went wrong. Please try again.");
+      makeToast("error", "Please try again, something went wrong");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -110,7 +133,13 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
             bgcolor: "background.paper",
           }}
         >
-          <Typography variant="h5" color="primary.main" textAlign="center" fontWeight={700} mb={2}>
+          <Typography
+            variant="h5"
+            color="primary.main"
+            textAlign="center"
+            fontWeight={700}
+            mb={2}
+          >
             Select Payment Method
           </Typography>
           <FormGroup sx={{ gap: 1.5 }}>
@@ -137,12 +166,20 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
               }
             />
             {option === "card" && (
-              <Stack spacing={2} sx={{ px: isMobile ? 2 : 3 }}>
-                <Typography variant="body2" color="text.secondary">
-                  You will be redirected to a secure Paystack Checkout page to
-                  complete your purchase.
+              <Stack spacing={2}>
+                <Typography
+                  fontSize="12px"
+                  color="text.secondary"
+                  sx={{
+                    paddingBottom: 2,
+                    paddingX: isMobile ? 3 : 2,
+                  }}
+                >
+                  Kindly note that you will be redirected to Stripe Checkout
+                  Page to complete your purchase.
                 </Typography>
-                <Cards option={option} />
+
+                {/* <Cards option={option} /> */}
               </Stack>
             )}
 
@@ -314,13 +351,13 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
       <Grid item xs={12} md={8}>
         <Button
           fullWidth
-          disabled={!option}
-          onClick={createOrder}
+          disabled={!option || isProcessing}
+          onClick={() => createOrder()}
           sx={{
             mt: 4,
             py: 1.5,
             textTransform: "none",
-            bgcolor: !option ? "#0000001f" : "primary.main",
+            bgcolor: !option || isProcessing ? "#0000001f" : "primary.main",
             color: "white",
             fontWeight: 700,
             fontSize: 15,
@@ -332,8 +369,27 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
             "&:hover": { bgcolor: "#E3364E" },
           }}
         >
-          <ShoppingCartOutlinedIcon sx={{ fontSize: 20 }} />
-          Buy Now
+          {isProcessing ? (
+            <>
+              <CircularProgress
+                size={20}
+                sx={{
+                  color: "white",
+                  mr: 1,
+                }}
+              />
+              Processing...
+            </>
+          ) : (
+            <>
+              <ShoppingCartOutlinedIcon
+                sx={{
+                  fontSize: "20px",
+                }}
+              />
+              Buy now{" "}
+            </>
+          )}
         </Button>
       </Grid>
     </Grid>

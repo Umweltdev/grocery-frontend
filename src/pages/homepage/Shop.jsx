@@ -157,18 +157,30 @@ const fallbackSnacks = [
   },
 ];
 
-const fallbackComments = [
+const fallbackProductsWithReviews = [
   {
-    id: 1,
-    user: "John D.",
-    text: "Really love the snacks collection here!",
-    rating: 5,
+    _id: "fallback-1",
+    ratings: [
+      {
+        comment: "Really love the snacks collection here!",
+        postedby: {
+          fullName: "John D.",
+          image: null,
+        },
+      },
+    ],
   },
   {
-    id: 2,
-    user: "Sarah M.",
-    text: "Fast delivery and fresh products.",
-    rating: 4,
+    _id: "fallback-2",
+    ratings: [
+      {
+        comment: "Fast delivery and fresh products.",
+        postedby: {
+          fullName: "Sarah M.",
+          image: null,
+        },
+      },
+    ],
   },
 ];
 
@@ -247,7 +259,7 @@ const Shop = () => {
         />
         <Comment
           products={
-            filteredProduct.length > 0 ? filteredProduct : fallbackComments
+            filteredProduct.length > 0 ? filteredProduct : fallbackProductsWithReviews
           }
         />
       </Stack>

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Typography,
+  Box,
   Stack,
   IconButton,
   Chip,
@@ -83,7 +84,9 @@ const Order = ({
                 £ {orderId.substring(0, 8).toUpperCase()}
               </Typography>
             </Stack>
+
           </Grid>
+
 
           <Grid item xs={6} sm={2}>
             <Stack spacing={1}>
@@ -109,6 +112,7 @@ const Order = ({
             </Stack>
           </Grid>
 
+
           <Grid item xs={6} sm={3}>
             <Stack spacing={1}>
               <Typography
@@ -128,6 +132,7 @@ const Order = ({
             </Stack>
           </Grid>
 
+
           <Grid item xs={8} sm={3}>
             <Stack spacing={1}>
               <Typography
@@ -142,6 +147,7 @@ const Order = ({
               </Typography>
             </Stack>
           </Grid>
+
 
           <Grid item xs={4} sm={1} sx={{ textAlign: "right" }}>
             <IconButton
@@ -177,6 +183,7 @@ Order.propTypes = {
 const Orders = ({ openDrawer, className, style, sx }) => {
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.auth);
+
 
   useEffect(() => {
     dispatch(getOrders());

@@ -24,7 +24,15 @@ const searchProduct = async (query) => {
 };
 
 const createProduct = async (product) => {
-  const response = await axios.post(`${base_url}product/`, product, config);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.token;
+  
+  const response = await axios.post(`${base_url}product/`, product, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
@@ -39,8 +47,15 @@ const getProduct = async (id) => {
 };
 
 const updateProduct = async (id, product) => {
-
-  const response = await axios.put(`${base_url}product/${id}`, product, config);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.token;
+  
+  const response = await axios.put(`${base_url}product/${id}`, product, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 const getProductByCategory = async (id) => {

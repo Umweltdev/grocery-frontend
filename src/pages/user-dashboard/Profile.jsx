@@ -17,7 +17,7 @@ import CakeIcon from "@mui/icons-material/Cake";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { useSelector } from "react-redux";
 import DashboardHeader from "./Header";
-import { PropTypes } from 'prop-types';
+import { PropTypes } from "prop-types";
 
 const Profile = ({ openDrawer }) => {
   const auth = useSelector((state) => state.auth);
