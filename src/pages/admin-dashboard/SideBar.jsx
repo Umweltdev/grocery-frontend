@@ -34,7 +34,8 @@ import { logout, resetState } from "../../features/auth/authSlice";
 
 const drawerWidth = 250;
 const collapsedWidth = 70;
-const sidebarBg = "#2B3445";
+
+const sidebarBg = "#2B3445"; // sidebar background
 
 const menuConfig = [
   { label: "Dashboard", icon: <Dashboard />, path: "/admin/" },
@@ -108,8 +109,9 @@ const SideBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const toggleMenu = (label) =>
+  const toggleMenu = (label) => {
     setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
 
   return (
     <Drawer
@@ -140,13 +142,14 @@ const SideBar = () => {
         }}
         onClick={() => setCollapsed((prev) => !prev)}
       >
-        {!collapsed ? (
+        {!collapsed && (
           <img
             src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
             alt="logo"
             style={{ height: 50 }}
           />
-        ) : (
+        )}
+        {collapsed && (
           <IconButton sx={{ color: "white" }}>
             <Menu />
           </IconButton>
@@ -155,8 +158,8 @@ const SideBar = () => {
 
       {/* Menu Items */}
       <List sx={{ flexGrow: 1 }}>
-        {menuConfig.map((item) => (
-          <Box key={item.label}>
+        {menuConfig.map((item, idx) => (
+          <Box key={idx}>
             {item.children ? (
               <>
                 <ListItemButton
@@ -193,9 +196,9 @@ const SideBar = () => {
                   unmountOnExit
                 >
                   <List component="div" disablePadding>
-                    {item.children.map((child) => (
+                    {item.children.map((child, i) => (
                       <ListItemButton
-                        key={child.label}
+                        key={i}
                         component={NavLink}
                         to={child.path}
                         sx={{
