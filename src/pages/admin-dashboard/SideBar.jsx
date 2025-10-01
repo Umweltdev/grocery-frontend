@@ -11,89 +11,96 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+import {
+  ExpandLess,
+  ExpandMore,
+  Menu,
+  Dashboard,
+  CardGiftcard,
+  PeopleAlt,
+  Logout,
+  Place,
+  Book,
+  Category,
+  Apps,
+  ListAlt,
+  AddCircleOutline,
+  RateReview,
+  FormatListBulleted,
+} from "@mui/icons-material";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout, resetState } from "../../features/auth/authSlice";
 
-// Import Lucide icons individually to avoid any issues
-import { LayoutDashboard } from "lucide-react";
-import { Package } from "lucide-react";
-import { Users } from "lucide-react";
-import { LogOut } from "lucide-react";
-import { MapPin } from "lucide-react";
-import { ShoppingCart } from "lucide-react";
-import { Tags } from "lucide-react";
-import { Tag } from "lucide-react";
-import { List as ListIcon } from "lucide-react";
-import { PlusCircle } from "lucide-react";
-import { Star } from "lucide-react";
-import { Info } from "lucide-react";
-import { TrendingUp } from "lucide-react";
-import { ChevronLeft } from "lucide-react";
-import { ChevronRight } from "lucide-react";
-import { ChevronDown } from "lucide-react";
-import { ChevronUp } from "lucide-react";
+const drawerWidth = 250;
+const collapsedWidth = 70;
 
-const drawerWidth = 240;
-const collapsedWidth = 60;
+const sidebarBg = "#2B3445";
 
 const menuConfig = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/admin/" },
+  { label: "Dashboard", icon: <Dashboard />, path: "/admin/" },
   {
     label: "Products",
-    icon: Package,
+    icon: <CardGiftcard />,
     children: [
-      { label: "Product List", path: "/admin/products", icon: ListIcon },
+      { label: "Product List", path: "/admin/products", icon: <ListAlt /> },
       {
         label: "Create Product",
         path: "/admin/product/create",
-        icon: PlusCircle,
+        icon: <AddCircleOutline />,
       },
-      { label: "Reviews", path: "/admin/product-reviews", icon: Star },
+      { label: "Review", path: "/admin/product-reviews", icon: <RateReview /> },
     ],
   },
   {
     label: "Categories",
-    icon: Tags,
+    icon: <Category />,
     children: [
-      { label: "Category List", path: "/admin/categories", icon: ListIcon },
+      {
+        label: "Category List",
+        path: "/admin/categories",
+        icon: <FormatListBulleted />,
+      },
       {
         label: "Create Category",
         path: "/admin/category/create",
-        icon: PlusCircle,
+        icon: <AddCircleOutline />,
       },
     ],
   },
   {
     label: "Brands",
-    icon: Tag,
+    icon: <Apps />,
     children: [
-      { label: "Brand List", path: "/admin/brands", icon: ListIcon },
-      { label: "Create Brand", path: "/admin/brand/create", icon: PlusCircle },
+      { label: "Brand List", path: "/admin/brands", icon: <ListAlt /> },
+      {
+        label: "Create Brand",
+        path: "/admin/brand/create",
+        icon: <AddCircleOutline />,
+      },
     ],
   },
   {
     label: "Orders",
-    icon: ShoppingCart,
+    icon: <Book />,
     children: [
-      { label: "Order List", path: "/admin/orders", icon: ListIcon },
-      { label: "Order Details", path: "/admin/order", icon: Info },
+      { label: "Order List", path: "/admin/orders", icon: <ListAlt /> },
+      { label: "Order Details", path: "/admin/order", icon: <ListAlt /> },
     ],
   },
   {
-    label: "Addresses",
-    icon: MapPin,
+    label: "Collection Addresses",
+    icon: <Place />,
     children: [
-      { label: "Address List", path: "/admin/addresses", icon: ListIcon },
+      { label: "Address List", path: "/admin/addresses", icon: <ListAlt /> },
       {
         label: "Create Address",
         path: "/admin/address/create",
-        icon: PlusCircle,
+        icon: <AddCircleOutline />,
       },
     ],
   },
-  { label: "Customers", icon: Users, path: "/admin/customers" },
-  { label: "Pricing", icon: TrendingUp, path: "/admin/pricing/dashboard" },
+  { label: "Customers", icon: <PeopleAlt />, path: "/admin/customers" },
 ];
 
 const SideBar = () => {
@@ -106,33 +113,6 @@ const SideBar = () => {
     setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
   };
 
-  // Render icon component with proper styling
-  const renderIcon = (IconComponent, size = 20) => {
-    if (!IconComponent) {
-      console.log('No icon component provided');
-      return null;
-    }
-    
-    try {
-      return (
-        <IconComponent
-          size={size}
-          color="white"
-          strokeWidth={2}
-          style={{
-            display: "block",
-            flexShrink: 0,
-            width: size,
-            height: size,
-          }}
-        />
-      );
-    } catch (error) {
-      console.error('Error rendering icon:', error);
-      return <div style={{ width: size, height: size, backgroundColor: 'white' }} />;
-    }
-  };
-
   return (
     <Drawer
       variant="permanent"
@@ -141,283 +121,148 @@ const SideBar = () => {
         flexShrink: 0,
         "& .MuiDrawer-paper": {
           width: collapsed ? collapsedWidth : drawerWidth,
-          transition: "width 0.3s ease",
+          transition: "width 0.3s",
           boxSizing: "border-box",
-          backgroundColor: "#2B3445",
+          backgroundColor: sidebarBg,
           color: "white",
           overflowX: "hidden",
           display: "flex",
           flexDirection: "column",
-          border: "none",
         },
       }}
     >
-      {/* Header Section */}
+      {/* Logo / Collapse Button */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: collapsed ? "center" : "space-between",
           p: 2,
-          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-          minHeight: "64px",
-          flexShrink: 0,
+          cursor: "pointer",
         }}
+        onClick={() => setCollapsed((prev) => !prev)}
       >
         {!collapsed && (
           <img
             src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
             alt="logo"
-            style={{ height: 40 }}
+            style={{ height: 50 }}
           />
         )}
-
-        <Tooltip title={collapsed ? "Expand" : "Collapse"} placement="right">
-          <IconButton
-            onClick={() => setCollapsed((prev) => !prev)}
-            sx={{
-              color: "white",
-              padding: "8px",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              },
-              ...(collapsed && { margin: "0 auto" }),
-            }}
-          >
-            {collapsed ? renderIcon(ChevronRight) : renderIcon(ChevronLeft)}
+        {collapsed && (
+          <IconButton sx={{ color: "white" }}>
+            <Menu />
           </IconButton>
-        </Tooltip>
+        )}
       </Box>
 
-      {/* Navigation Menu */}
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: "auto",
-          overflowX: "hidden",
-          "&::-webkit-scrollbar": {
-            width: "4px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "transparent",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "rgba(255,255,255,0.3)",
-            borderRadius: "2px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "rgba(255,255,255,0.5)",
-          },
-        }}
-      >
-        <List sx={{ py: 0 }}>
-          {menuConfig.map((item, index) => (
-            <Box key={item.label}>
-              {/* Parent Menu Items with Children */}
-              {item.children ? (
-                <>
-                  <Tooltip
-                    title={collapsed ? item.label : ""}
-                    placement="right"
-                  >
-                    <ListItemButton
-                      onClick={() => toggleMenu(item.label)}
-                      sx={{
-                        justifyContent: collapsed ? "center" : "flex-start",
-                        px: collapsed ? 1 : 2,
-                        minHeight: "48px",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        },
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: collapsed ? "auto" : 40,
-                          marginRight: collapsed ? 0 : 2,
-                          justifyContent: "center",
-                          color: "white",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        {renderIcon(item.icon)}
-                      </ListItemIcon>
-
-                      {!collapsed && (
-                        <>
-                          <ListItemText
-                            primary={item.label}
-                            sx={{
-                              "& .MuiTypography-root": {
-                                color: "white",
-                                fontWeight: 500,
-                                fontSize: "0.9rem",
-                              },
-                            }}
-                          />
-                          <Box sx={{ color: "white", display: "flex" }}>
-                            {openMenus[item.label]
-                              ? renderIcon(ChevronUp, 18)
-                              : renderIcon(ChevronDown, 18)}
-                          </Box>
-                        </>
-                      )}
-                    </ListItemButton>
-                  </Tooltip>
-
-                  {/* Child Menu Items - Show as individual icons when collapsed */}
-                  {collapsed ? (
-                    // When collapsed, show child items as individual icon buttons
-                    item.children.map((child) => (
-                      <Tooltip
-                        key={child.label}
-                        title={child.label}
-                        placement="right"
-                      >
-                        <ListItemButton
-                          component={NavLink}
-                          to={child.path}
-                          sx={{
-                            justifyContent: "center",
-                            px: 1,
-                            minHeight: "48px",
-                            "&:hover": {
-                              backgroundColor: "rgba(255, 255, 255, 0.1)",
-                            },
-                            "&.active": {
-                              backgroundColor: "rgba(255, 255, 255, 0.15)",
-                              borderRight: "3px solid white",
-                            },
-                          }}
-                        >
-                          <ListItemIcon
-                            sx={{
-                              minWidth: "auto",
-                              justifyContent: "center",
-                              color: "white",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            {renderIcon(child.icon, 18)}
-                          </ListItemIcon>
-                        </ListItemButton>
-                      </Tooltip>
-                    ))
-                  ) : (
-                    // When expanded, show normal collapsible child menu
-                    <Collapse
-                      in={openMenus[item.label]}
-                      timeout="auto"
-                    >
-                      <List component="div" disablePadding>
-                        {item.children.map((child) => (
-                          <Tooltip
-                            key={child.label}
-                            title={""}
-                            placement="right"
-                          >
-                            <ListItemButton
-                              component={NavLink}
-                              to={child.path}
-                              sx={{
-                                pl: 4,
-                                minHeight: "40px",
-                                "&:hover": {
-                                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                                },
-                                "&.active": {
-                                  backgroundColor: "rgba(255, 255, 255, 0.15)",
-                                  borderRight: "3px solid white",
-                                },
-                              }}
-                            >
-                              <ListItemIcon
-                                sx={{
-                                  minWidth: 40,
-                                  justifyContent: "center",
-                                  color: "white",
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {renderIcon(child.icon, 18)}
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={child.label}
-                                sx={{
-                                  "& .MuiTypography-root": {
-                                    fontSize: "0.8rem",
-                                    color: "white",
-                                  },
-                                }}
-                              />
-                            </ListItemButton>
-                          </Tooltip>
-                        ))}
-                      </List>
-                    </Collapse>
-                  )}
-                </>
-              ) : (
-                /* Single Menu Items (no children) */
-                <Tooltip title={collapsed ? item.label : ""} placement="right">
-                  <ListItemButton
-                    component={NavLink}
-                    to={item.path}
+      {/* Menu Items */}
+      <List sx={{ flexGrow: 1 }}>
+        {menuConfig.map((item, idx) => (
+          <Box key={idx}>
+            {item.children ? (
+              <>
+                <ListItemButton
+                  onClick={() => toggleMenu(item.label)}
+                  sx={{
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    py: 2,
+                    px: 2,
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: sidebarBg,
+                      "& .MuiListItemIcon-root": { color: sidebarBg },
+                    },
+                  }}
+                >
+                  <ListItemIcon
                     sx={{
-                      justifyContent: collapsed ? "center" : "flex-start",
-                      px: collapsed ? 1 : 2,
-                      minHeight: "48px",
-                      "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      },
-                      "&.active": {
-                        backgroundColor: "rgba(255, 255, 255, 0.15)",
-                        borderRight: "3px solid white",
-                      },
+                      color: "white",
+                      minWidth: collapsed ? "auto" : 30,
+                      display: "flex",
+                      justifyContent: "center",
                     }}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: collapsed ? "auto" : 40,
-                        marginRight: collapsed ? 0 : 2,
-                        justifyContent: "center",
-                        color: "white",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      {renderIcon(item.icon)}
-                    </ListItemIcon>
-                    {!collapsed && (
-                      <ListItemText
-                        primary={item.label}
+                    {item.icon}
+                  </ListItemIcon>
+                  {!collapsed && <ListItemText primary={item.label} />}
+                  {!collapsed &&
+                    (openMenus[item.label] ? <ExpandLess /> : <ExpandMore />)}
+                </ListItemButton>
+
+                <Collapse
+                  in={openMenus[item.label] && !collapsed}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    {item.children.map((child, i) => (
+                      <ListItemButton
+                        key={i}
+                        component={NavLink}
+                        to={child.path}
                         sx={{
-                          "& .MuiTypography-root": {
-                            color: "white",
-                            fontWeight: 500,
-                            fontSize: "0.9rem",
+                          pl: 6,
+                          py: 1.5,
+                          "&:hover": {
+                            backgroundColor: "white",
+                            color: sidebarBg,
+                            "& .MuiListItemIcon-root": { color: sidebarBg },
                           },
                         }}
-                      />
-                    )}
-                  </ListItemButton>
-                </Tooltip>
-              )}
-            </Box>
-          ))}
-        </List>
-      </Box>
+                      >
+                        <ListItemIcon
+                          sx={{
+                            color: "white",
+                            minWidth: 30,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {child.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={child.label} />
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Collapse>
+              </>
+            ) : (
+              <Tooltip title={collapsed ? item.label : ""} placement="right">
+                <ListItemButton
+                  component={NavLink}
+                  to={item.path}
+                  sx={{
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    py: 2,
+                    px: 2,
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: sidebarBg,
+                      "& .MuiListItemIcon-root": { color: sidebarBg },
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      color: "white",
+                      minWidth: collapsed ? "auto" : 30,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  {!collapsed && <ListItemText primary={item.label} />}
+                </ListItemButton>
+              </Tooltip>
+            )}
+          </Box>
+        ))}
+      </List>
 
-      {/* Logout Section */}
-      <Box
-        sx={{
-          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-          flexShrink: 0,
-        }}
-      >
+      {/* Logout at bottom */}
+      <Box sx={{ mt: "auto", mb: 2 }}>
         <Tooltip title={collapsed ? "Logout" : ""} placement="right">
           <ListItemButton
             onClick={() => {
@@ -427,37 +272,26 @@ const SideBar = () => {
             }}
             sx={{
               justifyContent: collapsed ? "center" : "flex-start",
-              px: collapsed ? 1 : 2,
-              minHeight: "48px",
+              py: 2,
+              px: 2,
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "white",
+                color: sidebarBg,
+                "& .MuiListItemIcon-root": { color: sidebarBg },
               },
             }}
           >
             <ListItemIcon
               sx={{
-                minWidth: collapsed ? "auto" : 40,
-                marginRight: collapsed ? 0 : 2,
-                justifyContent: "center",
                 color: "white",
+                minWidth: collapsed ? "auto" : 30,
                 display: "flex",
-                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {renderIcon(LogOut)}
+              <Logout />
             </ListItemIcon>
-            {!collapsed && (
-              <ListItemText
-                primary="Logout"
-                sx={{
-                  "& .MuiTypography-root": {
-                    color: "white",
-                    fontWeight: 500,
-                    fontSize: "0.9rem",
-                  },
-                }}
-              />
-            )}
+            {!collapsed && <ListItemText primary="Logout" />}
           </ListItemButton>
         </Tooltip>
       </Box>

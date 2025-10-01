@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
 import {
   Stack,
@@ -23,7 +24,6 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { getOrders } from "../../features/order/orderSlice";
 import Header from "./Header";
 import OrderDeliveryForm from "../../components/layouts/OrderDeliveryForm";
-
 
 const renderStatusCell = ({ value }) => {
   let color;
@@ -50,140 +50,60 @@ const renderStatusCell = ({ value }) => {
   }
 
   return (
-    <Chip label={value} sx={{ color, bgcolor, height: 25, fontWeight: 500 }} />
+    <Chip label={value} sx={{ color, bgcolor, height: 25, fontWeight: 300 }} />
   );
 };
 
-
-const columns = [
-  { field: "id", headerName: "Order ID", width: 120 },
-  {
-    field: "email",
-    headerName: "Customer Email",
-    width: 200,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "qty",
-    headerName: "Qty",
-    width: 100,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "date",
-    headerName: "Purchase Date",
-    width: 150,
-    headerAlign: "center",
-    align: "center",
-  },
-
-  {
-    field: "address",
-    headerName: "Billing Address",
-    width: 300,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "amount",
-    headerName: "Amount",
-    width: 150,
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    width: 120,
-
-    renderCell: ({ value }) => {
-      return (
-        <Box>
-          {value === "Delivered" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#4CAF50", height: "25px" }}
-            />
-          )}
-          {value === "Pending" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#FF9800", height: "25px" }}
-            />
-          )}
-          {value === "Processing" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#2196F3", height: "25px" }}
-            />
-          )}
-          {value === "Dispatched" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#9C27B0", height: "25px" }}
-            />
-          )}
-          {value === "Cancelled" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#F44336", height: "25px" }}
-            />
-          )}
-        </Box>
-      );
-    },
-  },
-  {
-    field: "action",
-    headerName: "Action",
-    headerAlign: "center",
-    align: "center",
-    renderCell: ({ row }) => (
-      <Stack direction="row">
-        <Link to={`/admin/order/${row._id}`}>
-          <IconButton aria-label="View">
-            <RemoveRedEyeIcon />
-          </IconButton>
-        </Link>
-      </Stack>
-    ),
-  },
-];
-
+renderStatusCell.propTypes = {
+  value: PropTypes.string,
+};
 
 const Orders = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
 
   const { orders } = useSelector((state) => state.order);
 
+  useEffect(() => {
+    dispatch(getOrders());
+  }, [dispatch]);
 
-  const filteredOrders = orders
-    .filter((order) =>
-      order.orderId.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .reverse();
+  const filteredOrders =
+    orders
+      ?.filter((order) =>
+        order?.orderId?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .reverse() || [];
 
   const orderData = filteredOrders.map((order) => ({
     _id: order?._id,
-    id: order?.orderId.substring(0, 8),
+    id: order?.orderId?.substring(0, 8),
     email: order?.orderBy?.email || "N/A",
-
-    date: new Date(order.orderDate).toLocaleDateString("en-US", {
+    date: new Date(order?.orderDate).toLocaleDateString("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
     }),
-    qty: order.products.reduce((sum, product) => sum + product.count, 0),
-    address: `${order.address?.address || ""} ${order.address?.state || ""}`,
-    amount: `£ ${order.totalPrice.toLocaleString()}`,
-    status: order.orderStatus,
-    customerName: order.customerName,
+    qty: order?.products?.reduce((sum, product) => sum + product.count, 0),
+    address: `${order?.address?.address || ""} ${order?.address?.state || ""}`,
+    amount: `£ ${order?.totalPrice?.toLocaleString()}`,
+    status: order?.orderStatus,
+    customerName: order?.customerName,
   }));
 
   const columns = [
     { field: "id", headerName: "Order ID", flex: 1, minWidth: 120 },
+    {
+      field: "email",
+      headerName: "Customer Email",
+      flex: 1,
+      minWidth: 200,
+      align: "center",
+      headerAlign: "center",
+    },
     {
       field: "qty",
       headerName: "Qty",
@@ -241,7 +161,6 @@ const Orders = () => {
     },
   ];
 
-
   return (
     <Stack spacing={3} py={3}>
       <Header
@@ -265,7 +184,7 @@ const Orders = () => {
               border: "none",
               "& .MuiDataGrid-columnHeaders": {
                 bgcolor: "grey.50",
-                fontWeight: 600,
+                fontWeight: 400,
               },
               "& .MuiDataGrid-cell": { borderBottom: "1px solid #f5f5f5" },
             }}
@@ -276,7 +195,7 @@ const Orders = () => {
       {isMobile && (
         <Stack spacing={2}>
           {orderData.map((row) => (
-            <Card key={row._id} sx={{ borderRadius: 2, boxShadow: 1 }}>
+            <Card key={row._id} sx={{ borderRadius: 2,  }}>
               <CardContent>
                 <Stack spacing={1}>
                   <Stack
@@ -284,7 +203,7 @@ const Orders = () => {
                     justifyContent="space-between"
                     alignItems="center"
                   >
-                    <Typography fontWeight={600}>Order #{row.id}</Typography>
+                    <Typography fontWeight={400}>Order #{row.id}</Typography>
                     {renderStatusCell({ value: row.status })}
                   </Stack>
 
@@ -292,7 +211,7 @@ const Orders = () => {
                     {row.date}
                   </Typography>
                   <Typography variant="body2">{row.address}</Typography>
-                  <Typography fontWeight={600}>{row.amount}</Typography>
+                  <Typography fontWeight={400}>{row.amount}</Typography>
 
                   <Stack direction="row" justifyContent="flex-end" spacing={1}>
                     <Link to={`/admin/order/${row._id}`}>
@@ -343,6 +262,24 @@ const Orders = () => {
       </Dialog>
     </Stack>
   );
+};
+
+Orders.propTypes = {};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
+  searchQuery: PropTypes.string.isRequired,
+  setSearchQuery: PropTypes.func.isRequired,
+};
+
+OrderDeliveryForm.propTypes = {
+  defaultData: PropTypes.shape({
+    orderId: PropTypes.string,
+    customerName: PropTypes.string,
+    address: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default Orders;

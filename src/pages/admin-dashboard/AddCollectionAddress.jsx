@@ -53,7 +53,6 @@ const AddCollectionAddress = () => {
   const resetFormRef = useRef();
   const navigate = useNavigate();
 
-  // fetch address if editing
   useEffect(() => {
     if (id !== "create") {
       dispatch(getAddress(id));
@@ -62,12 +61,10 @@ const AddCollectionAddress = () => {
     }
   }, [id, dispatch]);
 
-  // fetch categories once
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
-  // handle toast + reset after action
   useEffect(() => {
     if (isSuccess && createdAddress) {
       makeToast("success", "Address Added Sucessfully!");
