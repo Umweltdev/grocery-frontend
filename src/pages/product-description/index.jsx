@@ -211,7 +211,7 @@ const ProductDescription = () => {
                   <Stack spacing={0.5} alignItems="flex-start">
                     {/* Final / real price */}
                     <Typography variant="h5" color="primary.main">
-                      £{" "}
+                      £
                       {productDetails?.pricing?.finalPrice ||
                         (productDetails?.salePrice
                           ? productDetails?.salePrice
@@ -285,7 +285,6 @@ const ProductDescription = () => {
                       borderColor: "#ddd",
                       display: "flex",
                       gap: "15px",
-                      // margin: 30px 0;
                     }}
                   >
                     <Box
@@ -404,21 +403,6 @@ const ProductDescription = () => {
                       <Item1 key={index} {...item} />
                     ))}
                   </Stack>
-
-                  {/* <Stack spacing={1} alignItems="center" direction="row">
-                  <Typography variant="subtitle2">Rating:</Typography>
-                  <Rating
-                    value={productDetails?.totalstar || 2}
-                    readOnly
-                    sx={{
-                      fontSize: 20,
-                      // alignItems: "center",
-                    }}
-                  />
-                  <Typography variant="subtitle2">{`(${productDetails?.totalrating})`}</Typography>
-                </Stack> */}
-
-                  {/* </Stack> */}
                 </Stack>
               </Grid>
             </Grid>
@@ -437,7 +421,6 @@ const ProductDescription = () => {
               ))}
             </Grid>
             <Tab product={productDetails} />
-
             <Stack
               spacing={2}
               sx={{
@@ -449,14 +432,16 @@ const ProductDescription = () => {
               </Typography>
               <Grid
                 container
-                spacing={3}
+                spacing={{ xs: 2, sm: 3, md: 3 }}
+                justifyContent="left"
+                alignItems="stretch"
                 sx={{
-                  width: "calc(100% + 24px)",
-                  marginLeft: "-24px !important",
+                  maxWidth: { xs: "100%", md: "1200px" },
+                  margin: "0 auto",
                 }}
               >
                 {productState.map((item) => (
-                  <Grid item xs={12} sm={6} md={3} key={item._id}>
+                  <Grid item key={item._id} xs={12} sm={6} md={4}>
                     <ICard {...item} />
                   </Grid>
                 ))}
