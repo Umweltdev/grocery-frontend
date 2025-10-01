@@ -14,7 +14,7 @@ import {
   MailOutline,
   CalendarToday,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { theme } from "../../theme.js";
 
 const gradientText = {
@@ -27,13 +27,21 @@ const gradientText = {
 
 const CheckoutSuccess = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get('session_id');
 
   React.useEffect(() => {
     localStorage.removeItem("quoteBuilderState");
-  }, []);
+    localStorage.removeItem("cartState");
+    
+    // Log the session ID for debugging
+    if (sessionId) {
+      console.log('Stripe checkout session completed:', sessionId);
+    }
+  }, [sessionId]);
 
   const handleBackToHome = () => {
-    navigate("/schedule-delivery");
+    navigate("/");
   };
 
   return (
@@ -78,8 +86,7 @@ const CheckoutSuccess = () => {
                 color="text.secondary"
                 sx={{ fontWeight: 400, maxWidth: "500px" }}
               >
-                Thank you for choosing us for your digital transformation
-                journey. Your payment has been processed successfully.
+                Thank you for your order! Your payment has been processed successfully and your order is being prepared.
               </Typography>
 
               <Paper
@@ -111,8 +118,7 @@ const CheckoutSuccess = () => {
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <CalendarToday sx={{ color: "success.dark" }} />
                     <Typography variant="body1">
-                      Our team will contact you within 24-48 hours to begin your
-                      project.
+                      Your order will be prepared and ready for collection/delivery as scheduled.
                     </Typography>
                   </Box>
                 </Stack>
@@ -146,7 +152,7 @@ const CheckoutSuccess = () => {
                   },
                 }}
               >
-                Schedule your delivery
+                Continue Shopping
               </Button>
             </Stack>
           </Paper>
