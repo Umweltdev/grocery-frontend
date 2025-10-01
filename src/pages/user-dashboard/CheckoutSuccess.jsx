@@ -26,6 +26,7 @@ const gradientText = {
 };
 
 const CheckoutSuccess = () => {
+  
   const navigate = useNavigate();
 
   React.useEffect(() => {

@@ -5,7 +5,6 @@ import axios from "axios";
 import makeToast from "../../utils/toaster";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { loadStripe } from "@stripe/stripe-js";
-// import { Elements, useStripe, useElements } from "@stripe/react-stripe-js";
 
 import {
   Stack,
@@ -22,7 +21,6 @@ import {
   useMediaQuery,
   CircularProgress,
 } from "@mui/material";
-import Cards from "./cards";
 import { useSelector, useDispatch } from "react-redux";
 import { resetState } from "../../features/cart/cartSlice";
 import { resetState as resetOrderState } from "../../features/order/orderSlice";
@@ -87,7 +85,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
 
       if (option === "card" && response.data.sessionId) {
         const stripe = await loadStripe(
-          import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+          import.meta.env.STRIPE_PUBLISHABLE_KEY
         );
         if (stripe) {
           localStorage.removeItem("cartState");
@@ -120,7 +118,6 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
 
   return (
     <Grid container spacing={3} mt={{ xs: 2, sm: 4 }}>
-      {/* Payment Method Card */}
       <Grid item xs={12} md={8}>
         <Paper
           elevation={4}
@@ -179,7 +176,6 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
                   Page to complete your purchase.
                 </Typography>
 
-                {/* <Cards option={option} /> */}
               </Stack>
             )}
 
