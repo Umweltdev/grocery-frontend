@@ -122,12 +122,14 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
         <Paper
           elevation={4}
           sx={{
-            borderRadius: 3,
-            p: { xs: 2, sm: 4 },
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
             bgcolor: "background.paper",
+            borderRadius: "10px",
+            p: 3,
+            width: "100%",
+            maxWidth: { xs: "100%", md: 600 },
+            position: "relative",
+            transition: "box-shadow 0.3s",
+            "&:hover": { boxShadow: 6 },
           }}
         >
           <Typography
@@ -139,7 +141,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           >
             Select Payment Method
           </Typography>
-          <FormGroup sx={{ gap: 1.5 }}>
+          <FormGroup sx={{ gap: 1.5, width: "100%", maxWidth: 500 }}>
             <FormControlLabel
               sx={{
                 py: 2,
@@ -175,12 +177,9 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
                   Kindly note that you will be redirected to Stripe Checkout
                   Page to complete your purchase.
                 </Typography>
-
               </Stack>
             )}
-
             <CustomDivider />
-
             <FormControlLabel
               sx={{
                 py: 2,
@@ -202,9 +201,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
                 </Typography>
               }
             />
-
             <CustomDivider />
-
             <FormControlLabel
               sx={{
                 py: 2,
@@ -256,7 +253,6 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           </FormGroup>
         </Paper>
       </Grid>
-
       <Grid item xs={12} md={4}>
         <Paper
           elevation={4}
@@ -292,9 +288,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
               </Typography>
             </Stack>
           ))}
-
           <CustomDivider />
-
           <Stack direction="column" spacing={1}>
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="body2" color="text.secondary">
@@ -329,9 +323,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
               </Typography>
             </Stack>
           </Stack>
-
           <CustomDivider />
-
           <Typography
             variant="h5"
             fontWeight={700}
@@ -342,8 +334,6 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           </Typography>
         </Paper>
       </Grid>
-
-      {/* Buy Now Button */}
       <Grid item xs={12} md={8}>
         <Button
           fullWidth

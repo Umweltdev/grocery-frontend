@@ -62,12 +62,12 @@ const Signup = () => {
   return (
     <Box
       sx={{
+        minHeight: "100vh",
+        bgcolor: "#f4f6f8",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "column",
-        minHeight: "100vh",
-        bgcolor: "#F6F9FC",
+        p: 2,
       }}
     >
       <Paper
@@ -110,7 +110,6 @@ const Signup = () => {
                   }}
                 />
               </Link>
-
               <Typography variant="body2" mt={1} mb={4} textAlign="center">
                 Create Your Account
               </Typography>
