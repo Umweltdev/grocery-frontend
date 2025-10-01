@@ -16,11 +16,6 @@ import AddBrand from "./AddBrand";
 import OrderDetails from "./OrderDetails";
 import AddCollectionAddress from "./AddCollectionAddress";
 import CollectionAddress from "./CollectionAddresses";
-import PricingDashboard from "./PricingDashboard";
-import MCDPage from "./MCDPage";
-import RCDPage from "./RCDPage";
-import AEDPage from "./AEDPage";
-
 const AdminDashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -34,11 +29,10 @@ const AdminDashboard = () => {
     if (drawerOpen) {
       handleDrawerClose();
     }
-  }, [location.pathname]); // closes drawer whenever route changes
+  }, [drawerOpen, location.pathname]);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/* Permanent sidebar (desktop only) */}
       <Box
         sx={{
           display: { xs: "none", lg: "block" },
@@ -49,7 +43,6 @@ const AdminDashboard = () => {
         <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       </Box>
 
-      {/* Main content area */}
       <Box
         flex={1}
         sx={{
@@ -59,7 +52,6 @@ const AdminDashboard = () => {
           overflow: "hidden",
         }}
       >
-        {/* ✅ Hide Toolbar when Drawer is open */}
         {!drawerOpen && <Toolbar handleDrawerOpen={handleDrawerOpen} />}
 
         <Routes>
@@ -77,18 +69,9 @@ const AdminDashboard = () => {
           <Route path="/order" element={<OrderDetails />} />
           <Route path="/order/:id" element={<OrderDetails />} />
           <Route exact path="/customers" element={<Customers />} />
-          <Route
-            exact
-            path="/pricing/dashboard"
-            element={<PricingDashboard />}
-          />
-          <Route exact path="/pricing/mcd" element={<MCDPage />} />
-          <Route exact path="/pricing/rcd" element={<RCDPage />} />
-          <Route exact path="/pricing/aed" element={<AEDPage />} />
         </Routes>
       </Box>
 
-      {/* Temporary drawer (mobile) */}
       <Drawer
         open={drawerOpen}
         onClose={handleDrawerClose}
@@ -97,7 +80,7 @@ const AdminDashboard = () => {
           zIndex: 1300,
           "& .MuiPaper-root": {
             backgroundColor: "#2B3445",
-            color: "white", // ✅ make all sidebar text/icons white
+            color: "white",
           },
         }}
       >

@@ -144,7 +144,6 @@ const Categories = () => {
         button="Add Category"
         route="category/create"
       />
-
       {!isMobile && (
         <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 2 }}>
           <DataGrid
@@ -163,7 +162,6 @@ const Categories = () => {
           />
         </Paper>
       )}
-
       {isMobile && (
         <Stack spacing={2}>
           {categoryData.map((row) => (
@@ -171,7 +169,7 @@ const Categories = () => {
               <CardContent>
                 <Stack spacing={1}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="subtitle2">Category #{row.id}</Typography>
+                    <Typography>Category #{row.id}</Typography>
                     {renderVisibilityCell({ value: row.visible })}
                   </Stack>
                   <Typography variant="body2" color="text.secondary">{row.level}</Typography>
@@ -196,7 +194,6 @@ const Categories = () => {
         </Stack>
       )}
 
-      {/* Edit Dialog */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Category</DialogTitle>
         <DialogContent>

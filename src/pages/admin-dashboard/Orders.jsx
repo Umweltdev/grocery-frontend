@@ -127,8 +127,6 @@ const Categories = () => {
         button="Add Category"
         route="category/create"
       />
-
-      {/* Desktop Table */}
       {!isMobile && (
         <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 2 }}>
           <DataGrid
@@ -151,7 +149,6 @@ const Categories = () => {
         </Paper>
       )}
 
-      {/* Mobile Card View */}
       {isMobile && (
         <Stack spacing={2}>
           {categoryData.map((row) => (
@@ -163,7 +160,7 @@ const Categories = () => {
                     justifyContent="space-between"
                     alignItems="center"
                   >
-                    <Typography variant="subtitle2">
+                    <Typography >
                       Category #{row.id}
                     </Typography>
                     {renderVisibilityCell({ value: row.visible })}
