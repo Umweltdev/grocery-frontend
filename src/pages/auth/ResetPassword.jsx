@@ -11,6 +11,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { base_url } from "../../utils/baseUrl";
 
 const CustomTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
@@ -53,10 +54,9 @@ const ResetPassword = () => {
     setMessage("");
     
     try {
-      await axios.put(
-        `http://localhost:8080/api/user/reset-password/${token}`,
-        { password }
-      );
+      await axios.put(`${base_url}api/user/reset-password/${token}`, {
+        password,
+      });
       setMessage("Password reset successful! Redirecting to login...");
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
