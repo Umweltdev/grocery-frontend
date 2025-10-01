@@ -12,6 +12,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { base_url } from "../../utils/baseUrl";
 
 const CustomTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
@@ -48,7 +49,7 @@ const ForgotPassword = () => {
     
     try {
       await axios.post(
-        "http://localhost:8080/api/user/forgot-password",
+        `${base_url}/user/forgot-password`,
         { email: email.trim() }
       );
       setMessage("Password reset email sent! Check your inbox.");
