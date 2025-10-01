@@ -54,7 +54,7 @@ const ResetPassword = () => {
     setMessage("");
     
     try {
-      await axios.put(`${base_url}api/user/reset-password/${token}`, {
+      await axios.put(`${base_url}user/reset-password/${token}`, {
         password,
       });
       setMessage("Password reset successful! Redirecting to login...");
