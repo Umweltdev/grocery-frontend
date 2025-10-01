@@ -225,7 +225,7 @@ const Shop = () => {
           </Typography>
 
           {loading ? (
-            <Box display="flex" justifyContent="center" py={6}>
+            <Box display="flex" justifyContent="left" py={6}>
               <CircularProgress size={48} thickness={4} color="error" />
             </Box>
           ) : (

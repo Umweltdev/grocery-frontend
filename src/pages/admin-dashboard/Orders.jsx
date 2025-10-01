@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
 import {
   Stack,
@@ -13,249 +13,125 @@ import {
   Card,
   CardContent,
   Divider,
-  Dialog,
-  DialogContent,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import { getOrders } from "../../features/order/orderSlice";
 import Header from "./Header";
-import OrderDeliveryForm from "../../components/layouts/OrderDeliveryForm";
+import {
+  getCategories,
+  deleteCategory,
+  resetState,
+} from "../../features/category/categorySlice";
+import makeToast from "../../utils/toaster";
 
+const renderVisibilityCell = ({ value }) => (
+  <Chip
+    label={value ? "Visible" : "Hidden"}
+    color={value ? "success" : "default"}
+    size="small"
+  />
+);
 
-const renderStatusCell = ({ value }) => {
-  let color;
-  let bgcolor;
-
-  switch (value) {
-    case "Delivered":
-      color = "#33d067";
-      bgcolor = "#e7f9ed";
-      break;
-    case "Pending":
-    case "Cancelled":
-      color = "#e94560";
-      bgcolor = "#ffeaea";
-      break;
-    case "Processing":
-    case "Dispatched":
-      color = "#ffcd4e";
-      bgcolor = "#FFF8E5";
-      break;
-    default:
-      color = "#888";
-      bgcolor = "#f0f0f0";
-  }
-
-  return (
-    <Chip label={value} sx={{ color, bgcolor, height: 25, fontWeight: 500 }} />
-  );
+renderVisibilityCell.propTypes = {
+  value: PropTypes.bool,
 };
 
-
-const columns = [
-  { field: "id", headerName: "Order ID", width: 120 },
-  {
-    field: "email",
-    headerName: "Customer Email",
-    width: 200,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "qty",
-    headerName: "Qty",
-    width: 100,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "date",
-    headerName: "Purchase Date",
-    width: 150,
-    headerAlign: "center",
-    align: "center",
-  },
-
-  {
-    field: "address",
-    headerName: "Billing Address",
-    width: 300,
-    headerAlign: "center",
-    align: "center",
-  },
-  {
-    field: "amount",
-    headerName: "Amount",
-    width: 150,
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    width: 120,
-
-    renderCell: ({ value }) => {
-      return (
-        <Box>
-          {value === "Delivered" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#4CAF50", height: "25px" }}
-            />
-          )}
-          {value === "Pending" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#FF9800", height: "25px" }}
-            />
-          )}
-          {value === "Processing" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#2196F3", height: "25px" }}
-            />
-          )}
-          {value === "Dispatched" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#9C27B0", height: "25px" }}
-            />
-          )}
-          {value === "Cancelled" && (
-            <Chip
-              label={value}
-              sx={{ color: "white", bgcolor: "#F44336", height: "25px" }}
-            />
-          )}
-        </Box>
-      );
-    },
-  },
-  {
-    field: "action",
-    headerName: "Action",
-    headerAlign: "center",
-    align: "center",
-    renderCell: ({ row }) => (
-      <Stack direction="row">
-        <Link to={`/admin/order/${row._id}`}>
-          <IconButton aria-label="View">
-            <RemoveRedEyeIcon />
-          </IconButton>
-        </Link>
-      </Stack>
-    ),
-  },
-];
-
-
-const Orders = () => {
+const Categories = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useMediaQuery("(max-width:768px)");
 
-  const { orders } = useSelector((state) => state.order);
+  const { categories, deletedCategory, isError, isLoading } = useSelector(
+    (state) => state.category
+  );
 
+  useEffect(() => {
+    dispatch(getCategories(1));
+  }, [dispatch]);
 
-  const filteredOrders = orders
-    .filter((order) =>
-      order.orderId.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .reverse();
+  useEffect(() => {
+    if (deletedCategory) {
+      makeToast("success", "Category deleted successfully!");
+      dispatch(getCategories(1));
+    }
+    if (isError) {
+      makeToast("error", "Something went wrong");
+    }
+    return () => dispatch(resetState());
+  }, [deletedCategory, isError, dispatch]);
 
-  const orderData = filteredOrders.map((order) => ({
-    _id: order?._id,
-    id: order?.orderId.substring(0, 8),
-    email: order?.orderBy?.email || "N/A",
+  const filteredCategories = categories.filter(
+    (cat) =>
+      cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cat.categoryId.includes(searchQuery)
+  );
 
-    date: new Date(order.orderDate).toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    }),
-    qty: order.products.reduce((sum, product) => sum + product.count, 0),
-    address: `${order.address?.address || ""} ${order.address?.state || ""}`,
-    amount: `£ ${order.totalPrice.toLocaleString()}`,
-    status: order.orderStatus,
-    customerName: order.customerName,
+  const categoryData = filteredCategories.map((cat) => ({
+    _id: cat._id,
+    id: cat.categoryId,
+    name: cat.name,
+    level: cat.level,
+    visible: cat.visible,
   }));
 
+  const handleDelete = (id) => {
+    dispatch(deleteCategory(id));
+  };
+
   const columns = [
-    { field: "id", headerName: "Order ID", flex: 1, minWidth: 120 },
+    { field: "id", headerName: "ID", flex: 1, minWidth: 100 },
     {
-      field: "qty",
-      headerName: "Qty",
-      flex: 0.5,
-      minWidth: 80,
-      align: "center",
-      headerAlign: "center",
+      field: "name",
+      headerName: "Name",
+      flex: 1.5,
+      minWidth: 150,
+      renderCell: ({ value }) => <Chip label={value} size="small" />,
     },
-    { field: "date", headerName: "Purchase Date", flex: 1, minWidth: 150 },
-    { field: "address", headerName: "Billing Address", flex: 2, minWidth: 200 },
-    { field: "amount", headerName: "Amount", flex: 1, minWidth: 120 },
+    { field: "level", headerName: "Level", flex: 1, minWidth: 100 },
     {
-      field: "status",
-      headerName: "Status",
+      field: "visible",
+      headerName: "Visible",
       flex: 1,
-      minWidth: 140,
-      renderCell: renderStatusCell,
+      minWidth: 100,
+      renderCell: renderVisibilityCell,
     },
     {
       field: "action",
       headerName: "Action",
-      flex: 0.6,
-      minWidth: 100,
-      sortable: false,
-      renderCell: ({ row }) => (
-        <Tooltip title="View Order">
-          <Link to={`/admin/order/${row._id}`}>
-            <IconButton size="small" color="info">
-              <RemoveRedEyeIcon />
-            </IconButton>
-          </Link>
-        </Tooltip>
-      ),
-    },
-    {
-      field: "delivery",
-      headerName: "Delivery",
       flex: 0.8,
       minWidth: 120,
       sortable: false,
       renderCell: ({ row }) => (
-        <Tooltip title="Schedule Delivery">
+        <Tooltip title="Delete">
           <IconButton
             size="small"
-            color="primary"
-            onClick={() => {
-              setSelectedOrder(row);
-              setOpenForm(true);
-            }}
+            color="error"
+            disabled={isLoading}
+            onClick={() => handleDelete(row._id)}
           >
-            <LocalShippingIcon />
+            <DeleteIcon />
           </IconButton>
         </Tooltip>
       ),
     },
   ];
 
-
   return (
     <Stack spacing={3} py={3}>
       <Header
-        title="Order List"
-        placeholder="Search Order..."
+        title="Category List"
+        placeholder="Search Category..."
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        button="Add Category"
+        route="category/create"
       />
-
       {!isMobile && (
         <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 2 }}>
           <DataGrid
             autoHeight
-            rows={orderData}
+            rows={categoryData}
             columns={columns}
             pageSize={10}
             rowsPerPageOptions={[10, 25, 50]}
@@ -265,7 +141,7 @@ const Orders = () => {
               border: "none",
               "& .MuiDataGrid-columnHeaders": {
                 bgcolor: "grey.50",
-                fontWeight: 600,
+                fontWeight: 400,
               },
               "& .MuiDataGrid-cell": { borderBottom: "1px solid #f5f5f5" },
             }}
@@ -275,8 +151,8 @@ const Orders = () => {
 
       {isMobile && (
         <Stack spacing={2}>
-          {orderData.map((row) => (
-            <Card key={row._id} sx={{ borderRadius: 2, boxShadow: 1 }}>
+          {categoryData.map((row) => (
+            <Card key={row._id} sx={{ borderRadius: 2 }}>
               <CardContent>
                 <Stack spacing={1}>
                   <Stack
@@ -284,32 +160,24 @@ const Orders = () => {
                     justifyContent="space-between"
                     alignItems="center"
                   >
-                    <Typography fontWeight={600}>Order #{row.id}</Typography>
-                    {renderStatusCell({ value: row.status })}
+                    <Typography >
+                      Category #{row.id}
+                    </Typography>
+                    {renderVisibilityCell({ value: row.visible })}
                   </Stack>
-
-                  <Typography variant="body2" color="text.secondary">
-                    {row.date}
-                  </Typography>
-                  <Typography variant="body2">{row.address}</Typography>
-                  <Typography fontWeight={600}>{row.amount}</Typography>
-
+                  <Typography variant="body2">{row.name}</Typography>
+                  <Typography variant="body2">Level: {row.level}</Typography>
                   <Stack direction="row" justifyContent="flex-end" spacing={1}>
-                    <Link to={`/admin/order/${row._id}`}>
-                      <IconButton size="small" color="info">
-                        <RemoveRedEyeIcon />
+                    <Tooltip title="Delete">
+                      <IconButton
+                        size="small"
+                        color="error"
+                        disabled={isLoading}
+                        onClick={() => handleDelete(row._id)}
+                      >
+                        <DeleteIcon />
                       </IconButton>
-                    </Link>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        setSelectedOrder(row);
-                        setOpenForm(true);
-                      }}
-                    >
-                      <LocalShippingIcon />
-                    </IconButton>
+                    </Tooltip>
                   </Stack>
                 </Stack>
               </CardContent>
@@ -318,31 +186,19 @@ const Orders = () => {
           ))}
         </Stack>
       )}
-
-      <Dialog
-        open={openForm}
-        onClose={() => setOpenForm(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogContent>
-          {selectedOrder && (
-            <OrderDeliveryForm
-              defaultData={{
-                orderId: selectedOrder.id,
-                customerName: selectedOrder.customerName,
-                address: selectedOrder.address,
-              }}
-              onSubmit={(data) => {
-                console.log("Delivery Submitted:", data);
-                setOpenForm(false);
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
     </Stack>
   );
 };
 
-export default Orders;
+Categories.propTypes = {};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
+  searchQuery: PropTypes.string.isRequired,
+  setSearchQuery: PropTypes.func.isRequired,
+  button: PropTypes.string,
+  route: PropTypes.string,
+};
+
+export default Categories;

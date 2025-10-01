@@ -1,3 +1,4 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   CardMedia,
   CardContent,
   Rating,
+  Link as MuiLink,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -37,6 +39,12 @@ const ProductCard = ({
   pricing,
 }) => {
   const imageUrl = images[0]?.url || "/placeholder.png";
+  const [expanded, setExpanded] = useState(false);
+
+  const truncateText = (text, limit = 50) => {
+    if (expanded || text.length <= limit) return text;
+    return text.slice(0, limit) + "...";
+  };
 
   return (
     <Card
@@ -48,13 +56,16 @@ const ProductCard = ({
         boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
         transition: "all 500ms ease-in-out",
         overflow: "hidden",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
         "&:hover": {
           transform: "translateY(-6px)",
           boxShadow: "0 25px 50px -12px rgb(0 0 0 / 0.35)",
         },
       }}
     >
-      {/* Image + Wishlist */}
       <Box sx={{ position: "relative" }}>
         <Link
           to={`/product/${id}`}
@@ -90,91 +101,111 @@ const ProductCard = ({
         </IconButton>
       </Box>
 
-      {/* Content */}
-      <CardContent sx={{ p: 2.5 }}>
-        {/* Name */}
-        <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
-          <Typography
-            gutterBottom
-            variant="h6"
-            component="h3"
-            sx={{
-              fontWeight: 700,
-              textAlign: "left",
-              lineHeight: 1.3,
-              color: "text.primary",
-            }}
-          >
-            {name}
-          </Typography>
-        </Link>
-
-        {/* Rating */}
-        {totalStar > 0 && (
-          <Rating value={totalStar} readOnly size="small" sx={{ mb: 1 }} />
-        )}
-
-        {/* Description */}
-        {description && (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              mb: 1,
-            }}
-          >
-            {description}
-          </Typography>
-        )}
-
-        {/* Price */}
-        <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-          {salePrice && (
+      <CardContent
+        sx={{ p: 2.5, flexGrow: 1, display: "flex", flexDirection: "column" }}
+      >
+        <Box sx={{ flexGrow: 1 }}>
+          <Link to={`/product/${id}`} style={{ textDecoration: "none" }}>
             <Typography
-              color="text.secondary"
-              sx={{ textDecoration: "line-through", fontSize: "0.875rem" }}
+              gutterBottom
+              variant="h6"
+              component="h3"
+              sx={{
+                fontWeight: 700,
+                textAlign: "left",
+                lineHeight: 1.3,
+                color: "text.primary",
+              }}
             >
-              £{regularPrice.toLocaleString()}
+              {name}
             </Typography>
-          )}
-          <Typography color="primary" variant="h6" sx={{ fontWeight: "bold" }}>
-            £
-            {(
-              pricing?.finalPrice ||
-              salePrice ||
-              regularPrice
-            ).toLocaleString()}
-          </Typography>
-          {pricing?.discount > 0 && (
-            <Typography variant="caption" color="success.main" fontWeight={600}>
-              -{pricing.discount.toFixed(1)}% RCD
-            </Typography>
-          )}
-        </Stack>
+          </Link>
 
-        {/* Cart Actions */}
-        <Stack direction="row" spacing={1} alignItems="center">
+          {totalStar > 0 && (
+            <Rating value={totalStar} readOnly size="small" sx={{ mb: 1 }} />
+          )}
+
+          {description && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mb: 1, fontWeight: 500 }}
+            >
+              {truncateText(description, 50)}{" "}
+              {description.length > 50 && (
+                <MuiLink
+                  component="button"
+                  variant="body2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setExpanded(!expanded);
+                  }}
+                  sx={{ color: "#D23F57", fontWeight: "bold" }}
+                >
+                  {expanded ? "See less" : "See more"}
+                </MuiLink>
+              )}
+            </Typography>
+          )}
+
+          <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+            {salePrice && (
+              <Typography
+                color="text.secondary"
+                sx={{ textDecoration: "line-through", fontSize: "0.875rem" }}
+              >
+                £{regularPrice.toLocaleString()}
+              </Typography>
+            )}
+            <Typography
+              color="primary"
+              variant="h6"
+              sx={{ fontWeight: "bold" }}
+            >
+              £
+              {(
+                pricing?.finalPrice ||
+                salePrice ||
+                regularPrice
+              ).toLocaleString()}
+            </Typography>
+            {pricing?.discount > 0 && (
+              <Typography
+                variant="caption"
+                color="success.main"
+                fontWeight={600}
+              >
+                -{pricing.discount.toFixed(1)}% RCD
+              </Typography>
+            )}
+          </Stack>
+        </Box>
+
+        {/* Bottom-aligned Add to Cart */}
+        <Box>
           {stock <= 0 ? (
             <Button
               disabled
               startIcon={<BlockIcon />}
+              fullWidth
               sx={{
-                flex: 1,
                 textTransform: "none",
                 bgcolor: "#f0f0f0",
                 color: "rgba(0,0,0,0.5)",
-                borderRadius: 2,
-                py: 1,
+                borderRadius: 2.5,
+                py: 1.5,
+                fontWeight: 600,
               }}
             >
               Out of Stock
             </Button>
           ) : count > 0 ? (
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              justifyContent="center"
+            >
               <Button onClick={onRemoveFromCart} size="small">
                 <RemoveIcon fontSize="small" />
               </Button>
@@ -189,19 +220,26 @@ const ProductCard = ({
               startIcon={<ShoppingCartOutlinedIcon />}
               fullWidth
               sx={{
-                textTransform: "none",
+                mt: 2,
+                py: 1.5,
                 bgcolor: "#D23F57",
                 color: "#fff",
-                borderRadius: 2,
-                py: 1.2,
-                fontWeight: 600,
-                "&:hover": { bgcolor: "#B93247" },
+                borderRadius: 2.5,
+                fontWeight: "bold",
+                fontSize: "1rem",
+                boxShadow: 3,
+                textTransform: "none",
+                "&:hover": {
+                  bgcolor: "#B93247",
+                  transform: "translateY(-3px)",
+                  boxShadow: 6,
+                },
               }}
             >
               Add to Cart
             </Button>
           )}
-        </Stack>
+        </Box>
       </CardContent>
     </Card>
   );

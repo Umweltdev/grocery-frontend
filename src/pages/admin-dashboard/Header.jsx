@@ -53,8 +53,10 @@ const Header = ({
       <Typography
         variant="h5"
         fontWeight={700}
+        color={theme.palette.primary.main}
         textAlign={{ xs: "center", sm: "left" }}
-        fontSize={{ xs: "22px", sm: "26px" }}
+        fontSize={{ xs: "24px", sm: "28px" }}
+        p={2}
       >
         {title}
       </Typography>
