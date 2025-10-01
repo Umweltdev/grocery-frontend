@@ -1,16 +1,16 @@
-import { useState } from "react";
 import {
   Typography,
   Box,
   Button,
-  IconButton,
   Paper,
   TextField,
   styled,
+  Alert,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CustomTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
@@ -27,15 +27,43 @@ const CustomTextField = styled(TextField)({
 
 const ResetPassword = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { token } = useParams();
+  const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleToggleConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!password || password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
+    setLoading(true);
+    setError("");
+    setMessage("");
+    
+    try {
+      await axios.put(
+        `http://localhost:8080/api/user/reset-password/${token}`,
+        { password }
+      );
+      setMessage("Password reset successful! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to reset password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,7 +87,7 @@ const ResetPassword = () => {
           boxShadow: "rgba(3, 0, 71, 0.09) 0px 8px 45px",
         }}
       >
-        <form>
+        <form onSubmit={handleSubmit}>
           <Link to={"/"} style={{ textDecoration: "none" }}>
             <img
               src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
@@ -70,93 +98,44 @@ const ResetPassword = () => {
               }}
             />
           </Link>
-          <Typography variant="body2" mt={2} mb={4} textAlign="center">
-            Reset your Password
+          <Typography variant="body2" mt={2} mb={2} textAlign="center">
+            Reset Password
+          </Typography>
+          <Typography mb={4} textAlign="center">
+            Enter your new password below.
           </Typography>
 
-          <Box mb={2}>
-            <Typography
-              variant="subtitle1"
-              fontSize="12px"
-              color="#4b566b"
-              mb={1.5}
-            >
-              Password
-            </Typography>
-            <CustomTextField
-              fullWidth
-              variant="outlined"
-              type={showPassword ? "text" : "password"}
-              placeholder="*********"
-              size="small"
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    onClick={handleTogglePassword}
-                    edge="end"
-                    sx={{ padding: 0, marginRight: "10px" }}
-                  >
-                    {showPassword ? (
-                      <Visibility
-                        sx={{
-                          fontSize: "20px",
-                        }}
-                      />
-                    ) : (
-                      <VisibilityOff
-                        sx={{
-                          fontSize: "20px",
-                          color: "#DAE1E7",
-                        }}
-                      />
-                    )}
-                  </IconButton>
-                ),
-              }}
-            />
-          </Box>
-          <Box mb={2}>
-            <Typography
-              variant="subtitle1"
-              fontSize="12px"
-              color="#4b566b"
-              mb={1.5}
-            >
-              Confirm Password
-            </Typography>
-            <CustomTextField
-              fullWidth
-              variant="outlined"
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="*********"
-              size="small"
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    onClick={handleToggleConfirmPassword}
-                    edge="end"
-                    sx={{ padding: 0, marginRight: "10px" }}
-                  >
-                    {showConfirmPassword ? (
-                      <Visibility
-                        sx={{
-                          fontSize: "20px",
-                        }}
-                      />
-                    ) : (
-                      <VisibilityOff
-                        sx={{
-                          fontSize: "20px",
-                          color: "#DAE1E7",
-                        }}
-                      />
-                    )}
-                  </IconButton>
-                ),
-              }}
-            />
-          </Box>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
+
+          <CustomTextField
+            fullWidth
+            variant="outlined"
+            type="password"
+            label="New Password"
+            placeholder="Enter new password"
+            size="small"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            sx={{ mb: 2 }}
+          />
+
+          <CustomTextField
+            fullWidth
+            variant="outlined"
+            type="password"
+            label="Confirm Password"
+            placeholder="Confirm new password"
+            size="small"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+
           <Button
+            type="submit"
+            disabled={loading}
             sx={{
               textTransform: "none",
               bgcolor: "primary.main",
@@ -171,7 +150,7 @@ const ResetPassword = () => {
               },
             }}
           >
-            Reset
+            {loading ? "Resetting..." : "Reset Password"}
           </Button>
         </form>
       </Paper>

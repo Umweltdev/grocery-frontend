@@ -6,10 +6,13 @@ import {
   Paper,
   TextField,
   styled,
+  Alert,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const CustomTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
     fontSize: "14px",
@@ -25,6 +28,35 @@ const CustomTextField = styled(TextField)({
 
 const ForgotPassword = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+    
+    setLoading(true);
+    setError("");
+    setMessage("");
+    
+    try {
+      await axios.post(
+        "http://localhost:8080/api/user/forgot-password",
+        { email: email.trim() }
+      );
+      setMessage("Password reset email sent! Check your inbox.");
+      setEmail("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send reset email");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -47,7 +79,7 @@ const ForgotPassword = () => {
           boxShadow: "rgba(3, 0, 71, 0.09) 0px 8px 45px",
         }}
       >
-        <form>
+        <form onSubmit={handleSubmit}>
           <Link to={"/"} style={{ textDecoration: "none" }}>
             <img
               src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
@@ -65,6 +97,9 @@ const ForgotPassword = () => {
             Enter your email to reset password.
           </Typography>
 
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
+
           <CustomTextField
             fullWidth
             variant="outlined"
@@ -72,9 +107,14 @@ const ForgotPassword = () => {
             label="Email"
             placeholder="maria@romax.com"
             size="small"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <Button
+            type="submit"
+            disabled={loading}
             sx={{
               textTransform: "none",
               bgcolor: "primary.main",
@@ -89,7 +129,7 @@ const ForgotPassword = () => {
               },
             }}
           >
-            Submit
+            {loading ? "Sending..." : "Submit"}
           </Button>
         </form>
         <Stack direction="row" spacing={1} justifyContent="center" mt={3}>
