@@ -49,7 +49,7 @@ const ForgotPassword = () => {
     
     try {
       await axios.post(
-        `${base_url}/user/forgot-password`,
+        `${base_url}user/forgot-password`,
         { email: email.trim() }
       );
       setMessage("Password reset email sent! Check your inbox.");
