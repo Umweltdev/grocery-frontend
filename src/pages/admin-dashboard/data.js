@@ -1,4 +1,4 @@
-import Pie from "../../assets/icons/piechart.svg?component";
+import { PieChart } from "@mui/icons-material";
 
 export const mockData = [
   {
@@ -18,7 +18,7 @@ export const mockData = [
   {
     name: "Product Share",
     amount: "£2,350",
-    Icon: Pie,
+    Icon: PieChart,
     percentage: "2.25%",
     color: "green",
   },

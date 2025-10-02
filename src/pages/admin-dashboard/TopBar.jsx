@@ -3,20 +3,19 @@ import {
   Box,
   Stack,
   Button,
-  SvgIcon,
   IconButton,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import Browse from "../../assets/icons/browse.svg?component";
-import Bell from "../../assets/icons/bell.svg?component";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import MenuIcon from "@mui/icons-material/Menu";
+import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Link } from "react-router-dom";
+import { Avatar } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const TopBar = ({ handleDrawerOpen }) => {
   const bigScreen = useMediaQuery("(min-width:1230px)");
-
   const { user } = useSelector((state) => state.auth);
 
   return (
@@ -57,13 +56,7 @@ const TopBar = ({ handleDrawerOpen }) => {
             }}
           >
             <Stack direction="row" spacing={1} alignItems="center">
-              <SvgIcon
-                sx={{
-                  fontSize: "25px",
-                  color: "primary.main",
-                }}
-                component={Browse}
-              />
+              <TravelExploreIcon sx={{ fontSize: 25, color: "primary.main" }} />
               <Link to="/" style={{ textDecoration: "none" }}>
                 <Typography variant="subtitle1" color="primary.main">
                   Browse Website
@@ -72,36 +65,23 @@ const TopBar = ({ handleDrawerOpen }) => {
             </Stack>
           </Button>
         </Stack>
-
         <Stack
           direction="row"
           spacing={{ xs: 1.5, sm: 2.5 }}
           alignItems="center"
         >
-          <SvgIcon
-            sx={{
-              fontSize: "25px",
-              color: "primary.contrastText",
-            }}
-            component={Bell}
+          <NotificationsIcon
+            sx={{ fontSize: 25, color: "primary.contrastText" }}
           />
 
-          <Box
-            sx={{
-              width: "40px",
-              height: "40px",
-            }}
-          >
-            <img
-              src={user?.image || "/default-avatar.png"}
-              alt="User Avatar"
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
+          <Box sx={{ width: 40, height: 40 }}>
+            <Avatar
+              src={user?.image}
+              alt={user?.name || "User Avatar"}
+              sx={{ width: 40, height: 40 }}
+            >
+              {!user?.image && user?.name?.[0]?.toUpperCase()}
+            </Avatar>
           </Box>
         </Stack>
       </Stack>
