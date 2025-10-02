@@ -71,14 +71,14 @@ const TopBar = ({ handleDrawerOpen }) => {
           alignItems="center"
         >
           <NotificationsIcon
-            sx={{ fontSize: 25, color: "primary.contrastText" }}
+            sx={{ fontSize: 35, color: "primary.contrastText" }}
           />
 
-          <Box sx={{ width: 40, height: 40 }}>
+          <Box sx={{ width: 35, height: 35 }}>
             <Avatar
               src={user?.image}
               alt={user?.name || "User Avatar"}
-              sx={{ width: 40, height: 40 }}
+              sx={{ width: 35, height: 35 }}
             >
               {!user?.image && user?.name?.[0]?.toUpperCase()}
             </Avatar>
