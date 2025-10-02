@@ -52,8 +52,8 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: .
+          file: ./Dockerfile
           build-args: |
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
              STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
