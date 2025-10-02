@@ -1,9 +1,3 @@
-let base_url;
-
-if (import.meta.env.MODE === "development") {
-  base_url = "http://localhost:8080/api/";
-} else {
-  base_url = "https://grocery-backend-nkxh.onrender.com/api/";
-}
+const base_url = import.meta.env.VITE_API_BASE_URL + "/api/";
 
 export { base_url };
