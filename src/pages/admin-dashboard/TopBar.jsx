@@ -1,24 +1,20 @@
+import PropTypes from "prop-types";
 import {
   Box,
   Stack,
   Button,
   SvgIcon,
-  Container,
   IconButton,
   Typography,
-  OutlinedInput,
-  InputAdornment,
+  useMediaQuery,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { ReactComponent as Browse } from "../../assets/icons/browse.svg";
-import { ReactComponent as Bell } from "../../assets/icons/bell.svg";
+import Browse from "../../assets/icons/browse.svg?component";
+import Bell from "../../assets/icons/bell.svg?component";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const TopBar = ({ handleDrawerOpen }) => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
   const bigScreen = useMediaQuery("(min-width:1230px)");
 
   const { user } = useSelector((state) => state.auth);
@@ -29,14 +25,14 @@ const TopBar = ({ handleDrawerOpen }) => {
       p={2}
       px={{ xs: 1.5, sm: 4 }}
       sx={{
-        boxShadow: " 0px 4px 16px rgba(43, 52, 69, 0.1)",
+        boxShadow: "0px 4px 16px rgba(43, 52, 69, 0.1)",
         position: "sticky",
         top: 0,
         zIndex: 20,
       }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Stack direction="row" spacing={{ xs: 2, lg: 0 }}>
+        <Stack direction="row" spacing={{ xs: 2, lg: 0 }} alignItems="center">
           <IconButton
             onClick={handleDrawerOpen}
             sx={{
@@ -46,15 +42,15 @@ const TopBar = ({ handleDrawerOpen }) => {
           >
             <MenuIcon />
           </IconButton>
+
           <Button
             sx={{
               textTransform: "none",
               bgcolor: "background.paper",
-              paddingY: "9px",
-              paddingX: "20px",
+              py: "9px",
+              px: "20px",
               borderRadius: "8px",
               justifyContent: "space-between",
-
               "&:hover": {
                 backgroundColor: "background.paper",
               },
@@ -66,11 +62,9 @@ const TopBar = ({ handleDrawerOpen }) => {
                   fontSize: "25px",
                   color: "primary.main",
                 }}
-              >
-                <Browse />
-              </SvgIcon>
-
-              <Link to={"/"} style={{ textDecoration: "none" }}>
+                component={Browse}
+              />
+              <Link to="/" style={{ textDecoration: "none" }}>
                 <Typography variant="subtitle1" color="primary.main">
                   Browse Website
                 </Typography>
@@ -84,33 +78,14 @@ const TopBar = ({ handleDrawerOpen }) => {
           spacing={{ xs: 1.5, sm: 2.5 }}
           alignItems="center"
         >
-          {/* <OutlinedInput
-            placeholder="Search anything"
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            }
-            sx={{
-              borderRadius: "12px",
-              paddingRight: 0,
-              bgcolor: "background.paper",
-
-              "& .MuiInputBase-input": {
-                padding: "10px",
-                fontSize: "14px",
-              },
-            }}
-          /> */}
-
           <SvgIcon
             sx={{
               fontSize: "25px",
               color: "primary.contrastText",
             }}
-          >
-            <Bell />
-          </SvgIcon>
+            component={Bell}
+          />
+
           <Box
             sx={{
               width: "40px",
@@ -118,11 +93,13 @@ const TopBar = ({ handleDrawerOpen }) => {
             }}
           >
             <img
-              src={user?.image}
+              src={user?.image || "/default-avatar.png"}
+              alt="User Avatar"
               style={{
                 width: "100%",
                 height: "100%",
                 borderRadius: "50%",
+                objectFit: "cover",
               }}
             />
           </Box>
@@ -130,6 +107,10 @@ const TopBar = ({ handleDrawerOpen }) => {
       </Stack>
     </Box>
   );
+};
+
+TopBar.propTypes = {
+  handleDrawerOpen: PropTypes.func.isRequired,
 };
 
 export default TopBar;

@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -245,38 +244,6 @@ const Dashboard = () => {
       <Box mt={4}>
         <EcommerceDashboardSection />
       </Box>
-      {/* <Box mt={6}>
-        <SettingsSection
-          title="Configuration Settings"
-          onSave={handleSave}
-          buttonText="Save Settings"
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={config.mcd.enabled}
-                    onChange={() => handleToggle("mcd")}
-                  />
-                }
-                label="Enable MCD"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={config.rcd.enabled}
-                    onChange={() => handleToggle("rcd")}
-                  />
-                }
-                label="Enable RCD"
-              />
-            </Grid>
-          </Grid>
-        </SettingsSection>
-      </Box> */}
     </Box>
   );
 };
