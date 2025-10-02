@@ -1,7 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import {
-  Drawer,
   Box,
   List,
   ListItemButton,
@@ -34,8 +33,7 @@ import { logout, resetState } from "../../features/auth/authSlice";
 
 const drawerWidth = 250;
 const collapsedWidth = 70;
-
-const sidebarBg = "#2B3445"; // sidebar background
+const sidebarBg = "#2B3445";
 
 const menuConfig = [
   { label: "Dashboard", icon: <Dashboard />, path: "/admin/" },
@@ -103,9 +101,8 @@ const menuConfig = [
   { label: "Customers", icon: <PeopleAlt />, path: "/admin/customers" },
 ];
 
-const SideBar = () => {
+const SideBar = ({ collapsed, setCollapsed, onClose }) => {
   const [openMenus, setOpenMenus] = useState({});
-  const [collapsed, setCollapsed] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -114,24 +111,19 @@ const SideBar = () => {
   };
 
   return (
-    <Drawer
-      variant="permanent"
+    <Box
       sx={{
         width: collapsed ? collapsedWidth : drawerWidth,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: collapsed ? collapsedWidth : drawerWidth,
-          transition: "width 0.3s",
-          boxSizing: "border-box",
-          backgroundColor: sidebarBg,
-          color: "white",
-          overflowX: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        },
+        bgcolor: sidebarBg,
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        position: "sticky",
+        top: 0,
+        transition: "width 0.3s",
       }}
     >
-      {/* Logo / Collapse Button */}
       <Box
         sx={{
           display: "flex",
@@ -140,23 +132,22 @@ const SideBar = () => {
           p: 2,
           cursor: "pointer",
         }}
-        onClick={() => setCollapsed((prev) => !prev)}
+        onClick={() => setCollapsed(!collapsed)}
       >
-        {!collapsed && (
+        {!collapsed ? (
           <img
             src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
             alt="logo"
             style={{ height: 50 }}
           />
-        )}
-        {collapsed && (
+        ) : (
           <IconButton sx={{ color: "white" }}>
             <Menu />
           </IconButton>
         )}
       </Box>
 
-      {/* Menu Items */}
+      {/* Menu */}
       <List sx={{ flexGrow: 1 }}>
         {menuConfig.map((item, idx) => (
           <Box key={idx}>
@@ -169,7 +160,7 @@ const SideBar = () => {
                     py: 2,
                     px: 2,
                     "&:hover": {
-                      backgroundColor: "white",
+                      bgcolor: "white",
                       color: sidebarBg,
                       "& .MuiListItemIcon-root": { color: sidebarBg },
                     },
@@ -201,11 +192,12 @@ const SideBar = () => {
                         key={i}
                         component={NavLink}
                         to={child.path}
+                        onClick={onClose}
                         sx={{
                           pl: 6,
                           py: 1.5,
                           "&:hover": {
-                            backgroundColor: "white",
+                            bgcolor: "white",
                             color: sidebarBg,
                             "& .MuiListItemIcon-root": { color: sidebarBg },
                           },
@@ -232,12 +224,13 @@ const SideBar = () => {
                 <ListItemButton
                   component={NavLink}
                   to={item.path}
+                  onClick={onClose}
                   sx={{
                     justifyContent: collapsed ? "center" : "flex-start",
                     py: 2,
                     px: 2,
                     "&:hover": {
-                      backgroundColor: "white",
+                      bgcolor: "white",
                       color: sidebarBg,
                       "& .MuiListItemIcon-root": { color: sidebarBg },
                     },
@@ -261,8 +254,8 @@ const SideBar = () => {
         ))}
       </List>
 
-      {/* Logout at bottom */}
-      <Box sx={{ mt: "auto", mb: 2 }}>
+      {/* Logout */}
+      <Box sx={{ mb: 2 }}>
         <Tooltip title={collapsed ? "Logout" : ""} placement="right">
           <ListItemButton
             onClick={() => {
@@ -275,7 +268,7 @@ const SideBar = () => {
               py: 2,
               px: 2,
               "&:hover": {
-                backgroundColor: "white",
+                bgcolor: "white",
                 color: sidebarBg,
                 "& .MuiListItemIcon-root": { color: sidebarBg },
               },
@@ -295,12 +288,14 @@ const SideBar = () => {
           </ListItemButton>
         </Tooltip>
       </Box>
-    </Drawer>
+    </Box>
   );
 };
 
 SideBar.propTypes = {
-  handleDrawerClose: PropTypes.func,
+  collapsed: PropTypes.bool.isRequired,
+  setCollapsed: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
 };
 
 export default SideBar;

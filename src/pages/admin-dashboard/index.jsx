@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Routes, Route, useLocation,} from "react-router-dom";
-import { Box, Drawer } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { Box, Drawer, useMediaQuery } from "@mui/material";
 import Sidebar from "./SideBar";
 import Toolbar from "./TopBar";
 import Dashboard from "./Dashboard";
@@ -16,76 +16,94 @@ import AddBrand from "./AddBrand";
 import OrderDetails from "./OrderDetails";
 import AddCollectionAddress from "./AddCollectionAddress";
 import CollectionAddress from "./CollectionAddresses";
+
+const drawerWidth = 250;
+const collapsedWidth = 70;
+
 const AdminDashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-
   const location = useLocation();
+  const isMobile = useMediaQuery("(max-width:1200px)");
 
-  const handleDrawerOpen = () => setDrawerOpen(true);
-  const handleDrawerClose = () => setDrawerOpen(false);
-
-  React.useEffect(() => {
-    if (drawerOpen) {
-      handleDrawerClose();
-    }
-  }, [drawerOpen, location.pathname]);
+  useEffect(() => {
+    if (drawerOpen) setDrawerOpen(false);
+  }, [location.pathname]);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <Box
-        sx={{
-          display: { xs: "none", lg: "block" },
-          position: "fixed",
-          zIndex: 1200,
-        }}
-      >
-        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-      </Box>
+      {/* Sidebar */}
+      {!isMobile && (
+        <Box
+          sx={{
+            width: collapsed ? collapsedWidth : drawerWidth,
+            flexShrink: 0,
+            position: "fixed",
+            height: "100vh",
+          }}
+        >
+          <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+        </Box>
+      )}
 
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          anchor="left"
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            "& .MuiPaper-root": {
+              width: drawerWidth,
+              backgroundColor: "#2B3445",
+              color: "white",
+            },
+          }}
+        >
+          <Sidebar collapsed={false} setCollapsed={() => {}} />
+        </Drawer>
+      )}
+
+      {/* Main content */}
       <Box
-        flex={1}
+        component="main"
         sx={{
-          ml: { lg: collapsed ? "60px" : "240px" },
-          width: { lg: collapsed ? "calc(100% - 60px)" : "calc(100% - 240px)" },
+          flexGrow: 1,
+          ml: !isMobile
+            ? collapsed
+              ? `${collapsedWidth}px`
+              : `${drawerWidth}px`
+            : 0,
+          width: !isMobile
+            ? collapsed
+              ? `calc(100% - ${collapsedWidth}px)`
+              : `calc(100% - ${drawerWidth}px)`
+            : "100%",
           transition: "margin-left 0.3s ease, width 0.3s ease",
-          overflow: "hidden",
+          minHeight: "100vh",
+          overflow: "auto",
         }}
       >
-        {!drawerOpen && <Toolbar handleDrawerOpen={handleDrawerOpen} />}
+        <Toolbar handleDrawerOpen={() => setDrawerOpen(true)} />
 
         <Routes>
-          <Route exact path="/" element={<Dashboard />} />
-          <Route exact path="/products" element={<Products />} />
-          <Route exact path="/product/:id" element={<AddProduct />} />
-          <Route exact path="/product-reviews" element={<ProductReviews />} />
-          <Route exact path="/categories" element={<Categories />} />
-          <Route exact path="/category/:id" element={<AddCategory />} />
-          <Route exact path="/brand/:id" element={<AddBrand />} />
-          <Route exact path="/brands" element={<Brands />} />
-          <Route exact path="/orders" element={<Orders />} />
-          <Route exact path="/addresses" element={<CollectionAddress />} />
-          <Route exact path="/address/:id" element={<AddCollectionAddress />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<AddProduct />} />
+          <Route path="/product-reviews" element={<ProductReviews />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/category/:id" element={<AddCategory />} />
+          <Route path="/brands" element={<Brands />} />
+          <Route path="/brand/:id" element={<AddBrand />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/order" element={<OrderDetails />} />
           <Route path="/order/:id" element={<OrderDetails />} />
-          <Route exact path="/customers" element={<Customers />} />
+          <Route path="/addresses" element={<CollectionAddress />} />
+          <Route path="/address/:id" element={<AddCollectionAddress />} />
+          <Route path="/customers" element={<Customers />} />
         </Routes>
       </Box>
-
-      <Drawer
-        open={drawerOpen}
-        onClose={handleDrawerClose}
-        anchor="left"
-        sx={{
-          zIndex: 1300,
-          "& .MuiPaper-root": {
-            backgroundColor: "#2B3445",
-            color: "white",
-          },
-        }}
-      >
-        <Sidebar collapsed={false} setCollapsed={() => {}} />
-      </Drawer>
     </Box>
   );
 };
