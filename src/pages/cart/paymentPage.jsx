@@ -82,10 +82,10 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
         },
         { headers: { Authorization: `Bearer ${user?.token}` } }
       );
-
+      
       if (option === "card" && response.data.sessionId) {
         const stripe = await loadStripe(
-          import.meta.env.STRIPE_PUBLISHABLE_KEY
+          import.meta.env. VITE_STRIPE_PUBLISHABLE_KEY
         );
         if (stripe) {
           localStorage.removeItem("cartState");
