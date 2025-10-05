@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import {
   Stack,
   Typography,
@@ -17,7 +16,7 @@ import {
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,8 +26,6 @@ import {
 } from "../../features/product/productSlice";
 import Header from "./Header";
 import makeToast from "../../utils/toaster";
-import axios from "axios";
-import { base_url } from "../../utils/baseUrl";
 
 const renderNameCell = (params) => {
   const { value, row } = params;
@@ -65,113 +62,9 @@ const renderNameCell = (params) => {
   );
 };
 
-renderNameCell.propTypes = {
-  params: PropTypes.shape({
-    value: PropTypes.string.isRequired,
-    row: PropTypes.shape({
-      image: PropTypes.string,
-      id: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-};
-
-const MobileProductCard = ({
-  row,
-  onTogglePublish,
-  onDelete,
-  updatingProduct,
-  isLoading,
-}) => {
-  return (
-    <Card sx={{ borderRadius: 2 }}>
-      <CardContent>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Box
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: 2,
-              overflow: "hidden",
-              border: "1px solid #eee",
-            }}
-          >
-            <img
-              src={row.image}
-              alt={row.name}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-            />
-          </Box>
-          <Stack flex={1}>
-            <Typography fontWeight={600}>{row.name}</Typography>
-            <Typography variant="caption" color="text.secondary">
-              {row.category} • {row.brand}
-            </Typography>
-            <Typography fontWeight={600} color="primary">
-              ${row.basePrice ? row.basePrice.toFixed(2) : "0.00"}
-            </Typography>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Typography variant="body2">Published:</Typography>
-              <Switch
-                size="small"
-                checked={row.publish}
-                onChange={(e) => onTogglePublish(row._id, e.target.checked)}
-                disabled={updatingProduct === row._id}
-                color="success"
-              />
-            </Stack>
-          </Stack>
-          <Stack direction="row" spacing={1}>
-            <Link to={`/admin/product/${row._id}`}>
-              <IconButton size="small" color="primary">
-                <EditIcon />
-              </IconButton>
-            </Link>
-            <Link to={`/product/${row._id}`}>
-              <IconButton size="small" color="info">
-                <RemoveRedEyeIcon />
-              </IconButton>
-            </Link>
-            <IconButton
-              size="small"
-              color="error"
-              disabled={isLoading}
-              onClick={() => onDelete(row._id)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Stack>
-        </Stack>
-      </CardContent>
-      <Divider />
-    </Card>
-  );
-};
-
-MobileProductCard.propTypes = {
-  row: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string,
-    category: PropTypes.string.isRequired,
-    brand: PropTypes.string.isRequired,
-    basePrice: PropTypes.number,
-    publish: PropTypes.bool.isRequired,
-  }).isRequired,
-  onTogglePublish: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
-  updatingProduct: PropTypes.string,
-  isLoading: PropTypes.bool.isRequired,
-};
-
 const Products = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [updatingProduct, setUpdatingProduct] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
 
   const {
@@ -181,22 +74,9 @@ const Products = () => {
     deletedProduct,
   } = useSelector((state) => state.product);
 
-  // Token validation function
-  const validateToken = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      makeToast("error", "Please login to continue");
-      navigate("/login");
-      return false;
-    }
-    return true;
-  };
-
   useEffect(() => {
-    if (validateToken()) {
-      dispatch(getProducts());
-    }
-  }, [dispatch, navigate]);
+    dispatch(getProducts());
+  }, [dispatch]);
 
   useEffect(() => {
     if (deletedProduct) {
@@ -207,84 +87,26 @@ const Products = () => {
     if (isError) makeToast("error", "Something went wrong");
   }, [deletedProduct, isError, dispatch]);
 
-  // Toggle publish function with token validation
-  const handleTogglePublish = async (productId, isPublished) => {
-    if (!validateToken()) return;
-
-    setUpdatingProduct(productId);
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.put(
-        `${base_url}/product/admin/toggle-publish/${productId}`,
-        { published: isPublished },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.success) {
-        makeToast(
-          "success",
-          `Product ${isPublished ? "published" : "unpublished"} successfully!`
-        );
-        dispatch(getProducts());
-      } else {
-        makeToast(
-          "error",
-          response.data.message || "Failed to update product status"
-        );
-      }
-    } catch (error) {
-      if (error.response?.status === 401) {
-        makeToast("error", "Session expired. Please login again.");
-        localStorage.removeItem("token");
-        navigate("/login");
-      } else if (error.response?.status === 403) {
-        makeToast("error", "You don't have permission to perform this action");
-      } else {
-        makeToast(
-          "error",
-          "Failed to update product status. Please try again."
-        );
-      }
-      dispatch(getProducts());
-    } finally {
-      setUpdatingProduct(null);
-    }
-  };
-
-  // Delete product handler with token validation
-  const handleDeleteProduct = (productId) => {
-    if (!validateToken()) return;
-    dispatch(deleteProduct(productId));
-  };
-
   const filteredProducts = productState.filter(
     (product) =>
-      product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category?.name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      product.brand?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.productId?.includes(searchQuery)
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.brand.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.productId.includes(searchQuery)
   );
 
-  const products = filteredProducts
-    .map((product) => ({
-      _id: product._id,
-      id: product.productId,
-      name: product.name,
-      image: product?.images?.[0]?.url,
-      category: product?.category?.name || "N/A",
-      brand: product?.brand?.name || "No Brand",
-      publish: product.published,
-      action: null,
-      basePrice: product.regularPrice,
-      stock: product?.stock,
-    }))
-    .reverse();
+  const products = filteredProducts.map((product) => ({
+    _id: product._id,
+    id: product.productId,
+    name: product.name,
+    image: product?.images?.[0]?.url,
+    category: product?.category?.name || "N/A",
+    brand: product?.brand?.name || "No Brand",
+    publish: product.published,
+    action: null,
+    basePrice: product.regularPrice,
+    stock: product?.stock,
+  })).reverse();
 
   const columns = [
     {
@@ -321,14 +143,7 @@ const Products = () => {
       field: "publish",
       headerName: "Published",
       width: 120,
-      renderCell: ({ row }) => (
-        <Switch
-          checked={row.publish}
-          onChange={(e) => handleTogglePublish(row._id, e.target.checked)}
-          disabled={updatingProduct === row._id}
-          color="success"
-        />
-      ),
+      renderCell: ({ value }) => <Switch checked={value} />,
     },
     {
       field: "action",
@@ -355,7 +170,7 @@ const Products = () => {
               size="small"
               color="error"
               disabled={isLoading}
-              onClick={() => handleDeleteProduct(row._id)}
+              onClick={() => dispatch(deleteProduct(row._id))}
             >
               <DeleteIcon />
             </IconButton>
@@ -385,7 +200,6 @@ const Products = () => {
             rowsPerPageOptions={[10, 25, 50]}
             disableRowSelectionOnClick
             getRowHeight={() => 120}
-            loading={isLoading}
             sx={{
               border: "none",
               "& .MuiDataGrid-columnHeaders": {
@@ -400,14 +214,61 @@ const Products = () => {
       {isMobile && (
         <Stack spacing={2}>
           {products.map((row) => (
-            <MobileProductCard
-              key={row._id}
-              row={row}
-              onTogglePublish={handleTogglePublish}
-              onDelete={handleDeleteProduct}
-              updatingProduct={updatingProduct}
-              isLoading={isLoading}
-            />
+            <Card key={row._id} sx={{ borderRadius: 2 }}>
+              <CardContent>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      border: "1px solid #eee",
+                    }}
+                  >
+                    <img
+                      src={row.image}
+                      alt={row.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+                  <Stack flex={1}>
+                    <Typography fontWeight={600}>{row.name}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {row.category}
+                    </Typography>
+                    <Typography fontWeight={600} color="primary">
+                      ${row.basePrice ? row.basePrice.toFixed(2) : "0.00"}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={1}>
+                    <Link to={`/admin/product/${row._id}`}>
+                      <IconButton size="small" color="primary">
+                        <EditIcon />
+                      </IconButton>
+                    </Link>
+                    <Link to={`/product/${row._id}`}>
+                      <IconButton size="small" color="info">
+                        <RemoveRedEyeIcon />
+                      </IconButton>
+                    </Link>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      disabled={isLoading}
+                      onClick={() => dispatch(deleteProduct(row._id))}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+              </CardContent>
+              <Divider />
+            </Card>
           ))}
         </Stack>
       )}
