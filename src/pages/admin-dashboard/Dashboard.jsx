@@ -63,6 +63,11 @@ const Card1 = ({ data }) => {
   const { title, data: metricsData, color } = data;
   const currentMetrics = metricsData[timePeriod];
 
+  if (!currentMetrics) {
+  console.error(`Invalid time period: ${timePeriod}`);
+  return null;
+}
+
   const timePeriodDisplay =
     timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1);
 
@@ -80,6 +85,7 @@ const Card1 = ({ data }) => {
           {title}
         </Typography>
         <IconButton
+          id="time-period-button"
           aria-label="more"
           aria-controls={open ? "time-period-menu" : undefined}
           aria-expanded={open ? "true" : undefined}
