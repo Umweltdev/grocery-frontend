@@ -17,7 +17,7 @@ import {
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -169,6 +169,7 @@ MobileProductCard.propTypes = {
 
 const Products = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [updatingProduct, setUpdatingProduct] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -180,9 +181,22 @@ const Products = () => {
     deletedProduct,
   } = useSelector((state) => state.product);
 
+  // Token validation function
+  const validateToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      makeToast("error", "Please login to continue");
+      navigate("/login");
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (validateToken()) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     if (deletedProduct) {
@@ -193,16 +207,19 @@ const Products = () => {
     if (isError) makeToast("error", "Something went wrong");
   }, [deletedProduct, isError, dispatch]);
 
-  // Toggle publish function
+  // Toggle publish function with token validation
   const handleTogglePublish = async (productId, isPublished) => {
+    if (!validateToken()) return;
+
     setUpdatingProduct(productId);
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${base_url}/product/admin/toggle-publish/${productId}`,
         { published: isPublished },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -220,16 +237,27 @@ const Products = () => {
         );
       }
     } catch (error) {
-      console.error("Toggle publish error:", error);
-      makeToast("error", "Failed to update product status. Please try again.");
+      if (error.response?.status === 401) {
+        makeToast("error", "Session expired. Please login again.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else if (error.response?.status === 403) {
+        makeToast("error", "You don't have permission to perform this action");
+      } else {
+        makeToast(
+          "error",
+          "Failed to update product status. Please try again."
+        );
+      }
       dispatch(getProducts());
     } finally {
       setUpdatingProduct(null);
     }
   };
 
-  // Delete product handler
+  // Delete product handler with token validation
   const handleDeleteProduct = (productId) => {
+    if (!validateToken()) return;
     dispatch(deleteProduct(productId));
   };
 

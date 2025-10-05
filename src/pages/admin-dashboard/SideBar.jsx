@@ -9,6 +9,8 @@ import {
   Collapse,
   IconButton,
   Tooltip,
+  Popover,
+  Paper,
 } from "@mui/material";
 import {
   ExpandLess,
@@ -104,12 +106,30 @@ const menuConfig = [
 
 const SideBar = ({ collapsed, setCollapsed, onClose }) => {
   const [openMenus, setOpenMenus] = useState({});
+  const [popoverAnchor, setPopoverAnchor] = useState(null);
+  const [popoverMenu, setPopoverMenu] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const toggleMenu = (label) => {
     setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
   };
+
+  const handlePopoverOpen = (event, menuItem) => {
+    if (collapsed && menuItem.children) {
+      setPopoverAnchor(event.currentTarget);
+      setPopoverMenu(menuItem);
+    } else if (!collapsed && menuItem.children) {
+      toggleMenu(menuItem.label);
+    }
+  };
+
+  const handlePopoverClose = () => {
+    setPopoverAnchor(null);
+    setPopoverMenu(null);
+  };
+
+  const popoverOpen = Boolean(popoverAnchor);
 
   return (
     <Box
@@ -128,6 +148,7 @@ const SideBar = ({ collapsed, setCollapsed, onClose }) => {
         zIndex: 1200,
       }}
     >
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -152,6 +173,8 @@ const SideBar = ({ collapsed, setCollapsed, onClose }) => {
           </IconButton>
         )}
       </Box>
+
+      {/* Scrollable Menu Section */}
       <Box
         sx={{
           flexGrow: 1,
@@ -177,98 +200,121 @@ const SideBar = ({ collapsed, setCollapsed, onClose }) => {
             <Box key={idx}>
               {item.children ? (
                 <>
-                  <ListItemButton
-                    onClick={() => toggleMenu(item.label)}
-                    sx={{
-                      justifyContent: collapsed ? "center" : "flex-start",
-                      py: 1.5,
-                      px: 2,
-                      mb: 0.5,
-                      "&:hover": {
-                        bgcolor: "white",
-                        color: sidebarBg,
-                        "& .MuiListItemIcon-root": { color: sidebarBg },
-                      },
-                    }}
+                  {/* Parent menu item with popover */}
+                  <Tooltip
+                    title={collapsed ? item.label : ""}
+                    placement="right"
                   >
-                    <ListItemIcon
+                    <ListItemButton
+                      onClick={(e) => handlePopoverOpen(e, item)}
+                      onMouseEnter={(e) => {
+                        if (collapsed) {
+                          setPopoverAnchor(e.currentTarget);
+                          setPopoverMenu(item);
+                        }
+                      }}
                       sx={{
-                        color: "white",
-                        minWidth: collapsed ? "auto" : 40,
-                        display: "flex",
-                        justifyContent: "center",
-                        mr: collapsed ? 0 : 2,
+                        justifyContent: collapsed ? "center" : "flex-start",
+                        py: 1.5,
+                        px: 2,
+                        mb: 0.5,
+                        "&:hover": {
+                          bgcolor: "white",
+                          color: sidebarBg,
+                          "& .MuiListItemIcon-root": { color: sidebarBg },
+                        },
                       }}
                     >
-                      {item.icon}
-                    </ListItemIcon>
-                    {!collapsed && (
-                      <ListItemText
-                        primary={item.label}
-                        primaryTypographyProps={{
-                          fontSize: "14px",
-                          fontWeight: 500,
+                      <ListItemIcon
+                        sx={{
+                          color: "white",
+                          minWidth: collapsed ? "auto" : 40,
+                          display: "flex",
+                          justifyContent: "center",
+                          mr: collapsed ? 0 : 2,
                         }}
-                      />
-                    )}
-                    {!collapsed &&
-                      (openMenus[item.label] ? <ExpandLess /> : <ExpandMore />)}
-                  </ListItemButton>
-
-                  <Collapse
-                    in={openMenus[item.label] && !collapsed}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <List component="div" disablePadding>
-                      {item.children.map((child, i) => (
-                        <Tooltip
-                          key={i}
-                          title={collapsed ? child.label : ""}
-                          placement="right"
-                        >
-                          <ListItemButton
-                            component={NavLink}
-                            to={child.path}
-                            onClick={onClose}
-                            sx={{
-                              pl: 4,
-                              py: 1.25,
-                              mb: 0.25,
-                              "&:hover": {
-                                bgcolor: "white",
-                                color: sidebarBg,
-                                "& .MuiListItemIcon-root": { color: sidebarBg },
-                              },
-                              "&.active": {
-                                bgcolor: "primary.main",
-                                color: "white",
-                                "& .MuiListItemIcon-root": { color: "white" },
-                              },
+                      >
+                        {item.icon}
+                      </ListItemIcon>
+                      {!collapsed && (
+                        <>
+                          <ListItemText
+                            primary={item.label}
+                            primaryTypographyProps={{
+                              fontSize: "14px",
+                              fontWeight: 500,
                             }}
+                          />
+                          {openMenus[item.label] ? (
+                            <ExpandLess />
+                          ) : (
+                            <ExpandMore />
+                          )}
+                        </>
+                      )}
+                    </ListItemButton>
+                  </Tooltip>
+
+                  {/* Expanded submenu (when sidebar is open) */}
+                  {!collapsed && (
+                    <Collapse
+                      in={openMenus[item.label]}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      <List component="div" disablePadding>
+                        {item.children.map((child, i) => (
+                          <Tooltip
+                            key={i}
+                            title={collapsed ? child.label : ""}
+                            placement="right"
                           >
-                            <ListItemIcon
+                            <ListItemButton
+                              component={NavLink}
+                              to={child.path}
+                              onClick={onClose}
                               sx={{
-                                color: "white",
-                                minWidth: 32,
-                                display: "flex",
-                                justifyContent: "center",
-                                mr: 2,
+                                pl: 4,
+                                py: 1.25,
+                                mb: 0.25,
+                                "&:hover": {
+                                  bgcolor: "white",
+                                  color: sidebarBg,
+                                  "& .MuiListItemIcon-root": {
+                                    color: sidebarBg,
+                                  },
+                                },
+                                "&.active": {
+                                  bgcolor: "primary.main",
+                                  color: "white",
+                                  "& .MuiListItemIcon-root": { color: "white" },
+                                },
                               }}
                             >
-                              {child.icon}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={child.label}
-                              primaryTypographyProps={{ fontSize: "13px" }}
-                            />
-                          </ListItemButton>
-                        </Tooltip>
-                      ))}
-                    </List>
-                  </Collapse>
+                              <ListItemIcon
+                                sx={{
+                                  color: "white",
+                                  minWidth: 32,
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  mr: 2,
+                                }}
+                              >
+                                {child.icon}
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={child.label}
+                                primaryTypographyProps={{ fontSize: "13px" }}
+                              />
+                            </ListItemButton>
+                          </Tooltip>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
                 </>
               ) : (
+                /* Single menu items */
                 <Tooltip title={collapsed ? item.label : ""} placement="right">
                   <ListItemButton
                     component={NavLink}
@@ -318,6 +364,65 @@ const SideBar = ({ collapsed, setCollapsed, onClose }) => {
           ))}
         </List>
       </Box>
+
+      {/* Popover for collapsed submenus */}
+      <Popover
+        open={popoverOpen}
+        anchorEl={popoverAnchor}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        sx={{
+          "& .MuiPopover-paper": {
+            borderRadius: 2,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          },
+        }}
+      >
+        <Paper sx={{ width: 200, bgcolor: "background.paper" }}>
+          <List disablePadding>
+            {popoverMenu?.children?.map((child, index) => (
+              <ListItemButton
+                key={index}
+                component={NavLink}
+                to={child.path}
+                onClick={() => {
+                  handlePopoverClose();
+                  if (onClose) onClose();
+                }}
+                sx={{
+                  py: 1.5,
+                  px: 2,
+                  "&:hover": {
+                    bgcolor: "primary.light",
+                    color: "white",
+                    "& .MuiListItemIcon-root": { color: "white" },
+                  },
+                  "&.active": {
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "& .MuiListItemIcon-root": { color: "white" },
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>{child.icon}</ListItemIcon>
+                <ListItemText
+                  primary={child.label}
+                  primaryTypographyProps={{ fontSize: "14px" }}
+                />
+              </ListItemButton>
+            ))}
+          </List>
+        </Paper>
+      </Popover>
+
+      {/* Fixed Logout Section */}
       <Box sx={{ flexShrink: 0, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
         <Tooltip title={collapsed ? "Logout" : ""} placement="right">
           <ListItemButton
