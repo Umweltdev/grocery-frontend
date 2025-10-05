@@ -293,7 +293,6 @@ const Comment = ({ products }) => {
         },
       }}
     >
-      {/* Section Header */}
       <Box textAlign="center" mb={6}>
         <Typography
           variant="h3"
@@ -325,7 +324,6 @@ const Comment = ({ products }) => {
         </Typography>
       </Box>
 
-      {/* Reviews Slider */}
       <Box sx={{ position: "relative" }}>
         <Slider {...settings}>
           {reviews.map((item) => (

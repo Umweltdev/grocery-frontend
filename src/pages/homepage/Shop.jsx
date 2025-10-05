@@ -232,7 +232,7 @@ const Shop = () => {
             <Grid
               container
               spacing={{ xs: 1, md: 2 }}
-              justifyContent="left"
+              justifyContent="flex-start"
               alignItems="stretch"
               sx={{ maxWidth: { xs: "100%", md: "1200px" } }}
             >
@@ -259,7 +259,9 @@ const Shop = () => {
         />
         <Comment
           products={
-            filteredProduct.length > 0 ? filteredProduct : fallbackProductsWithReviews
+            filteredProduct.length > 0
+              ? filteredProduct
+              : fallbackProductsWithReviews
           }
         />
       </Stack>
