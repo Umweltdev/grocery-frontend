@@ -22,14 +22,16 @@ import makeToast from "../../utils/toaster";
 import { Link } from "react-router-dom";
 
 const ICard = ({
-  images = [],
-  name = "AuraPhone Pro",
-  description = "Experience the future with the A17 Bionic chip and Pro-Motion display.",
-  regularPrice = 1099,
-  salePrice = 999,
+  images = [
+    "https://res.cloudinary.com/dkcgd7fio/image/upload/v1758917148/samples/breakfast.jpg",
+  ],
+  name = "Fresh Organic Bananas",
+  description = "Sweet and nutritious organic bananas, perfect for smoothies, baking, or a healthy snack. Rich in potassium and natural energy.",
+  regularPrice = 2.99,
+  salePrice = 1.99,
   totalstar = 4,
   _id,
-  reviewCount = 1288,
+  reviewCount = 1,
 }) => {
   const dispatch = useDispatch();
   const { user, wishlist } = useSelector((state) => state.auth);
@@ -45,7 +47,9 @@ const ICard = ({
     dispatch(
       addToCart({
         id: _id,
-        image: images[0]?.url || "/placeholder.png",
+        image:
+          (typeof images[0] === "string" ? images[0] : images[0]?.url) ||
+          "/placeholder.jpg",
         price: salePrice ?? regularPrice,
         name,
       })
@@ -74,7 +78,9 @@ const ICard = ({
       .catch(() => makeToast("error", "Unable to update wishlist"));
   };
 
-  const imageUrl = images[0]?.url || "/placeholder.png";
+  const imageUrl =
+    (typeof images[0] === "string" ? images[0] : images[0]?.url) ||
+    "/placeholder.png";
 
   const truncateText = (text, limit = 50) => {
     if (expanded || text.length <= limit) return text;
@@ -164,10 +170,10 @@ const ICard = ({
         <CardContent
           sx={{
             p: 2.5,
-            flexGrow: 1, // ✅ content stretches
+            flexGrow: 1,
             display: "flex",
             flexDirection: "column",
-            mb: "10"// ✅ allows pushing button down
+            mb: "10",
           }}
         >
           <Typography

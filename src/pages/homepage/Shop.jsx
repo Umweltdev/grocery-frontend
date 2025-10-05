@@ -232,7 +232,7 @@ const Shop = () => {
             <Grid
               container
               spacing={{ xs: 1, md: 2 }}
-              justifyContent="center"
+              justifyContent="left"
               alignItems="stretch"
               sx={{ maxWidth: { xs: "100%", md: "1200px" } }}
             >
