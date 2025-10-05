@@ -4,6 +4,9 @@ import {
   Stack,
   Grid,
   Typography,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
@@ -16,6 +19,7 @@ import { OverviewSection } from "./components/OverviewSection";
 import { EcommerceDashboardSection } from "./components/EcommerceDashboardSection";
 import { MarketTrend } from "./components/MarketTrends";
 import { ThirtyDayTrend } from "./components/ThirtyDayTrend";
+import { ArrowDropDown } from "@mui/icons-material";
 
 const initialAnalytics = {
   currentMCDMultiplier: 1.15,
@@ -40,42 +44,98 @@ const initialMarketingTrends = [
   { name: "Referrals", value: 10 },
 ];
 
-const Card1 = ({ name, amount, amount1, percentage, color }) => (
-  <Stack
-    bgcolor="white"
-    borderRadius="10px"
-    p={3.1}
-    px={2}
-    spacing={1}
-    sx={{ boxShadow: "0px 1px 3px rgba(3, 0, 71, 0.09)" }}
-  >
-    <Typography variant="subtitle1" color="text.secondary">
-      {name}
-    </Typography>
-    <Typography variant="subtitle1" fontSize="20px" fontWeight="700">
-      {amount}
-    </Typography>
+const Card1 = ({ data }) => {
+  const [timePeriod, setTimePeriod] = useState("daily");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (period) => {
+    if (period) {
+      setTimePeriod(period);
+    }
+    setAnchorEl(null);
+  };
+
+  const { title, data: metricsData, color } = data;
+  const currentMetrics = metricsData[timePeriod];
+
+  const timePeriodDisplay =
+    timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1);
+
+  return (
     <Stack
-      direction="row"
-      justifyContent="space-between"
-      color={color}
-      alignItems="center"
+      bgcolor="white"
+      borderRadius="10px"
+      p={3.5}
+      px={2}
+      spacing={1}
+      sx={{ boxShadow: "0px 1px 3px rgba(3, 0, 71, 0.09)" }}
     >
-      <Typography color="text.secondary" fontSize="13.5px">
-        {amount1}
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography variant="h5" color="text.secondary">
+          {title}
+        </Typography>
+        <IconButton
+          aria-label="more"
+          aria-controls={open ? "time-period-menu" : undefined}
+          aria-expanded={open ? "true" : undefined}
+          aria-haspopup="true"
+          onClick={handleClick}
+          size="small"
+        >
+          <ArrowDropDown color="primary" />
+        </IconButton>
+        <Menu
+          id="time-period-menu"
+          MenuListProps={{ "aria-labelledby": "time-period-button" }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={() => handleClose(null)}
+        >
+          {["daily", "weekly", "monthly", "yearly"].map((period) => (
+            <MenuItem key={period} onClick={() => handleClose(period)}>
+              {period.charAt(0).toUpperCase() + period.slice(1)}
+            </MenuItem>
+          ))}
+        </Menu>
+      </Stack>
+
+      <Typography variant="subtitle1" fontSize="18px" fontWeight="700">
+        {currentMetrics.current}
       </Typography>
-      <Typography fontSize="11px">{percentage}</Typography>
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        color={color}
+        alignItems="center"
+      >
+        <Stack spacing={0.5}>
+          <Typography color="text.secondary" fontSize="13.5px">
+            Quantity: {currentMetrics.quantity}
+          </Typography>
+          <Typography color="text.secondary" fontSize="13.5px">
+            {timePeriodDisplay}
+          </Typography>
+        </Stack>
+        <Typography fontSize="11px">{currentMetrics.percentage}</Typography>
+      </Stack>
     </Stack>
-  </Stack>
-);
+  );
+};
 
 Card1.propTypes = {
-  name: PropTypes.string.isRequired,
-  amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  amount1: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  percentage: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  color: PropTypes.string,
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    color: PropTypes.string,
+    data: PropTypes.object.isRequired,
+  }).isRequired,
 };
+
 
 const Card2 = ({ name, amount, percentage, Icon }) => (
   <Stack
@@ -223,7 +283,7 @@ const Dashboard = () => {
           <Grid container flex={1} spacing={3}>
             {mockData.map((item, index) => (
               <Grid key={index} item xs={12} sm={6}>
-                <Card1 {...item} />
+                <Card1 data={item} />
               </Grid>
             ))}
           </Grid>
