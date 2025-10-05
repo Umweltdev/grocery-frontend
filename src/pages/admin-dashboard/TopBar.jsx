@@ -6,17 +6,22 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Link } from "react-router-dom";
-import { Avatar } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const TopBar = ({ handleDrawerOpen }) => {
   const bigScreen = useMediaQuery("(min-width:1230px)");
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const handleAvatarClick = () => {
+    navigate("/user/profile");
+  };
 
   return (
     <Box
@@ -65,6 +70,7 @@ const TopBar = ({ handleDrawerOpen }) => {
             </Stack>
           </Button>
         </Stack>
+
         <Stack
           direction="row"
           spacing={{ xs: 1.5, sm: 2.5 }}
@@ -74,7 +80,16 @@ const TopBar = ({ handleDrawerOpen }) => {
             sx={{ fontSize: 35, color: "primary.contrastText" }}
           />
 
-          <Box sx={{ width: 35, height: 35 }}>
+          <IconButton
+            onClick={handleAvatarClick}
+            sx={{
+              p: 0,
+              borderRadius: "50%",
+              overflow: "hidden",
+              "&:hover": { transform: "scale(1.05)" },
+              transition: "transform 0.2s ease",
+            }}
+          >
             <Avatar
               src={user?.image}
               alt={user?.name || "User Avatar"}
@@ -82,7 +97,7 @@ const TopBar = ({ handleDrawerOpen }) => {
             >
               {!user?.image && user?.name?.[0]?.toUpperCase()}
             </Avatar>
-          </Box>
+          </IconButton>
         </Stack>
       </Stack>
     </Box>
