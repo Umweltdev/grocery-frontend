@@ -55,12 +55,10 @@ export const mockData = [
   },
 ];
 
-export const staticData = [
-  {
-    title: "Product Share",
-    current: "£2,350",
-    Icon: PieChart,
-    percentageChange: "2.25%",
-    color: "green",
-  },
-];
+export const staticData = {
+  title: "Product Share",
+  current: 2350,
+  Icon: PieChart,
+  percentageChange: 2.25,
+  color: "#10B981",
+};
