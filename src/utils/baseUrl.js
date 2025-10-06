@@ -1,4 +1,4 @@
-const base_url = "https://kaccocashncarry.co.uk/api/";
+const base_url = "http://kaccocashncarry.co.uk/api/";
 
 
 export { base_url };

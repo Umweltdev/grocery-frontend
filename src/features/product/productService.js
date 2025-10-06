@@ -62,6 +62,25 @@ const getProductByCategory = async (id) => {
   const response = await axios.get(`${base_url}product/category/${id}`, config);
   return response.data;
 };
+
+const togglePublish = async (id, published) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.token;
+
+  const response = await axios.put(
+    `${base_url}product/toggle-publish/${id}`,
+    { published },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return response.data;
+};
+
 const productService = {
   getProducts,
   createProduct,
@@ -70,6 +89,7 @@ const productService = {
   getProduct,
   getProductByCategory,
   searchProduct,
+  togglePublish
 };
 
 export default productService;

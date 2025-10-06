@@ -23,6 +23,7 @@ import {
   getProducts,
   deleteProduct,
   resetState,
+  togglePublish
 } from "../../features/product/productSlice";
 import Header from "./Header";
 import makeToast from "../../utils/toaster";
@@ -143,7 +144,31 @@ const Products = () => {
       field: "publish",
       headerName: "Published",
       width: 120,
-      renderCell: ({ value }) => <Switch checked={value} />,
+      renderCell: ({ row }) => (
+        <Switch
+          checked={row.publish}
+          onChange={(e) => {
+            const isChecked = e.target.checked;
+
+            dispatch(togglePublish({ id: row._id, published: isChecked }))
+              .unwrap()
+              .then(() => {
+                makeToast(
+                  "success",
+                  isChecked
+                    ? "Product published successfully!"
+                    : "Product unpublished successfully!"
+                );
+                dispatch(getProducts());
+              })
+              .catch(() => {
+                makeToast("error", "Failed to update publish status!");
+              });
+          }
+          }
+        />
+      ),
+
     },
     {
       field: "action",
