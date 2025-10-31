@@ -15,6 +15,7 @@ import {
   Divider,
   Dialog,
   DialogContent,
+  Box,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -154,6 +155,8 @@ const columns = [
 const Orders = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
 
   const { orders } = useSelector((state) => state.order);

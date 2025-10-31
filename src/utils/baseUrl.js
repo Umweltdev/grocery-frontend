@@ -1,9 +1,9 @@
 let base_url;
 
 if (import.meta.env.MODE === "development") {
-  base_url = "http://localhost:8080/api/";
+  base_url = "https://www.kaccocashncarry.co.uk/api/";
 } else {
-  base_url = "https://grocery-backend-nkxh.onrender.com/api/";
+  base_url = "https://www.kaccocashncarry.co.uk/api/";
 }
 
 export { base_url };
