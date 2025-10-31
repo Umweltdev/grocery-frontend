@@ -5,7 +5,6 @@ import axios from "axios";
 import makeToast from "../../utils/toaster";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { loadStripe } from "@stripe/stripe-js";
-// import { Elements, useStripe, useElements } from "@stripe/react-stripe-js";
 
 import {
   Stack,
@@ -22,7 +21,6 @@ import {
   useMediaQuery,
   CircularProgress,
 } from "@mui/material";
-import Cards from "./cards";
 import { useSelector, useDispatch } from "react-redux";
 import { resetState } from "../../features/cart/cartSlice";
 import { resetState as resetOrderState } from "../../features/order/orderSlice";
@@ -84,10 +82,10 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
         },
         { headers: { Authorization: `Bearer ${user?.token}` } }
       );
-
+      
       if (option === "card" && response.data.sessionId) {
         const stripe = await loadStripe(
-          import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+          import.meta.env. VITE_STRIPE_PUBLISHABLE_KEY
         );
         if (stripe) {
           localStorage.removeItem("cartState");
@@ -120,17 +118,18 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
 
   return (
     <Grid container spacing={3} mt={{ xs: 2, sm: 4 }}>
-      {/* Payment Method Card */}
       <Grid item xs={12} md={8}>
         <Paper
           elevation={4}
           sx={{
-            borderRadius: 3,
-            p: { xs: 2, sm: 4 },
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
             bgcolor: "background.paper",
+            borderRadius: "10px",
+            p: 3,
+            width: "100%",
+            maxWidth: { xs: "100%", md: 600 },
+            position: "relative",
+            transition: "box-shadow 0.3s",
+            "&:hover": { boxShadow: 6 },
           }}
         >
           <Typography
@@ -142,7 +141,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           >
             Select Payment Method
           </Typography>
-          <FormGroup sx={{ gap: 1.5 }}>
+          <FormGroup sx={{ gap: 1.5, width: "100%", maxWidth: 500 }}>
             <FormControlLabel
               sx={{
                 py: 2,
@@ -178,13 +177,9 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
                   Kindly note that you will be redirected to Stripe Checkout
                   Page to complete your purchase.
                 </Typography>
-
-                {/* <Cards option={option} /> */}
               </Stack>
             )}
-
             <CustomDivider />
-
             <FormControlLabel
               sx={{
                 py: 2,
@@ -206,9 +201,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
                 </Typography>
               }
             />
-
             <CustomDivider />
-
             <FormControlLabel
               sx={{
                 py: 2,
@@ -260,7 +253,6 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           </FormGroup>
         </Paper>
       </Grid>
-
       <Grid item xs={12} md={4}>
         <Paper
           elevation={4}
@@ -296,9 +288,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
               </Typography>
             </Stack>
           ))}
-
           <CustomDivider />
-
           <Stack direction="column" spacing={1}>
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="body2" color="text.secondary">
@@ -333,9 +323,7 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
               </Typography>
             </Stack>
           </Stack>
-
           <CustomDivider />
-
           <Typography
             variant="h5"
             fontWeight={700}
@@ -346,8 +334,6 @@ const PaymentPage = ({ defaultDeliveryDate }) => {
           </Typography>
         </Paper>
       </Grid>
-
-      {/* Buy Now Button */}
       <Grid item xs={12} md={8}>
         <Button
           fullWidth

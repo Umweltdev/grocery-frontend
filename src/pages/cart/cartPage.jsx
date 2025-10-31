@@ -215,7 +215,6 @@ const CartPage = ({ updateStepCompletion }) => {
             "&:hover": { boxShadow: 8 },
           }}
         >
-          {/* Total Amount */}
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -237,10 +236,7 @@ const CartPage = ({ updateStepCompletion }) => {
               {`£ ${cartTotal.toLocaleString()}`}
             </Typography>
           </Stack>
-
           <CustomDivider />
-
-          {/* Additional Comments Section */}
           <Stack spacing={1.5} mt={3}>
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
@@ -260,7 +256,6 @@ const CartPage = ({ updateStepCompletion }) => {
                 Note
               </Typography>
             </Stack>
-
             <TextField
               fullWidth
               variant="outlined"
@@ -277,10 +272,7 @@ const CartPage = ({ updateStepCompletion }) => {
               InputLabelProps={{ style: { fontSize: 14 } }}
             />
           </Stack>
-
           <CustomDivider sx={{ my: 3 }} />
-
-          {/* Voucher Section */}
           <Stack spacing={2}>
             <TextField
               fullWidth

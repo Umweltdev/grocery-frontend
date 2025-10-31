@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Typography,
-  Box,
   Stack,
   IconButton,
   Chip,

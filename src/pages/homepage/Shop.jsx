@@ -225,14 +225,14 @@ const Shop = () => {
           </Typography>
 
           {loading ? (
-            <Box display="flex" justifyContent="center" py={6}>
+            <Box display="flex" justifyContent="left" py={6}>
               <CircularProgress size={48} thickness={4} color="error" />
             </Box>
           ) : (
             <Grid
               container
               spacing={{ xs: 1, md: 2 }}
-              justifyContent="center"
+              justifyContent="flex-start"
               alignItems="stretch"
               sx={{ maxWidth: { xs: "100%", md: "1200px" } }}
             >
@@ -259,7 +259,9 @@ const Shop = () => {
         />
         <Comment
           products={
-            filteredProduct.length > 0 ? filteredProduct : fallbackProductsWithReviews
+            filteredProduct.length > 0
+              ? filteredProduct
+              : fallbackProductsWithReviews
           }
         />
       </Stack>

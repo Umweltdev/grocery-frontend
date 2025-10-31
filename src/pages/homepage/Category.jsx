@@ -31,16 +31,13 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
-
-const fallbackCategories = [
-  { _id: "fashion", name: "Fashion", children: [] },
-  { _id: "groceries", name: "Groceries", children: [] },
-  { _id: "home-living", name: "Home & Living", children: [] },
-];
+import CategoryIcon from "@mui/icons-material/Category"; 
 
 const iconProps = {
   sx: { color: "grey.700", fontSize: { xs: "20px", sm: "26px" } },
 };
+
+const fallbackIcon = <CategoryIcon {...iconProps} />; 
 
 const categoryIcons = {
   fashion: <CheckroomIcon {...iconProps} />,
@@ -65,7 +62,7 @@ const categoryIcons = {
 const getCategoryIcon = (categoryName) => {
   if (!categoryName) return null;
   const normalizedName = categoryName.toLowerCase();
-  return categoryIcons[normalizedName] || null;
+  return categoryIcons[normalizedName] || fallbackIcon;
 };
 
 const Category = ({ visibleCategories, loading, productsByCategory }) => {
@@ -89,13 +86,7 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
     return (
       <Grid container spacing={{ xs: 1, sm: 2 }} mt={1} alignItems="stretch">
         {products.slice(0, 6).map((product) => (
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={3}
-            key={product._id}
-          >
+          <Grid item xs={12} sm={6} md={3} key={product._id}>
             <Card
               sx={{
                 height: "100%",
@@ -226,10 +217,31 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
     );
   };
 
-  const categoriesToShow =
-    visibleCategories && visibleCategories.length
-      ? visibleCategories
-      : fallbackCategories;
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
+        <CircularProgress size={32} thickness={4} />
+      </Box>
+    );
+  }
+
+  if (!visibleCategories || visibleCategories.length === 0) {
+    return (
+      <Typography
+        textAlign="center"
+        color="text.secondary"
+        py={2}
+        fontSize="0.95rem"
+      >
+        No categories available.
+      </Typography>
+    );
+  }
 
   return (
     <Box>
@@ -243,25 +255,15 @@ const Category = ({ visibleCategories, loading, productsByCategory }) => {
       >
         CATEGORIES
       </Typography>
-      {loading ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="150px"
-        >
-          <CircularProgress size={28} thickness={4} />
-        </Box>
-      ) : (
-        categoriesToShow.map((category, index) => (
-          <React.Fragment key={category._id}>
-            {renderCategory(category, true)}
-            {index < categoriesToShow.length - 1 && (
-              <Divider sx={{ my: 0.5 }} />
-            )}
-          </React.Fragment>
-        ))
-      )}
+
+      {visibleCategories.map((category, index) => (
+        <React.Fragment key={category._id}>
+          {renderCategory(category, true)}
+          {index < visibleCategories.length - 1 && (
+            <Divider sx={{ my: 0.5 }} />
+          )}
+        </React.Fragment>
+      ))}
     </Box>
   );
 };
@@ -273,7 +275,7 @@ Category.propTypes = {
 };
 
 Category.defaultProps = {
-  visibleCategories: fallbackCategories,
+  visibleCategories: [],
   loading: false,
   productsByCategory: {},
 };

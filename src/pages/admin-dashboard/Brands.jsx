@@ -74,34 +74,34 @@ const Brands = () => {
                 <Chip label={value} sx={{ height: "25px" }} />
               ),
             },
-            {
-              field: "featured",
-              headerName: "Featured",
-              flex: 1,
-              renderCell: ({ value, row }) => {
-                const [checked, setChecked] = useState(value);
+            // {
+            //   field: "featured",
+            //   headerName: "Featured",
+            //   flex: 1,
+            //   renderCell: ({ value, row }) => {
+            //     const [checked, setChecked] = useState(value);
 
-                const handleSwitchChange = () => {
-                  const updatedRow = { ...row, publish: !checked };
-                  setChecked(!checked);
-                };
+            //     const handleSwitchChange = () => {
+            //       const updatedRow = { ...row, publish: !checked };
+            //       setChecked(!checked);
+            //     };
 
-                return (
-                  <Switch
-                    checked={checked}
-                    onChange={handleSwitchChange}
-                    sx={{
-                      "& .MuiSwitch-thumb": {
-                        color: "#2756b6",
-                      },
-                      "& .Mui-checked+.MuiSwitch-track": {
-                        backgroundColor: "#4e97fd !important",
-                      },
-                    }}
-                  />
-                );
-              },
-            },
+            //     return (
+            //       <Switch
+            //         checked={checked}
+            //         onChange={handleSwitchChange}
+            //         sx={{
+            //           "& .MuiSwitch-thumb": {
+            //             color: "#2756b6",
+            //           },
+            //           "& .Mui-checked+.MuiSwitch-track": {
+            //             backgroundColor: "#4e97fd !important",
+            //           },
+            //         }}
+            //       />
+            //     );
+            //   },
+            // },
 
             {
               field: "action",

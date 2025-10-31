@@ -1,28 +1,64 @@
-import { ReactComponent as Pie } from "../../assets/icons/piechart.svg";
+import { PieChart } from "@mui/icons-material";
 
 export const mockData = [
-    {
-      name: "Order",
-      amount: "32,350",
-      amount1: "9345",
-      percentage: "25.25%",
-      color: "#4E97FD",
+  {
+    title: "Orders",
+    data: {
+      daily: {
+        current: "£32,350",
+        percentage: "25.25%",
+        quantity: "1,520",
+      },
+      weekly: {
+        current: "£15,800",
+        percentage: "12.5%",
+        quantity: "7,800",
+      },
+      monthly: {
+        current: "£65,400",
+        percentage: "15.0%",
+        quantity: "35,100",
+      },
+      yearly: {
+        current: "£500,000",
+        percentage: "30.0%",
+        quantity: "250,000",
+      },
     },
-    {
-      name: "Sold Sales",
-      amount: "2,350",
-      amount1: "9345",
-      percentage: "2.25%",
-      color: "#E94560",
+    color: "#4E97FD",
   },
-        {
-      name: "Product Share",
-      amount: "£2,350",
-      Icon: Pie,
-      percentage: "2.25%",
-      color: "green",
+  {
+    title: "Revenue",
+    data: {
+      daily: {
+        current: "£2,350",
+        percentage: "2.25%",
+        quantity: "150",
+      },
+      weekly: {
+        current: "£1,200",
+        percentage: "1.5%",
+        quantity: "750",
+      },
+      monthly: {
+        current: "£15,000",
+        percentage: "5.0%",
+        quantity: "5,500",
+      },
+      yearly: {
+        current: "£120,000",
+        percentage: "10.0%",
+        quantity: "45,000",
+      },
     },
-  ];
-  
+    color: "#E94560",
+  },
+];
 
-  
+export const staticData = {
+  title: "Product Share",
+  current: 2350,
+  Icon: PieChart,
+  percentageChange: 2.25,
+  color: "#10B981",
+};

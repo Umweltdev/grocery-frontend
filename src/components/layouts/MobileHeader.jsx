@@ -75,7 +75,7 @@ const MobileHeader = ({
             src="https://res.cloudinary.com/dkcgd7fio/image/upload/v1759144244/Gemini_Generated_Image_couzo3couzo3couz-removebg-preview_ugmc0u.png"
             alt="logo"
             style={{
-              height: "70px",
+              height: "65px",
               transition: "all 0.3s",
               cursor: "pointer",
             }}
@@ -106,8 +106,8 @@ const MobileHeader = ({
             sx={{
               bgcolor: theme.palette.primary.main,
               color: "#fff",
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
               ml: 1,
               "&:hover": { bgcolor: theme.palette.primary.dark },
             }}

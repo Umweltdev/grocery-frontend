@@ -1,27 +1,27 @@
+import PropTypes from "prop-types";
 import {
   Box,
   Stack,
   Button,
-  SvgIcon,
-  Container,
   IconButton,
   Typography,
-  OutlinedInput,
-  InputAdornment,
+  useMediaQuery,
+  Avatar,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { ReactComponent as Browse } from "../../assets/icons/browse.svg";
-import { ReactComponent as Bell } from "../../assets/icons/bell.svg";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
+import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const TopBar = ({ handleDrawerOpen }) => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
   const bigScreen = useMediaQuery("(min-width:1230px)");
-
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const handleAvatarClick = () => {
+    navigate("/user/profile");
+  };
 
   return (
     <Box
@@ -29,14 +29,14 @@ const TopBar = ({ handleDrawerOpen }) => {
       p={2}
       px={{ xs: 1.5, sm: 4 }}
       sx={{
-        boxShadow: " 0px 4px 16px rgba(43, 52, 69, 0.1)",
+        boxShadow: "0px 4px 16px rgba(43, 52, 69, 0.1)",
         position: "sticky",
         top: 0,
         zIndex: 20,
       }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Stack direction="row" spacing={{ xs: 2, lg: 0 }}>
+        <Stack direction="row" spacing={{ xs: 2, lg: 0 }} alignItems="center">
           <IconButton
             onClick={handleDrawerOpen}
             sx={{
@@ -46,31 +46,23 @@ const TopBar = ({ handleDrawerOpen }) => {
           >
             <MenuIcon />
           </IconButton>
+
           <Button
             sx={{
               textTransform: "none",
               bgcolor: "background.paper",
-              paddingY: "9px",
-              paddingX: "20px",
+              py: "9px",
+              px: "20px",
               borderRadius: "8px",
               justifyContent: "space-between",
-
               "&:hover": {
                 backgroundColor: "background.paper",
               },
             }}
           >
             <Stack direction="row" spacing={1} alignItems="center">
-              <SvgIcon
-                sx={{
-                  fontSize: "25px",
-                  color: "primary.main",
-                }}
-              >
-                <Browse />
-              </SvgIcon>
-
-              <Link to={"/"} style={{ textDecoration: "none" }}>
+              <TravelExploreIcon sx={{ fontSize: 25, color: "primary.main" }} />
+              <Link to="/" style={{ textDecoration: "none" }}>
                 <Typography variant="subtitle1" color="primary.main">
                   Browse Website
                 </Typography>
@@ -84,52 +76,36 @@ const TopBar = ({ handleDrawerOpen }) => {
           spacing={{ xs: 1.5, sm: 2.5 }}
           alignItems="center"
         >
-          {/* <OutlinedInput
-            placeholder="Search anything"
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            }
-            sx={{
-              borderRadius: "12px",
-              paddingRight: 0,
-              bgcolor: "background.paper",
+          <NotificationsIcon
+            sx={{ fontSize: 35, color: "primary.contrastText" }}
+          />
 
-              "& .MuiInputBase-input": {
-                padding: "10px",
-                fontSize: "14px",
-              },
-            }}
-          /> */}
-
-          <SvgIcon
+          <IconButton
+            onClick={handleAvatarClick}
             sx={{
-              fontSize: "25px",
-              color: "primary.contrastText",
+              p: 0,
+              borderRadius: "50%",
+              overflow: "hidden",
+              "&:hover": { transform: "scale(1.05)" },
+              transition: "transform 0.2s ease",
             }}
           >
-            <Bell />
-          </SvgIcon>
-          <Box
-            sx={{
-              width: "40px",
-              height: "40px",
-            }}
-          >
-            <img
+            <Avatar
               src={user?.image}
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-              }}
-            />
-          </Box>
+              alt={user?.name || "User Avatar"}
+              sx={{ width: 35, height: 35 }}
+            >
+              {!user?.image && user?.name?.[0]?.toUpperCase()}
+            </Avatar>
+          </IconButton>
         </Stack>
       </Stack>
     </Box>
   );
+};
+
+TopBar.propTypes = {
+  handleDrawerOpen: PropTypes.func.isRequired,
 };
 
 export default TopBar;

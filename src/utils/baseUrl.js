@@ -1,4 +1,4 @@
-let base_url;
+const base_url = "http://kaccocashncarry.co.uk/api/";
 
 if (import.meta.env.MODE === "development") {
   base_url = "https://www.kaccocashncarry.co.uk/api/";

@@ -100,7 +100,7 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
 
   return (
     <>
-      <Grid container spacing={3} justifyContent="center" alignItems="stretch">
+      <Grid container spacing={3} justifyContent="left" alignItems="stretch">
         {paginatedData.map((item) => (
           <Grid
             item
@@ -111,7 +111,7 @@ const Products = ({ activeIcon, category, search, itemsPerPage = 6 }) => {
             display="flex"
             justifyContent="center"
           >
-            <Box sx={{ width: "100%", maxWidth: 384, display: "flex" }}>
+            <Box sx={{ width: "100%", maxWidth: 385, display: "flex" }}>
               {activeIcon === "apps" ? (
                 <ICard {...item} />
               ) : (

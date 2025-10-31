@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import productService from "./productService";
 
-
 // Get all products
 export const getProducts = createAsyncThunk(
   "product/get-products",
@@ -148,11 +147,13 @@ export const getProductByCategory = createAsyncThunk(
 // Toggle publish/unpublish
 export const togglePublish = createAsyncThunk(
   "product/toggle-publish",
-  async (id, thunkAPI) => {
+  async ({ id, published }, thunkAPI) => {
     try {
-      return await productService.togglePublish(id);
+      return await productService.togglePublish(id,published);
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );

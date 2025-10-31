@@ -69,12 +69,12 @@ const ResetPassword = () => {
   return (
     <Box
       sx={{
+        minHeight: "100vh",
+        bgcolor: "#f4f6f8",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "column",
-        height: "100vh",
-        bgcolor: "#F6F9FC",
+        p: 2,
       }}
     >
       <Paper
@@ -95,6 +95,7 @@ const ResetPassword = () => {
               style={{
                 margin: "0 auto",
                 display: "block",
+                width: "120px",
               }}
             />
           </Link>
@@ -105,8 +106,16 @@ const ResetPassword = () => {
             Enter your new password below.
           </Typography>
 
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-          {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          {message && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {message}
+            </Alert>
+          )}
 
           <CustomTextField
             fullWidth

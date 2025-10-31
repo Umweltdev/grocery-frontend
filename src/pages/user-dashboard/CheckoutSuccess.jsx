@@ -26,6 +26,7 @@ const gradientText = {
 };
 
 const CheckoutSuccess = () => {
+  
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
