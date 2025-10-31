@@ -34,6 +34,8 @@ const Homepage = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [visibleCategories, setVisibleCategories] = useState([]);
+  const [loadingVisibleCategories, setLoadingVisibleCategories] = useState(false);
+
 
   const { products } = useSelector((state) => state.cart);
   const user = useSelector((state) => state.auth.user);
@@ -52,12 +54,14 @@ const Homepage = () => {
   }));
 
   const getVisibleCategories = () => {
+    setLoadingVisibleCategories(true);
     axios
       .get(`${base_url}category?level=1&visible=true`)
       .then((response) => {
         setVisibleCategories(response.data || []);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error("Error fetching categories:", error))
+      .finally(() => setLoadingVisibleCategories(false)); // ✅ stop loading
   };
 
   useEffect(() => {
@@ -117,7 +121,7 @@ const Homepage = () => {
       >
         <Box p={3} sx={{ height: "100vh", overflowY: "auto" }}>
           <Divider sx={{ mb: 2 }} />
-          <Category visibleCategories={visibleCategories} />
+          <Category visibleCategories={visibleCategories} loading={loadingVisibleCategories}/>
         </Box>
       </Drawer>
 
@@ -217,7 +221,7 @@ const Homepage = () => {
                 },
               }}
             >
-              <Category visibleCategories={visibleCategories} />
+              <Category visibleCategories={visibleCategories}  loading={loadingVisibleCategories}/>
             </Box>
           </Grid>
           <Grid item xs={12} md={9}>
