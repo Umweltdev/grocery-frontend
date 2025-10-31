@@ -44,7 +44,10 @@ const AddProduct = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const { brands } = useSelector((state) => state.brand);
-  const categories = useSelector((state) => state.category.categories);
+  const { categories } = useSelector((state) => state.category);
+  
+  // Debug categories
+  console.log('Categories:', categories);
   const {
     isSuccess,
     isError,
@@ -55,7 +58,8 @@ const AddProduct = () => {
   } = useSelector((state) => state.product);
 
   useEffect(() => {
-    dispatch(getCategories(1));
+    console.log('Fetching categories and brands...');
+    dispatch(getCategories());
     dispatch(getBrands());
   }, [dispatch]);
 
@@ -133,15 +137,25 @@ const AddProduct = () => {
           <Formik
             enableReinitialize={true}
             onSubmit={(values, { resetForm }) => {
+              // Validate images
+              if (selectedFiles.length === 0) {
+                alert('Please upload at least one product image.');
+                return;
+              }
+              
+              // Ensure images are valid files
+              const validImages = selectedFiles.filter(file => file instanceof File);
+              
               if (id !== "create") {
                 const data = {
                   id: id,
-                  productData: { ...values, previousImages: selectedFiles },
+                  productData: { ...values, previousImages: selectedFiles, images: validImages },
                 };
                 dispatch(updateProduct(data));
                 resetFormRef.current = resetForm;
               } else {
-                dispatch(createProducts(values));
+                const productData = { ...values, images: validImages };
+                dispatch(createProducts(productData));
                 resetFormRef.current = resetForm;
               }
             }}
@@ -197,17 +211,27 @@ const AddProduct = () => {
                         </TextField>
                       </Grid>
                       <Grid item xs={12} md={3}>
-                        <Dropdown
-                          setCategoryLevels={setCategoryLevels}
-                          setSelectedCategories={setSelectedCategories}
-                          setFieldValue={setFieldValue}
-                          categoryLevels={categoryLevels}
-                          selectedCategories={selectedCategories}
-                          field="category"
-                          errors={errors}
-                          editMode={editMode}
-                          categoryId={productData?.category?._id}
-                        />
+                        <TextField
+                          select
+                          fullWidth
+                          label="Category"
+                          name="category"
+                          value={values.category}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!touched.category && !!errors.category}
+                          helperText={touched.category && errors.category}
+                        >
+                          {categories && categories.length > 0 ? (
+                            categories.map((category) => (
+                              <MenuItem key={category._id} value={category._id}>
+                                {category.name}
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <MenuItem disabled>No categories available</MenuItem>
+                          )}
+                        </TextField>
                       </Grid>
                       <Grid item xs={12}>
                         <TextField
@@ -230,15 +254,32 @@ const AddProduct = () => {
                     <Typography variant="h6" mb={2}>Product Images</Typography>
                     <Dropzone
                       onDrop={(acceptedFiles) => {
-                        const files = acceptedFiles.map((file) => {
+                        // Filter only valid image files
+                        const validFiles = acceptedFiles.filter(file => 
+                          file.type.startsWith('image/') && file.size <= 2000000 // 2MB limit
+                        );
+                        
+                        const files = validFiles.map((file) => {
                           file.url = URL.createObjectURL(file);
                           return file;
                         });
-                        setSelectedFiles((prev) => [...prev, ...files]);
-                        setFieldValue("images", [...values.images, ...files]);
+                        
+                        if (files.length > 0) {
+                          setSelectedFiles((prev) => [...prev, ...files]);
+                          setFieldValue("images", [...values.images, ...files]);
+                        }
+                        
+                        if (acceptedFiles.length > validFiles.length) {
+                          alert('Some files were rejected. Please upload only image files under 2MB.');
+                        }
                       }}
-                      accept={{ 'image/*': [] }}
+                      accept={{
+                        'image/jpeg': ['.jpg', '.jpeg'],
+                        'image/png': ['.png'],
+                        'image/gif': ['.gif']
+                      }}
                       multiple
+                      maxSize={2000000}
                     >
 
                       {({ getRootProps, getInputProps }) => (
@@ -423,3 +464,47 @@ const productSchema = yup.object().shape({
 });
 
 export default AddProduct;
+
+
+// import { v2 as cloudinary } from "cloudinary";
+
+// (async function () {
+//   // Configuration
+//   cloudinary.config({
+//     cloud_name: "dw4cj9csz",
+//     api_key: "438336712639652",
+//     api_secret: "<your_api_secret>", // Click 'View API Keys' above to copy your API secret
+//   });
+
+//   // Upload an image
+//   const uploadResult = await cloudinary.uploader
+//     .upload(
+//       "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
+//       {
+//         public_id: "shoes",
+//       }
+//     )
+//     .catch((error) => {
+//       console.log(error);
+//     });
+
+//   console.log(uploadResult);
+
+//   // Optimize delivery by resizing and applying auto-format and auto-quality
+//   const optimizeUrl = cloudinary.url("shoes", {
+//     fetch_format: "auto",
+//     quality: "auto",
+//   });
+
+//   console.log(optimizeUrl);
+
+//   // Transform the image: auto-crop to square aspect_ratio
+//   const autoCropUrl = cloudinary.url("shoes", {
+//     crop: "auto",
+//     gravity: "auto",
+//     width: 500,
+//     height: 500,
+//   });
+
+//   console.log(autoCropUrl);
+// })();
