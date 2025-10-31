@@ -13,6 +13,9 @@ import {
   Card,
   CardContent,
   Divider,
+  Dialog,
+  DialogContent,
+  Box,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -40,6 +43,8 @@ renderVisibilityCell.propTypes = {
 const Categories = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
 
   const { categories, deletedCategory, isError, isLoading } = useSelector(
